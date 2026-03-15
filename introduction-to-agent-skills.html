@@ -790,7 +790,8 @@
         <ul>
           <li><strong>스킬은 지시 사항이 담긴 폴더</strong>입니다. Claude Code가 더 정확하게 특정 작업을 수행하도록 탐색하고 활용할 수 있습니다. 각 스킬은 프론트매터(frontmatter)에 이름과 설명이 담긴 <code>SKILL.md</code> 파일로 이루어집니다.</li>
           <li><strong>Claude는 description을 보고 스킬을 매칭합니다.</strong> 작업을 요청하면, Claude는 사용 가능한 스킬 설명과 요청을 비교해 가장 잘 맞는 스킬을 활성화합니다.</li>
-          <li><strong>개인 스킬</strong>은 <code>~/.claude/skills</code>에 저장되어 모든 프로젝트에서 사용됩니다. <strong>프로젝트 스킬</strong>은 레포지토리 내 <code>.claude/skills</code>에 저장되어 팀 전체와 공유됩니다.</li>
+          <li><strong>개인 스킬</strong>은 <code>~/.claude/skills</code>에 저장되어 모든 프로젝트에서 사용됩니다.</li>
+          <li><strong>프로젝트 스킬</strong>은 레포지토리 내 <code>.claude/skills</code>에 저장되어 팀 전체와 공유됩니다.</li>
           <li><strong>스킬은 필요할 때만 로드됩니다.</strong> CLAUDE.md(항상 로드)나 슬래시 명령어(명시적 호출)와 달리, 스킬은 Claude가 상황을 인식할 때 자동으로 활성화됩니다.</li>
           <li>Claude에게 <strong>같은 내용을 반복해서 설명하고 있다면</strong>, 그건 스킬로 만들어야 할 신호입니다.</li>
         </ul>
