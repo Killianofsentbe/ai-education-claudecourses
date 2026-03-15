@@ -8,53 +8,177 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0d0d10;
-      --bg2: #13131a;
-      --bg3: #1a1a24;
-      --border: #2a2a3a;
-      --text: #e0e0ee;
-      --muted: #7070a0;
-      --accent: #d97f3a;
+      --bg:      #0d0d10;
+      --bg2:     #13131a;
+      --surface: #16161c;
+      --surface2:#1e1e27;
+      --border:  #2a2a3a;
+      --text:    #e0e0ee;
+      --text2:   #a0a0c0;
+      --muted:   #6060a0;
+      --accent:  #d97f3a;
       --accent2: #7b6ef6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── 사이드바 ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 270px;
+      height: 100vh;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: .1em;
+      margin-bottom: 10px;
+    }
+    .sidebar-header h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .sidebar-header p {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .nav-list::-webkit-scrollbar { width: 3px; }
+    .nav-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .nav-section {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      padding: 14px 20px 5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 18px 8px 17px;
+      text-decoration: none;
+      color: var(--text2);
+      font-size: 12.5px;
+      line-height: 1.35;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    .nav-item:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-left-color: var(--ic, var(--accent));
+    }
+    .nav-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      min-width: 20px;
+      height: 17px;
+      border-radius: 3px;
+      background: var(--surface2);
+      color: var(--ic, var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: background .15s;
+    }
+    .nav-item:hover .nav-num {
+      background: var(--surface2);
+      opacity: .9;
+    }
+
+    .sidebar-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-footer a {
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .sidebar-footer a:hover { color: var(--accent2); }
+
+    /* ── 메인 영역 ── */
+    .main-wrap {
+      margin-left: 270px;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
 
     header {
       border-bottom: 1px solid var(--border);
       padding: 40px 48px 32px;
-      max-width: 1100px;
-      margin: 0 auto;
     }
     .header-badge {
       display: inline-block;
-      background: rgba(217,127,58,.15); color: var(--accent);
-      border: 1px solid rgba(217,127,58,.3);
-      font-size: 11px; font-weight: 700; letter-spacing: .6px;
-      padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+      background: rgba(217,127,58,.13); color: var(--accent);
+      border: 1px solid rgba(217,127,58,.28);
+      font-size: 10.5px; font-weight: 700; letter-spacing: .6px;
+      padding: 3px 11px; border-radius: 20px; margin-bottom: 16px;
     }
     header h1 {
       font-family: 'Noto Serif KR', serif;
-      font-size: 32px; font-weight: 700; line-height: 1.3; margin-bottom: 10px;
+      font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 10px;
     }
-    header p { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 600px; }
-    .stats-row { display: flex; gap: 28px; margin-top: 24px; flex-wrap: wrap; }
-    .stat .num { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--accent2); }
-    .stat .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    header p { color: var(--muted); font-size: 14px; line-height: 1.75; max-width: 580px; }
+    .stats-row { display: flex; gap: 28px; margin-top: 22px; flex-wrap: wrap; }
+    .stat .num { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--accent2); }
+    .stat .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    main { max-width: 1100px; margin: 0 auto; padding: 48px 48px 80px; }
+    main { padding: 40px 48px 80px; flex: 1; }
 
     .section-title {
-      font-size: 13px; font-weight: 700; color: var(--muted);
+      font-size: 11px; font-weight: 700; color: var(--muted);
       text-transform: uppercase; letter-spacing: .8px;
-      margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+      margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
     }
 
-    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; margin-bottom: 52px; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 44px;
+    }
 
     .card {
-      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
-      padding: 22px 24px; text-decoration: none; display: block;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px 22px; text-decoration: none; display: block;
       transition: border-color .2s, transform .15s, box-shadow .2s;
       position: relative; overflow: hidden;
     }
@@ -62,23 +186,27 @@
       content: ''; position: absolute; top: 0; left: 0; right: 0;
       height: 3px; background: var(--ca, var(--accent));
     }
-    .card:hover { border-color: var(--ca, var(--accent)); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
-
-    .card-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 8px; }
-    .card-tag {
-      display: inline-block; font-size: 10px; font-weight: 700;
-      background: rgba(255,255,255,.06); color: var(--muted);
-      padding: 2px 8px; border-radius: 4px; margin-bottom: 12px; letter-spacing: .4px;
+    .card:hover {
+      border-color: var(--ca, var(--accent));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
     }
-    .card h3 { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
-    .card p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .card-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 7px; }
+    .card-tag {
+      display: inline-block; font-size: 9.5px; font-weight: 700;
+      background: rgba(255,255,255,.05); color: var(--muted);
+      padding: 2px 7px; border-radius: 3px; margin-bottom: 10px; letter-spacing: .4px;
+    }
+    .card h3 { font-size: 13.5px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+    .card p { font-size: 12px; color: var(--muted); line-height: 1.7; padding-bottom: 4px; }
     .card-arrow {
-      position: absolute; bottom: 20px; right: 20px;
-      font-size: 16px; color: var(--ca, var(--accent)); opacity: 0;
+      position: absolute; bottom: 16px; right: 16px;
+      font-size: 13px; color: var(--ca, var(--accent)); opacity: 0;
       transition: opacity .2s, transform .2s;
     }
     .card:hover .card-arrow { opacity: 1; transform: translateX(3px); }
 
+    /* 코스별 accent 색상 */
     .c1  { --ca: #7b6ef6; }
     .c2  { --ca: #d97f3a; }
     .c3  { --ca: #e06c75; }
@@ -94,162 +222,248 @@
     .c13 { --ca: #e5c07b; }
 
     footer {
-      border-top: 1px solid var(--border); padding: 28px 48px;
-      max-width: 1100px; margin: 0 auto;
+      border-top: 1px solid var(--border);
+      padding: 22px 48px;
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
     }
-    footer p { font-size: 12px; color: var(--muted); }
-    footer a { color: var(--accent2); text-decoration: none; font-size: 12px; }
+    footer p { font-size: 11.5px; color: var(--muted); }
+    footer a { color: var(--accent2); text-decoration: none; font-size: 11.5px; }
     footer a:hover { text-decoration: underline; }
 
-    @media (max-width: 600px) {
-      header { padding: 28px 20px 24px; }
-      main { padding: 32px 20px 60px; }
-      header h1 { font-size: 24px; }
-      footer { padding: 20px; }
+    /* ── 반응형 ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-wrap { margin-left: 0; }
+      header { padding: 24px 20px; }
+      main { padding: 24px 20px 60px; }
+      header h1 { font-size: 22px; }
+      footer { padding: 18px 20px; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="header-badge">ANTHROPIC ACADEMY · 한국어 학습 자료</div>
-  <h1>AI 교육 코스 모음</h1>
-  <p>Anthropic Academy의 공식 코스를 한국어로 정리한 교육 자료입니다. Claude API부터 AI Fluency까지, 총 13개 코스를 학습할 수 있습니다.</p>
-  <div class="stats-row">
-    <div class="stat"><div class="num">13</div><div class="lbl">코스</div></div>
-    <div class="stat"><div class="num">한국어</div><div class="lbl">전체 번역</div></div>
-    <div class="stat"><div class="num">무료</div><div class="lbl">오픈 소스</div></div>
-  </div>
-</header>
-
-<main>
-
-  <div class="section-title">AI Fluency 시리즈</div>
-  <div class="cards">
-
-    <a href="ai-fluency-framework-foundations.html" class="card c2">
-      <div class="card-num">COURSE 02</div>
-      <div class="card-tag">AI FLUENCY</div>
-      <h3>AI Fluency: 프레임워크 & 기초</h3>
-      <p>4D 프레임워크(위임·설명·식별·철저함)와 인간-AI 협업의 근본 원칙을 배웁니다.</p>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <a href="ai-fluency-for-educators.html" class="card c3">
-      <div class="card-num">COURSE 03</div>
-      <div class="card-tag">AI FLUENCY · 교육자</div>
-      <h3>교육자를 위한 AI Fluency</h3>
-      <p>교수 실무에 AI를 통합하는 방법. 코스 설계, 자료 제작, 평가 혁신을 다룹니다.</p>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <a href="ai-fluency-for-students.html" class="card c4">
-      <div class="card-num">COURSE 04</div>
-      <div class="card-tag">AI FLUENCY · 학생</div>
-      <h3>학생을 위한 AI Fluency</h3>
-      <p>학습과 연구에서 AI를 효과적이고 윤리적으로 활용하는 핵심 스킬을 개발합니다.</p>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <a href="teaching-ai-fluency.html" class="card c11">
-      <div class="card-num">COURSE 11</div>
-      <div class="card-tag">AI FLUENCY · 교수법</div>
-      <h3>AI Fluency 가르치기</h3>
-      <p>위임-철저함 루프와 기술-식별 루프로 AI 유창성 교육 커리큘럼을 설계합니다.</p>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <a href="ai-fluency-for-nonprofits.html" class="card c12">
-      <div class="card-num">COURSE 12</div>
-      <div class="card-tag">AI FLUENCY · 비영리</div>
-      <h3>비영리 단체를 위한 AI Fluency</h3>
-      <p>비영리 미션을 강화하는 AI 활용법. 리서치·글쓰기·데이터 분석 실무 적용.</p>
-      <span class="card-arrow">→</span>
-    </a>
-
-    <a href="claude-101.html" class="card c13">
-      <div class="card-num">COURSE 13</div>
-      <div class="card-tag">CLAUDE 기초</div>
-      <h3>Claude 101</h3>
-      <p>Claude를 일상 업무에 활용하는 법. 프롬프트 작성, 핵심 기능, 실무 응용을 다룹니다.</p>
-      <span class="card-arrow">→</span>
-    </a>
-
+<!-- ── 왼쪽 사이드바 ── -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">⬡ Anthropic Academy</div>
+    <h2>AI 교육 코스</h2>
+    <p>13개 한국어 학습 자료</p>
   </div>
 
-  <div class="section-title">Claude API · 개발자 시리즈</div>
-  <div class="cards">
+  <nav class="nav-list">
 
-    <a href="claude-with-the-anthropic-api.html" class="card c5">
-      <div class="card-num">COURSE 05</div>
-      <div class="card-tag">ANTHROPIC API</div>
-      <h3>Anthropic API로 Claude 개발하기</h3>
-      <p>API 요청·멀티턴·스트리밍·Tool Use·RAG·MCP·에이전트까지, 풀스택 개발 완전 가이드.</p>
-      <span class="card-arrow">→</span>
+    <div class="nav-section">AI Fluency</div>
+
+    <a href="ai-fluency-framework-foundations.html" class="nav-item" style="--ic:#d97f3a">
+      <span class="nav-num">02</span>
+      <span class="nav-text">AI Fluency 프레임워크 & 기초</span>
+    </a>
+    <a href="ai-fluency-for-educators.html" class="nav-item" style="--ic:#e06c75">
+      <span class="nav-num">03</span>
+      <span class="nav-text">교육자를 위한 AI Fluency</span>
+    </a>
+    <a href="ai-fluency-for-students.html" class="nav-item" style="--ic:#56b6c2">
+      <span class="nav-num">04</span>
+      <span class="nav-text">학생을 위한 AI Fluency</span>
+    </a>
+    <a href="teaching-ai-fluency.html" class="nav-item" style="--ic:#d97f3a">
+      <span class="nav-num">11</span>
+      <span class="nav-text">AI Fluency 가르치기</span>
+    </a>
+    <a href="ai-fluency-for-nonprofits.html" class="nav-item" style="--ic:#61afef">
+      <span class="nav-num">12</span>
+      <span class="nav-text">비영리 단체를 위한 AI Fluency</span>
+    </a>
+    <a href="claude-101.html" class="nav-item" style="--ic:#e5c07b">
+      <span class="nav-num">13</span>
+      <span class="nav-text">Claude 101</span>
     </a>
 
-    <a href="claude-in-amazon-bedrock.html" class="card c9">
-      <div class="card-num">COURSE 09</div>
-      <div class="card-tag">AMAZON BEDROCK</div>
-      <h3>Amazon Bedrock으로 Claude 개발하기</h3>
-      <p>boto3 + converse() API, inference profiles, Bedrock Knowledge Bases, IAM 보안까지.</p>
-      <span class="card-arrow">→</span>
+    <div class="nav-section">Claude API · 개발</div>
+
+    <a href="claude-with-the-anthropic-api.html" class="nav-item" style="--ic:#56b6c2">
+      <span class="nav-num">05</span>
+      <span class="nav-text">Anthropic API로 Claude 개발하기</span>
+    </a>
+    <a href="claude-in-amazon-bedrock.html" class="nav-item" style="--ic:#e5c07b">
+      <span class="nav-num">09</span>
+      <span class="nav-text">Amazon Bedrock으로 개발하기</span>
+    </a>
+    <a href="claude-with-google-vertex.html" class="nav-item" style="--ic:#98c379">
+      <span class="nav-num">10</span>
+      <span class="nav-text">Google Vertex AI로 개발하기</span>
     </a>
 
-    <a href="claude-with-google-vertex.html" class="card c10">
-      <div class="card-num">COURSE 10</div>
-      <div class="card-tag">GOOGLE VERTEX AI</div>
-      <h3>Google Vertex AI로 Claude 개발하기</h3>
-      <p>AnthropicVertex 클라이언트, gcloud 인증, GCP 서비스 통합, Vertex AI Agents.</p>
-      <span class="card-arrow">→</span>
+    <div class="nav-section">MCP · Claude Code</div>
+
+    <a href="introduction-to-agent-skills.html" class="nav-item" style="--ic:#7b6ef6">
+      <span class="nav-num">01</span>
+      <span class="nav-text">에이전트 스킬 소개</span>
+    </a>
+    <a href="claude-code-in-action.html" class="nav-item" style="--ic:#98c379">
+      <span class="nav-num">06</span>
+      <span class="nav-text">Claude Code 실전</span>
+    </a>
+    <a href="introduction-to-model-context-protocol.html" class="nav-item" style="--ic:#7b6ef6">
+      <span class="nav-num">07</span>
+      <span class="nav-text">MCP 입문</span>
+    </a>
+    <a href="model-context-protocol-advanced-topics.html" class="nav-item" style="--ic:#c678dd">
+      <span class="nav-num">08</span>
+      <span class="nav-text">MCP 고급 주제</span>
     </a>
 
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="https://www.anthropic.com/learn" target="_blank">원본: anthropic.com/learn →</a>
   </div>
+</aside>
 
-  <div class="section-title">MCP · Claude Code 시리즈</div>
-  <div class="cards">
+<!-- ── 메인 콘텐츠 ── -->
+<div class="main-wrap">
 
-    <a href="introduction-to-agent-skills.html" class="card c1">
-      <div class="card-num">COURSE 01</div>
-      <div class="card-tag">CLAUDE CODE · SKILLS</div>
-      <h3>에이전트 스킬 소개</h3>
-      <p>Claude Code의 Skills 기능으로 반복 작업을 자동화하고 팀과 공유하는 방법을 배웁니다.</p>
-      <span class="card-arrow">→</span>
-    </a>
+  <header>
+    <div class="header-badge">ANTHROPIC ACADEMY · 한국어 학습 자료</div>
+    <h1>AI 교육 코스 모음</h1>
+    <p>Anthropic Academy의 공식 코스를 한국어로 정리한 교육 자료입니다. Claude API부터 AI Fluency까지, 총 13개 코스를 학습할 수 있습니다.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="num">13</div><div class="lbl">코스</div></div>
+      <div class="stat"><div class="num">한국어</div><div class="lbl">전체 번역</div></div>
+      <div class="stat"><div class="num">무료</div><div class="lbl">오픈 소스</div></div>
+    </div>
+  </header>
 
-    <a href="claude-code-in-action.html" class="card c6">
-      <div class="card-num">COURSE 06</div>
-      <div class="card-tag">CLAUDE CODE</div>
-      <h3>Claude Code 실전</h3>
-      <p>Claude Code를 개발 워크플로우에 통합하는 방법. 코드베이스 탐색, 디버깅, 자동화.</p>
-      <span class="card-arrow">→</span>
-    </a>
+  <main>
 
-    <a href="introduction-to-model-context-protocol.html" class="card c7">
-      <div class="card-num">COURSE 07</div>
-      <div class="card-tag">MCP · 기초</div>
-      <h3>MCP 입문</h3>
-      <p>Model Context Protocol의 핵심 개념. Tools·Resources·Prompts와 전송 방식 독립성.</p>
-      <span class="card-arrow">→</span>
-    </a>
+    <div class="section-title">AI Fluency 시리즈</div>
+    <div class="cards">
 
-    <a href="model-context-protocol-advanced-topics.html" class="card c8">
-      <div class="card-num">COURSE 08</div>
-      <div class="card-tag">MCP · 심화</div>
-      <h3>MCP 고급 주제</h3>
-      <p>Sampling, 알림, Roots, STDIO·StreamableHTTP 전송, 상태 관리 심화 구현.</p>
-      <span class="card-arrow">→</span>
-    </a>
+      <a href="ai-fluency-framework-foundations.html" class="card c2">
+        <div class="card-num">COURSE 02</div>
+        <div class="card-tag">AI FLUENCY</div>
+        <h3>AI Fluency: 프레임워크 & 기초</h3>
+        <p>4D 프레임워크(위임·설명·식별·철저함)와 인간-AI 협업의 근본 원칙을 배웁니다.</p>
+        <span class="card-arrow">→</span>
+      </a>
 
-  </div>
+      <a href="ai-fluency-for-educators.html" class="card c3">
+        <div class="card-num">COURSE 03</div>
+        <div class="card-tag">AI FLUENCY · 교육자</div>
+        <h3>교육자를 위한 AI Fluency</h3>
+        <p>교수 실무에 AI를 통합하는 방법. 코스 설계, 자료 제작, 평가 혁신을 다룹니다.</p>
+        <span class="card-arrow">→</span>
+      </a>
 
-</main>
+      <a href="ai-fluency-for-students.html" class="card c4">
+        <div class="card-num">COURSE 04</div>
+        <div class="card-tag">AI FLUENCY · 학생</div>
+        <h3>학생을 위한 AI Fluency</h3>
+        <p>학습과 연구에서 AI를 효과적이고 윤리적으로 활용하는 핵심 스킬을 개발합니다.</p>
+        <span class="card-arrow">→</span>
+      </a>
 
-<footer>
-  <p>Anthropic Academy 공식 코스 기반 한국어 학습 자료 · 비공식 번역</p>
-  <a href="https://www.anthropic.com/learn" target="_blank">원본: anthropic.com/learn →</a>
-</footer>
+      <a href="teaching-ai-fluency.html" class="card c11">
+        <div class="card-num">COURSE 11</div>
+        <div class="card-tag">AI FLUENCY · 교수법</div>
+        <h3>AI Fluency 가르치기</h3>
+        <p>위임-철저함 루프와 기술-식별 루프로 AI 유창성 교육 커리큘럼을 설계합니다.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="ai-fluency-for-nonprofits.html" class="card c12">
+        <div class="card-num">COURSE 12</div>
+        <div class="card-tag">AI FLUENCY · 비영리</div>
+        <h3>비영리 단체를 위한 AI Fluency</h3>
+        <p>비영리 미션을 강화하는 AI 활용법. 리서치·글쓰기·데이터 분석 실무 적용.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="claude-101.html" class="card c13">
+        <div class="card-num">COURSE 13</div>
+        <div class="card-tag">CLAUDE 기초</div>
+        <h3>Claude 101</h3>
+        <p>Claude를 일상 업무에 활용하는 법. 프롬프트 작성, 핵심 기능, 실무 응용을 다룹니다.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+    </div>
+
+    <div class="section-title">Claude API · 개발자 시리즈</div>
+    <div class="cards">
+
+      <a href="claude-with-the-anthropic-api.html" class="card c5">
+        <div class="card-num">COURSE 05</div>
+        <div class="card-tag">ANTHROPIC API</div>
+        <h3>Anthropic API로 Claude 개발하기</h3>
+        <p>API 요청·멀티턴·스트리밍·Tool Use·RAG·MCP·에이전트까지, 풀스택 개발 완전 가이드.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="claude-in-amazon-bedrock.html" class="card c9">
+        <div class="card-num">COURSE 09</div>
+        <div class="card-tag">AMAZON BEDROCK</div>
+        <h3>Amazon Bedrock으로 Claude 개발하기</h3>
+        <p>boto3 + converse() API, inference profiles, Bedrock Knowledge Bases, IAM 보안까지.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="claude-with-google-vertex.html" class="card c10">
+        <div class="card-num">COURSE 10</div>
+        <div class="card-tag">GOOGLE VERTEX AI</div>
+        <h3>Google Vertex AI로 Claude 개발하기</h3>
+        <p>AnthropicVertex 클라이언트, gcloud 인증, GCP 서비스 통합, Vertex AI Agents.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+    </div>
+
+    <div class="section-title">MCP · Claude Code 시리즈</div>
+    <div class="cards">
+
+      <a href="introduction-to-agent-skills.html" class="card c1">
+        <div class="card-num">COURSE 01</div>
+        <div class="card-tag">CLAUDE CODE · SKILLS</div>
+        <h3>에이전트 스킬 소개</h3>
+        <p>Claude Code의 Skills 기능으로 반복 작업을 자동화하고 팀과 공유하는 방법을 배웁니다.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="claude-code-in-action.html" class="card c6">
+        <div class="card-num">COURSE 06</div>
+        <div class="card-tag">CLAUDE CODE</div>
+        <h3>Claude Code 실전</h3>
+        <p>Claude Code를 개발 워크플로우에 통합하는 방법. 코드베이스 탐색, 디버깅, 자동화.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="introduction-to-model-context-protocol.html" class="card c7">
+        <div class="card-num">COURSE 07</div>
+        <div class="card-tag">MCP · 기초</div>
+        <h3>MCP 입문</h3>
+        <p>Model Context Protocol의 핵심 개념. Tools·Resources·Prompts와 전송 방식 독립성.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="model-context-protocol-advanced-topics.html" class="card c8">
+        <div class="card-num">COURSE 08</div>
+        <div class="card-tag">MCP · 심화</div>
+        <h3>MCP 고급 주제</h3>
+        <p>Sampling, 알림, Roots, STDIO·StreamableHTTP 전송, 상태 관리 심화 구현.</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Anthropic Academy 공식 코스 기반 한국어 학습 자료 · 비공식 번역</p>
+    <a href="https://www.anthropic.com/learn" target="_blank">원본: anthropic.com/learn →</a>
+  </footer>
+
+</div><!-- /.main-wrap -->
 
 </body>
 </html>
