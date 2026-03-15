@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 유창성 교수법 — Anthropic Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10; --surface: #16161c; --surface2: #1e1e27;
+      --border: #2a2a38; --accent: #d97f3a; --accent2: #7b6ef6;
+      --text: #e8e6f0; --text-muted: #8884a8; --text-dim: #5a5870;
+      --code-bg: #111118; --tag-bg: #1e1e2e;
+      --success: #4caf80; --warning: #e8a838;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.8; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #0d0f1a 100%); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 56px; }
+    .logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
+    .sep { color: var(--text-dim); }
+    .course-title-small { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 240px 1fr; gap: 0; padding: 0 2rem; }
+    aside { position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1.5rem 2rem 0; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .sidebar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
+    .lesson-nav { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-muted); font-size: 13px; line-height: 1.4; transition: all 0.15s; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
+    .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); min-width: 18px; margin-top: 1px; }
+    main { padding: 3rem 0 3rem 3rem; min-width: 0; }
+    .course-hero { margin-bottom: 3rem; }
+    .course-badge { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); background: rgba(217,127,58,0.1); border: 1px solid rgba(217,127,58,0.25); padding: 0.3rem 0.75rem; border-radius: 100px; margin-bottom: 1.25rem; letter-spacing: 0.08em; }
+    .course-hero h1 { font-family: 'Noto Serif KR', serif; font-size: 2.4rem; font-weight: 700; line-height: 1.25; color: var(--text); margin-bottom: 1rem; }
+    .course-meta { display: flex; gap: 1.5rem; color: var(--text-muted); font-size: 13px; flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: 0.4rem; }
+    .lesson-section { margin-bottom: 4rem; padding-bottom: 4rem; border-bottom: 1px solid var(--border); }
+    .lesson-section:last-child { border-bottom: none; }
+    .lesson-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+    .lesson-number-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--bg); background: var(--accent); padding: 0.25rem 0.6rem; border-radius: 4px; white-space: nowrap; margin-top: 4px; letter-spacing: 0.05em; }
+    .lesson-title-block h2 { font-family: 'Noto Serif KR', serif; font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 0.4rem; }
+    .lesson-time { font-size: 12px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+    .learn-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+    .learn-box-title { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.75rem; }
+    .learn-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .learn-box ul li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 13.5px; color: var(--text-muted); }
+    .learn-box ul li::before { content: '->'; color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+    .key-takeaways { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+    .key-takeaways-title { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .key-takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .key-takeaways ul li { display: flex; gap: 0.75rem; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+    .key-takeaways ul li::before { content: '*'; color: var(--accent); font-size: 11px; margin-top: 3px; flex-shrink: 0; }
+    .content-section { margin-bottom: 2rem; }
+    .content-section h3 { font-family: 'Noto Serif KR', serif; font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    .content-section h4 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1rem 0 0.4rem; }
+    .content-section p { color: var(--text-muted); margin-bottom: 0.75rem; font-size: 14px; line-height: 1.85; }
+    .content-section ul { list-style: none; padding: 0; margin: 0.5rem 0 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .content-section ul li { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 14px; color: var(--text-muted); }
+    .content-section ul li::before { content: '->'; color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 3px; flex-shrink: 0; }
+    strong { color: var(--text); font-weight: 600; }
+    .tip-box { background: rgba(76,175,128,0.07); border: 1px solid rgba(76,175,128,0.25); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 13.5px; color: var(--text-muted); }
+    .tip-box .tip-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--success); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .warn-box { background: rgba(232,168,56,0.07); border: 1px solid rgba(232,168,56,0.25); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 13.5px; color: var(--text-muted); }
+    .warn-box .warn-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--warning); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13.5px; }
+    .compare-table th { background: var(--surface2); padding: 0.75rem 1rem; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
+    .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-muted); line-height: 1.6; }
+    .compare-table tr:hover td { background: var(--surface); }
+    .compare-table td:first-child { font-weight: 600; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+    .priority-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1rem 0; }
+    .priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .priority-card .rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .priority-card .name { font-weight: 600; color: var(--text); font-size: 14px; }
+    .priority-card .desc { font-size: 12px; color: var(--text-muted); margin-top: 0.4rem; line-height: 1.5; }
+    .priority-card.p1 { border-left: 3px solid #e84040; }
+    .priority-card.p2 { border-left: 3px solid var(--accent); }
+    .priority-card.p3 { border-left: 3px solid var(--accent2); }
+    .priority-card.p4 { border-left: 3px solid var(--text-dim); }
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin: 1rem 0; }
+    .checklist li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+    .checklist li::before { content: '[ ]'; font-family: 'JetBrains Mono', monospace; color: var(--accent); margin-top: 1px; flex-shrink: 0; }
+    .reflection-box { background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+    .reflection-box .ref-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .reflection-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .reflection-box ul li { display: flex; gap: 0.6rem; font-size: 13.5px; color: var(--text-muted); font-style: italic; }
+    .reflection-box ul li::before { content: 'o'; color: var(--text-dim); flex-shrink: 0; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 2px; }
+    .four-d-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1.25rem 0; }
+    .d-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.2rem; }
+    .d-card .d-label { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; margin-bottom: 0.3rem; }
+    .d-card .d-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+    .d-card .d-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
+    .d-card.delegation .d-label { color: #e84040; }
+    .d-card.description .d-label { color: var(--accent); }
+    .d-card.discernment .d-label { color: var(--accent2); }
+    .d-card.diligence .d-label { color: var(--success); }
+    .tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--border); overflow-x: auto; flex-wrap: nowrap; }
+    .tab-btn { padding: 0.6rem 1rem; font-size: 12.5px; color: var(--text-muted); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; font-family: 'Noto Sans KR', sans-serif; transition: all 0.15s; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+    .progress-bar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width 0.4s ease; }
+    @media (max-width: 800px) { .layout { grid-template-columns: 1fr; padding: 0 1rem; } aside { display: none; } main { padding: 2rem 0; } .priority-grid { grid-template-columns: 1fr; } .four-d-grid { grid-template-columns: 1fr; } .course-hero h1 { font-size: 1.8rem; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="logo">Anthropic Academy</span>
+    <span class="sep">/</span>
+    <span class="course-title-small">AI 유창성 교수법 (Teaching AI Fluency)</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="sidebar-label">레슨 목차</div>
+    <nav class="lesson-nav">
+      <a class="nav-item active" onclick="showLesson(0)">
+        <span class="nav-num">01</span>
+        <span>환영 및 교수 접근법</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(1)">
+        <span class="nav-num">02</span>
+        <span>위임-철저함 루프</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(2)">
+        <span class="nav-num">03</span>
+        <span>기술-식별 루프</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(3)">
+        <span class="nav-num">04</span>
+        <span>4D를 어떻게 평가할까?</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(4)">
+        <span class="nav-num">05</span>
+        <span>AI 유창성을 위한 과제 설계</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(5)">
+        <span class="nav-num">06</span>
+        <span>AI와 나의 학문 분야</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(6)">
+        <span class="nav-num">07</span>
+        <span>전문 지식을 AI 유창성에 적용</span>
+      </a>
+      <a class="nav-item" onclick="showLesson(7)">
+        <span class="nav-num">08</span>
+        <span>수료 퀴즈</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="course-hero">
+      <div class="course-badge">COURSE 11 · ANTHROPIC ACADEMY</div>
+      <h1>AI 유창성 교수법</h1>
+      <div class="course-meta">
+        <span class="meta-item">총 8개 레슨</span>
+        <span class="meta-item">교육자 / 강사 대상</span>
+        <span class="meta-item">4D Framework 기반</span>
+        <span class="meta-item">CC BY-NC-SA 4.0</span>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width: 12.5%"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showLesson(0)">01 환영</button>
+      <button class="tab-btn" onclick="showLesson(1)">02 위임-성실</button>
+      <button class="tab-btn" onclick="showLesson(2)">03 기술-식별</button>
+      <button class="tab-btn" onclick="showLesson(3)">04 평가</button>
+      <button class="tab-btn" onclick="showLesson(4)">05 과제 설계</button>
+      <button class="tab-btn" onclick="showLesson(5)">06 학문 영향</button>
+      <button class="tab-btn" onclick="showLesson(6)">07 전문 지식</button>
+      <button class="tab-btn" onclick="showLesson(7)">08 수료</button>
+    </div>
+
+    <!-- 레슨 1 -->
+    <div class="lesson-panel active">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 01</span>
+        <div class="lesson-title-block">
+          <h2>환영 및 AI 유창성 교수 접근법</h2>
+          <div class="lesson-time">예상 시간: 60분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>학생에게 AI 유창성 프레임워크를 가르치기 위한 교수 접근법을 선택하고 적용할 수 있다</li>
+          <li>선형, 비선형, 집중형, 루프 기반 학습 경험을 설계할 수 있다</li>
+          <li>자신의 교수 상황에 맞는 접근법을 선택하는 기준을 수립할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li><strong>AI 유창성 프레임워크</strong>는 AI 상호작용을 '묘사'하는 기술적 모델인 동시에, 더 나은 실천을 '안내'하는 규범적 지침으로 이중 기능을 수행한다</li>
+          <li><strong>4가지 교수 접근법</strong>(선형, 비선형, 집중형, 두 루프)은 학생의 배경과 학습 목표에 따라 서로 다른 진입점을 제공한다</li>
+          <li><strong>선형 접근법</strong>은 구조적이고 순차적인 기술 구축이 필요한 초보자에게 가장 효과적이다</li>
+          <li><strong>숙련된 학생</strong>은 실제 세계의 복잡성을 반영하는 비선형 또는 루프 기반 접근법을 통해 더 많은 것을 얻는다</li>
+          <li>교수 접근법은 <strong>학생의 준비도, 가용 시간, 학습 목표</strong>에 맞춰 선택해야 한다</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>AI 유창성 프레임워크의 이중 본질</h3>
+        <p>이 코스는 이미 AI 유창성 프레임워크를 다뤄본 교육자들이 이를 학생에게 가르칠 준비를 갖추도록 설계되었습니다. 핵심은 <strong>프레임워크의 이중 본질</strong>을 이해하는 데 있습니다.</p>
+        <p>AI 유창성 프레임워크는 두 가지 층위에서 동시에 작동합니다. 첫째로 사람들이 AI와 함께 작업할 때 일어나는 일을 기술(describe)하는 모델이며, 둘째로 더 나은 실천 방향으로 안내하는 규범적 지침입니다. 교수자는 이 이중 본질을 숙지해야 학생들이 AI 상호작용의 메커니즘과 개선 방법을 모두 파악하도록 도울 수 있습니다.</p>
+
+        <div class="four-d-grid">
+          <div class="d-card delegation">
+            <div class="d-label">DELEGATION</div>
+            <div class="d-name">위임 (Delegation)</div>
+            <div class="d-desc">어떤 작업을 AI에게 맡길지 결정하는 전략적 역량. 문제 인식, 플랫폼 인식, 작업 위임으로 구성된다.</div>
+          </div>
+          <div class="d-card description">
+            <div class="d-label">DESCRIPTION</div>
+            <div class="d-name">기술 (Description)</div>
+            <div class="d-desc">AI에게 효과적으로 소통하는 역량. 산출물 기술, 과정 기술, 수행 기술로 구성된다.</div>
+          </div>
+          <div class="d-card discernment">
+            <div class="d-label">DISCERNMENT</div>
+            <div class="d-name">식별 (Discernment)</div>
+            <div class="d-desc">AI 결과물을 비판적으로 평가하는 역량. 산출물 식별, 과정 식별, 수행 식별로 구성된다.</div>
+          </div>
+          <div class="d-card diligence">
+            <div class="d-label">DILIGENCE</div>
+            <div class="d-name">성실 (Diligence)</div>
+            <div class="d-desc">AI 사용에 대한 책임을 지는 역량. 생성 철저함, 투명성 성실, 배포 성실로 구성된다.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>4가지 교수 접근법 비교</h3>
+        <p>같은 AI 유창성 프레임워크를 가르치더라도, 교수 상황에 따라 전혀 다른 진입점과 경로를 선택할 수 있습니다.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>접근법</th>
+              <th>흐름</th>
+              <th>적합한 대상</th>
+              <th>특징</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>선형 접근법</td>
+              <td>Delegation → Description → Discernment → Diligence</td>
+              <td>AI 초보자, 구조적 학습 선호자</td>
+              <td>각 역량을 순서대로 쌓아 올림. 기초가 탄탄해짐</td>
+            </tr>
+            <tr>
+              <td>비선형 접근법</td>
+              <td>어느 D에서든 시작, 유연하게 이동</td>
+              <td>어느 정도 경험이 있는 학생</td>
+              <td>실제 워크플로의 복잡성 반영. 시나리오 기반으로 맥락에 맞게 진입</td>
+            </tr>
+            <tr>
+              <td>집중 접근법</td>
+              <td>하나의 D를 깊게 탐구</td>
+              <td>시간 제약이 있거나 특정 필요가 있는 경우</td>
+              <td>선택한 역량의 3가지 하위 요소를 집중적으로 다룸</td>
+            </tr>
+            <tr>
+              <td>두 루프 접근법</td>
+              <td>위임-철저함 루프 + 기술-식별 루프</td>
+              <td>고급 학습자, 총체적 이해를 원하는 경우</td>
+              <td>전략적 프로세스와 전술적 프로세스를 중첩된 시스템으로 교수</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>실습: 교수 맥락 매핑 및 접근법 설계</h3>
+        <p><strong>1단계: 나의 교수 맥락 파악 (10분)</strong></p>
+        <p>AI(Claude 또는 선호하는 모델)와 대화를 시작합니다. 특정 언어 모델이나 제품을 사용할 필요는 없으며, 선호하는 AI 어시스턴트를 자유롭게 활용하세요.</p>
+        <ul>
+          <li>교육자로서의 상황과 강좌 세부 정보를 AI에게 공유한다</li>
+          <li>학생의 배경, AI 경험 수준, 학습 동기를 설명한다 (개인정보 보호 유의)</li>
+          <li>시간 제약, 기술 접근성, 기관 정책 등의 제약 조건을 논의한다</li>
+          <li>AI에게 교수 맥락을 구조화된 요약 문서로 합성해 달라고 요청한다</li>
+          <li>이 문서를 저장해 이후 레슨에서 재사용한다</li>
+        </ul>
+
+        <p><strong>2단계: 각 접근법으로 설계 탐색 (20분)</strong></p>
+        <ul>
+          <li><strong>선형 접근법:</strong> 4D를 순서대로 가르치는 구체적인 활동과 전환점을 AI와 함께 스케치한다</li>
+          <li><strong>비선형 접근법:</strong> 학생이 시나리오에 따라 어느 D에서 시작하는 것이 적합한지 기준을 수립한다</li>
+          <li><strong>집중 접근법:</strong> 제약 조건을 고려하여 가장 가치 있는 단일 D를 파악하고, 3가지 하위 요소를 심층 탐구하는 활동을 계획한다</li>
+        </ul>
+
+        <div class="tip-box">
+          <div class="tip-label">교수자 팁</div>
+          루프 기반 수업 설계는 레슨 2와 3에서 집중적으로 다룹니다. 이 단계에서는 선형, 비선형, 집중 접근법에 먼저 익숙해지세요. 각 접근법을 실제 교수 상황에 대입해 보는 것이 중요합니다.
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>내 학생들의 AI 경험 수준과 학습 목표를 고려할 때 어떤 접근법이 가장 적합한가?</li>
+          <li>선형 접근법의 명확한 구조와 비선형 접근법의 실제적 복잡성 중 어느 쪽이 내 학생에게 더 공명할 것인가?</li>
+          <li>기관의 제약이나 시간 제한이 접근법 선택에 어떤 영향을 미치는가?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 2 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 02</span>
+        <div class="lesson-title-block">
+          <h2>위임-철저함 루프 (Delegation-Diligence Loop)</h2>
+          <div class="lesson-time">예상 시간: 40분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>Delegation-Diligence 루프를 책임감 있는 설계와 의사결정 프레임워크로 학생에게 가르칠 수 있다</li>
+          <li>두 역량의 양방향 관계를 수업 시나리오를 통해 시각화할 수 있다</li>
+          <li>제약을 한계가 아닌 창의적 촉매로 바라보는 관점을 학생에게 전달할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li><strong>Delegation-Diligence 루프</strong>는 AI를 사용할지, 언제, 어떻게 사용할지에 관한 거시적 전략적·윤리적 의사결정을 다룬다</li>
+          <li>Delegation은 Diligence 질문을 유발하고, Diligence 고려사항은 Delegation 전략을 재형성한다 — <strong>루프는 양방향으로 흐른다</strong></li>
+          <li>시나리오를 통한 교수는 학생이 역량을 개별 체크박스가 아닌 <strong>연결된 전체</strong>로 보도록 돕는다</li>
+          <li>이 루프를 마스터한 학생은 자신의 선택에 대한 명확한 근거를 가지고, 목표와 가치에 부합하는 이유를 설명할 수 있다</li>
+          <li><strong>책임감과 투명성은 창의적 가능성을 제한하는 것이 아니라 오히려 강화한다</strong></li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>루프의 핵심: "AI를 어떻게 쓰는가"를 넘어서</h3>
+        <p>Delegation-Diligence 루프의 핵심 전환점은 질문의 방향입니다. "AI를 어떻게 사용하는가?"에서 "AI에 대해 어떻게 좋은 결정을 내리는가?"로 이동하는 것입니다.</p>
+        <p>이 루프는 두 방향으로 모두 흐릅니다. <strong>전진 흐름(Delegation to Diligence)</strong>에서는 어떤 작업을 AI에게 위임할지 결정하면서 윤리적, 투명성 관련 질문이 자연스럽게 제기됩니다. <strong>역방향 흐름(Diligence to Delegation)</strong>에서는 책임 요건이나 투명성 기준을 먼저 설정하면, 이것이 위임 전략을 더욱 명확하게 만들어줍니다.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>흐름 방향</th>
+              <th>시작점</th>
+              <th>핵심 질문</th>
+              <th>교육적 효과</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>전진 흐름 (Delegation -> Diligence)</td>
+              <td>문제 인식 및 플랫폼 선택</td>
+              <td>이 위임 결정이 어떤 윤리적 문제를 제기하는가?</td>
+              <td>전략적 선택의 윤리적 함의 인식</td>
+            </tr>
+            <tr>
+              <td>역방향 흐름 (Diligence -> Delegation)</td>
+              <td>윤리적 제약 또는 투명성 요건</td>
+              <td>이 제약들이 위임 결정을 어떻게 명확하게 하는가?</td>
+              <td>책임감이 제한이 아닌 역량 강화임을 인식</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <div class="tip-label">교수 핵심 통찰</div>
+          제약과 책임감은 종종 창의적 제한으로 오해됩니다. 하지만 학생들이 이 루프를 제대로 이해하면, 제약이 오히려 어떤 AI 활용이 가능한지를 더 명확하게 해준다는 사실을 깨닫게 됩니다.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>루프 시나리오 설계 실습</h3>
+        <p><strong>1단계: 루프 시나리오 만들기 (10분)</strong></p>
+        <p>레슨 1의 대화를 이어받아 AI 파트너에게 Delegation-Diligence 루프 중심 수업을 설계 중임을 알립니다.</p>
+        <ul>
+          <li>자신의 학문 분야에서 현실적인 시나리오 또는 워크플로를 AI와 함께 만든다</li>
+          <li>업무의 성격, 인간과 AI의 능력과 한계, 윤리, 투명성, 책임감을 탐구할 수 있는 세부 사항을 포함한다</li>
+          <li>학생이 전략적 선택과 윤리적 고려 사이를 탐색해야 하는 결정 지점을 만든다</li>
+          <li>학생이 사고 과정을 문서화하는 방법을 계획한다</li>
+        </ul>
+
+        <p><strong>2단계: 학습 경험 구조화 (20분)</strong></p>
+        <h4>전진 흐름 설계 (Delegation to Diligence)</h4>
+        <ul>
+          <li>문제 인식과 플랫폼 선택에서 시작하는 구조화된 워크시트나 가이드를 만든다</li>
+          <li>학생이 Delegation 결정이 윤리적 질문을 어떻게 제기하는지 인식하도록 돕는 프롬프트를 설계한다</li>
+          <li>투명성과 책임감을 고려해야 하는 체크포인트를 포함한다</li>
+          <li>전략적 선택과 윤리적 함의의 연결을 문서화하는 방법을 계획한다</li>
+        </ul>
+
+        <h4>역방향 흐름 설계 (Diligence to Delegation)</h4>
+        <ul>
+          <li>학생이 윤리적 제약이나 투명성 요건에서 시작하는 변형 활동을 만든다</li>
+          <li>이러한 제약이 작업 위임을 어떻게 명확하게 하고 개선하는지 보여주는 활동을 설계한다</li>
+          <li>학생이 책임감을 제한이 아닌 역량 강화로 인식하도록 돕는 성찰 프롬프트를 포함한다</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>학생들이 "책임감 있는 AI 사용"을 제한이 아닌 기회로 바라보게 하려면 어떤 시나리오가 효과적일까?</li>
+          <li>내 학문 분야에서 Delegation 결정이 가장 복잡한 윤리적 질문을 제기하는 상황은 어떤 것인가?</li>
+          <li>학생들에게 루프의 양방향 흐름을 경험시키기 위해 어떤 순서로 활동을 배치할 것인가?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 3 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 03</span>
+        <div class="lesson-title-block">
+          <h2>기술-식별 루프 (Description-Discernment Loop)</h2>
+          <div class="lesson-time">예상 시간: 40분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>Description-Discernment 루프를 통해 인지적 환경을 구축하는 방법을 가르칠 수 있다</li>
+          <li>Product, Process, Performance 세 가지 렌즈로 협업을 분석하는 수업을 설계할 수 있다</li>
+          <li>학생이 단순 자동화를 넘어 진정한 AI 증강으로 나아가도록 지도할 수 있다</li>
+          <li>두 루프가 중첩된 시스템으로 어떻게 함께 작동하는지 설명할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li><strong>Description-Discernment 루프</strong>는 AI 상호작용을 단순 명령에서 맥락을 활용하여 인지적 환경을 구축하는 대화로 전환시킨다</li>
+          <li><strong>Product, Process, Performance</strong>는 같은 협업 과정을 이해하는 서로 다른 렌즈로 작동한다</li>
+          <li>학생들은 종종 "프롬프트 트릭"을 찾으려 하지만, AI와 <strong>진정한 협업 관계를 구축</strong>하는 더 정교한 이해가 필요하다</li>
+          <li>성공적인 인지 환경은 공유된 어휘, 확립된 상호작용 패턴, 이전 교환을 쌓아가는 메커니즘을 포함한다</li>
+          <li>두 루프는 중첩된 시스템으로 작동한다 — <strong>전략적 결정이 컨테이너를 만들면, 전술적 상호작용이 그 컨테이너를 채운다</strong></li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>인지적 환경(Cognitive Environment)이란?</h3>
+        <p>Description-Discernment 루프는 단일 프롬프트를 넘어 지속적인 대화에 초점을 맞춥니다. 인지적 환경은 인간과 AI가 함께 효과적으로 작업하는 공간으로, 시간이 지나면서 공유된 맥락과 이해가 쌓이는 것입니다.</p>
+        <p>이 루프는 거시적 루프(Delegation-Diligence)와 대비됩니다. 위임-철저함 루프가 "왜, 언제 AI를 쓸까?"를 다룬다면, 기술-식별 루프는 "어떻게 더 효과적으로 AI와 상호작용할까?"의 순간적 기술에 집중합니다.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>렌즈</th>
+              <th>의미</th>
+              <th>탐구 질문</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Product (산출물)</td>
+              <td>우리가 만들고 있는 것</td>
+              <td>목표가 반복을 통해 어떻게 진화하는가? "좋음"에 대한 비전이 어떻게 변화하는가?</td>
+            </tr>
+            <tr>
+              <td>Process (과정)</td>
+              <td>우리가 접근하는 방식</td>
+              <td>시간이 지남에 따라 AI와 공유 문제해결 방법이 어떻게 발전하는가?</td>
+            </tr>
+            <tr>
+              <td>Performance (수행)</td>
+              <td>우리가 상호작용하는 방법</td>
+              <td>다양한 상호작용 스타일이 AI의 행동과 결과에 어떤 영향을 미치는가?</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>루프 시나리오 설계 실습</h3>
+        <p><strong>1단계: 루프 시나리오 개발 (10분)</strong></p>
+        <ul>
+          <li>레슨 2와 동일한 시나리오 맥락에서 Description-Discernment 루프로 전환하는 대화를 이어간다</li>
+          <li>학생이 반복과 식별을 통해 Product, Process, Performance 기술이 어떻게 진화하는지 탐구하는 요소를 만든다</li>
+          <li>학생이 AI와의 공유 맥락 발전 과정을 문서화하는 방법을 계획한다</li>
+        </ul>
+
+        <p><strong>2단계: 학습 경험 구조화 (20분)</strong></p>
+        <h4>Product 진화 설계</h4>
+        <ul>
+          <li>학생이 모호한 목표에서 시작해 반복적으로 명확화하는 진행 과정을 만든다</li>
+          <li>학생이 언제, 어떻게 산출물에 대한 비전이 진화하는지 인식하도록 돕는다</li>
+          <li>산출물 이해가 어떻게 변화했는지 문서화하는 체크포인트를 포함한다</li>
+        </ul>
+
+        <h4>Process 발전 설계</h4>
+        <ul>
+          <li>학생이 AI와 시간이 지나면서 공유 문제해결 방법을 개발하는 진행을 만든다</li>
+          <li>선호하는 문제해결 접근법이 어떻게 발전하는지 인식하도록 돕는다</li>
+          <li>과정 이해 변화를 문서화하는 체크포인트를 포함한다</li>
+        </ul>
+
+        <h4>Performance 관계 설계</h4>
+        <ul>
+          <li>학생이 다양한 상호작용 스타일과 그 효과를 실험하도록 유도한다</li>
+          <li>AI 행동이 언제, 어떻게 목표에 적합하고 유용한지 인식하도록 돕는다</li>
+          <li>시간 경과에 따른 수행 이해 변화를 문서화하는 체크포인트를 포함한다</li>
+        </ul>
+
+        <div class="warn-box">
+          <div class="warn-label">교수 주의 사항</div>
+          학생들은 종종 "완벽한 프롬프트" 하나를 찾는 데 집중합니다. 프롬프트 하나가 아닌 지속적인 대화와 관계 구축의 관점으로 사고를 전환시키는 것이 이 루프 교수의 핵심 목표입니다.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>두 루프의 관계: 중첩된 시스템</h3>
+        <p>두 루프는 독립적이지 않습니다. <strong>Delegation-Diligence 루프</strong>가 전략적 방향(컨테이너)을 설정하고, <strong>Description-Discernment 루프</strong>가 그 안에서 구체적이고 반복적인 상호작용(내용)을 채웁니다.</p>
+        <p>예를 들어, 위임-철저함 루프에서 "이 분석 과제는 AI와 협력하되 최종 판단은 내가 한다"고 결정했다면, 기술-식별 루프에서는 구체적으로 어떻게 AI에게 분석을 안내하고, 결과를 평가하며, 협업을 발전시킬지를 다루게 됩니다.</p>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>어떤 접근법이 나의 학습 목표와 가장 잘 맞는가?</li>
+          <li>어떤 접근법이 나의 교수 스타일과 선호도와 가장 잘 맞는가?</li>
+          <li>학생들이 "자동화"가 아닌 "증강"의 관점에서 AI를 바라보게 하려면 어떤 경험을 설계해야 할까?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 4 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 04</span>
+        <div class="lesson-title-block">
+          <h2>4D를 어떻게 평가할까?</h2>
+          <div class="lesson-time">예상 시간: 40분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>산출물 기반, 과정 기반, 성찰 기반 평가 전략을 AI 유창성 평가에 적용할 수 있다</li>
+          <li>자신의 구체적인 교수 맥락에서 4D 역량을 포착하는 루브릭을 만들 수 있다</li>
+          <li>관찰 가능한 지표를 통해 학생 발전을 신뢰성 있게 측정할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li>효과적인 AI 유창성 평가는 <strong>산출물, 과정, 성찰</strong> 세 가지 접근법을 결합하여 완전한 그림을 제공한다</li>
+          <li>4D 각각은 <strong>서로 다른 유형의 증거와 평가 전략</strong>을 필요로 한다</li>
+          <li>산출물 평가는 생성된 결과물에, 과정 평가는 여정에, 성찰 평가는 <strong>메타인지 인식</strong>에 초점을 맞춘다</li>
+          <li><strong>관찰 가능한 행동과 구체적인 결과물</strong>이 이해에 대한 가정보다 신뢰성이 높다</li>
+          <li>평가는 단순한 측정이 아니라 <strong>학습 기회</strong>여야 한다</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>3가지 평가 접근법</h3>
+
+        <div class="priority-grid">
+          <div class="priority-card p1">
+            <div class="rank">APPROACH 01</div>
+            <div class="name">산출물 기반 평가</div>
+            <div class="desc">학생이 AI 협업을 통해 무엇을 생산했는지에 초점. AI 결과물 개선, 다양한 AI 시스템 비교 등의 과제 포함.</div>
+          </div>
+          <div class="priority-card p2">
+            <div class="rank">APPROACH 02</div>
+            <div class="name">과정 기반 평가</div>
+            <div class="desc">학생이 시간이 지나면서 AI와 어떻게 작업했는지 검토. 주석이 달린 채팅 로그, 녹화된 나레이션 등 포함.</div>
+          </div>
+          <div class="priority-card p3">
+            <div class="rank">APPROACH 03</div>
+            <div class="name">성찰 기반 평가</div>
+            <div class="desc">메타인지 인식을 평가. 학습 저널, 개인 AI 정책 성명서 등 포함.</div>
+          </div>
+          <div class="priority-card p4">
+            <div class="rank">BEST PRACTICE</div>
+            <div class="name">통합 접근</div>
+            <div class="desc">세 접근법을 결합하면 학생의 AI 유창성 발전에 대한 가장 완전한 그림을 얻을 수 있다.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>각 D별 평가 초점</h3>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>역량 (D)</th>
+              <th>평가 초점</th>
+              <th>증거 유형</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Delegation (위임)</td>
+              <td>목표 설정, 작업 분해, 도구 선택</td>
+              <td>의사결정 기록, 작업 분석 문서</td>
+            </tr>
+            <tr>
+              <td>Description (기술)</td>
+              <td>대화 품질, 반복적 정제</td>
+              <td>채팅 로그, 프롬프트 진화 기록</td>
+            </tr>
+            <tr>
+              <td>Discernment (식별)</td>
+              <td>비판적 평가 기술</td>
+              <td>검토 코멘트, 수정 결정 근거</td>
+            </tr>
+            <tr>
+              <td>Diligence (철저함)</td>
+              <td>윤리적 의사결정, 책임감</td>
+              <td>투명성 선언, 개인 AI 정책문</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>실습: 루브릭 단계별 작성</h3>
+        <p><strong>1단계: 평가 기반 수립 (5분)</strong></p>
+        <ul>
+          <li>학생이 AI를 사용할 특정 과제나 프로젝트를 설명한다</li>
+          <li>이 과제에서 가장 중요한 AI 유창성 측면을 파악한다</li>
+          <li>어떤 4D와 하위 역량이 이 과제 목표와 가장 관련 있는지 논의한다</li>
+        </ul>
+
+        <p><strong>2단계: 관찰 가능한 지표 만들기 (10분)</strong></p>
+        <ul>
+          <li>세 가지 명확한 수준(초급, 발전, 숙련)을 정의한다</li>
+          <li>각 수준에서 학생 과제에서 실제로 볼 수 있는 것을 기술한다</li>
+          <li>추상적 개념("좋은 이해" 등)을 구체적인 행동으로 대체한다</li>
+          <li>모든 지표를 실제로 평가할 수 있는지 확인한다</li>
+        </ul>
+
+        <div class="tip-box">
+          <div class="tip-label">루브릭 작성 팁</div>
+          추상적 개념을 관찰 가능한 행동으로 전환하세요. "AI 출력을 비판적으로 평가한다"는 표현 대신 "AI가 제공한 정보 중 최소 3개의 주장에 출처를 직접 확인했다"와 같이 구체적으로 기술하세요.
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>과정과 성찰의 가치를 학생에게 어떻게 전달할 것인가?</li>
+          <li>이러한 평가를 실행하는 데 어떤 어려움이 있을 것으로 예상되는가?</li>
+          <li>종합적인 평가와 채점 효율성 사이의 균형을 어떻게 맞출 것인가?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 5 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 05</span>
+        <div class="lesson-title-block">
+          <h2>AI 유창성을 위한 과제 설계</h2>
+          <div class="lesson-time">예상 시간: 40분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>학생이 AI 유창성을 발전시키고 증명하는 과제를 설계할 수 있다</li>
+          <li>AI 강화 학생 작업의 증가된 양과 복잡성을 관리하는 전략을 수립할 수 있다</li>
+          <li>실제 AI 협업을 반영하는 진정성 있는 과제를 만들 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li>효과적인 AI 유창성 과제는 <strong>진정성(authenticity), 반복(iteration), 교육적 투명성(pedagogical transparency)</strong>을 강조한다</li>
+          <li>산출물 기반 과제는 결과물에 초점을 맞추지만 <strong>협업 기술을 드러낸다</strong></li>
+          <li>과정 기반 과제는 <strong>보이지 않는 의사결정을 가시화</strong>한다</li>
+          <li>성찰 기반 과제는 메타인지를 발전시키지만 다양성 없이는 <strong>피로감</strong>을 유발할 수 있다</li>
+          <li>증가된 작업량 관리를 위해 <strong>루브릭, 동료 평가, 선택적 샘플링</strong> 같은 전략적 접근이 필요하다</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>AI 유창성 과제의 3가지 핵심 원칙</h3>
+
+        <div class="priority-grid">
+          <div class="priority-card p1">
+            <div class="rank">PRINCIPLE 01</div>
+            <div class="name">진정성 (Authenticity)</div>
+            <div class="desc">실제 세계의 AI 협업을 반영하는 과제. AI 파트너십이 실제 가치를 더하는 진짜 문제를 포함. 인위적인 시나리오를 피한다.</div>
+          </div>
+          <div class="priority-card p2">
+            <div class="rank">PRINCIPLE 02</div>
+            <div class="name">반복 (Iteration)</div>
+            <div class="desc">성장을 보여주는 개선 기회를 내장한 과제. 학생이 초기 시도에서 배울 수 있는 체크포인트 포함. 결과물이 아닌 성장을 강조한다.</div>
+          </div>
+          <div class="priority-card p3">
+            <div class="rank">PRINCIPLE 03</div>
+            <div class="name">교육적 투명성 (Pedagogical Transparency)</div>
+            <div class="desc">산출물뿐 아니라 협업 과정을 평가함을 명확히 하는 과제. 학생이 무엇을 왜 평가받는지 미리 이해한다.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>과제 유형별 특성</h3>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>과제 유형</th>
+              <th>예시</th>
+              <th>강점</th>
+              <th>고려사항</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>산출물 기반</td>
+              <td>AI 결과물 개선, AI 시스템 비교</td>
+              <td>결과물이 명확하고 평가하기 쉬움</td>
+              <td>과정이 숨겨질 수 있음</td>
+            </tr>
+            <tr>
+              <td>과정 기반</td>
+              <td>주석 채팅 로그, 녹화 나레이션</td>
+              <td>의사결정 과정이 가시화됨</td>
+              <td>평가 시간이 상당히 증가함</td>
+            </tr>
+            <tr>
+              <td>성찰 기반</td>
+              <td>학습 저널, 개인 AI 정책 성명서</td>
+              <td>메타인지 발전을 촉진함</td>
+              <td>다양성 없으면 피로감 유발</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>증가된 작업량 관리 전략</h3>
+        <p>AI 강화 과제는 학생이 제출하는 컨텐츠의 양과 복잡성을 크게 증가시킵니다.</p>
+        <ul>
+          <li><strong>세부 루브릭 활용:</strong> 명확한 기준으로 채점 속도 향상</li>
+          <li><strong>동료 평가 강조:</strong> 교수자 부담 없이 가치를 더하는 동료 검토 구성요소 설계</li>
+          <li><strong>라이트닝 컨퍼런스:</strong> 학생과 짧고 집중적인 개인 면담 진행</li>
+          <li><strong>선택적 샘플링:</strong> 모든 작업을 상세히 평가하는 것이 아니라 전략적으로 샘플링</li>
+        </ul>
+
+        <div class="tip-box">
+          <div class="tip-label">과제 설계 팁</div>
+          학생들에게 과제 지침에서 "무엇을 평가받는지" 명확히 알려주세요. 산출물만이 아니라 과정과 성찰도 평가 대상임을 미리 안내하면 학생들의 참여 방식이 달라집니다.
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>이러한 평가를 실행하는 데 어떤 어려움이 예상되는가?</li>
+          <li>과정과 성찰의 가치를 학생에게 어떻게 전달할 것인가?</li>
+          <li>학생들이 AI를 진정한 협업 파트너로 경험할 수 있는 과제는 어떤 모습인가?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 6 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 06</span>
+        <div class="lesson-title-block">
+          <h2>AI와 나의 학문 분야</h2>
+          <div class="lesson-time">예상 시간: 40분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>내 학문 분야에서 AI가 커리큘럼, 교수법, 평가에 미치는 구체적인 영향을 분석할 수 있다</li>
+          <li>내 학문 분야에서 AI의 역할에 대한 자신의 관점을 담은 입장문를 작성할 수 있다</li>
+          <li>AI 자동화가 기회인지 문제인지를 분야별 전문성으로 판단할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li>AI는 <strong>학문 분야마다 다른 방식으로</strong> 커리큘럼, 교수법, 평가에 영향을 미친다</li>
+          <li>분야별 전문성 — 핵심 가치, 방법론, 사고방식에 대한 이해 — 이 AI 혼란을 탐색하는 <strong>필수 기반</strong>이다</li>
+          <li>세 가지 핵심 질문: 무엇이 자동화되는가? 인간-AI 파트너십이 가장 가치를 더하는 곳은 어디인가? 학생들이 <strong>책임감</strong>을 어떻게 유지하도록 준비시킬 것인가?</li>
+          <li>혼란 패턴은 균일하지 않다 — 커리큘럼은 안정적인데 평가가 변형되거나, 교수법이 진화하는데 핵심 내용은 유지될 수 있다</li>
+          <li><strong>AI 유창성은 분야별 전문성을 대체하는 것이 아니라 증폭시킨다</strong></li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>분야별 AI 영향 분석 프레임워크</h3>
+        <p>AI가 모든 학문 분야에 동일한 방식으로 영향을 미치는 것이 아닙니다. 분야별 전문가가 AI 통합을 의미 있게 탐색하는 기반이 됩니다.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>영역</th>
+              <th>핵심 질문</th>
+              <th>예시 혼란</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>커리큘럼</td>
+              <td>무엇이 자동화되는가? 무엇이 더 중요해지는가?</td>
+              <td>"AI가 할 수 있는데 왜 XYZ를 배워야 하는가?"에 대한 설득력 있는 분야별 답변</td>
+            </tr>
+            <tr>
+              <td>교수법</td>
+              <td>AI가 어떤 학습 경험을 가능하게 하는가?</td>
+              <td>개인화된 튜터링, 즉각적 피드백, 인터랙티브 시뮬레이션 등 새로운 교수 가능성</td>
+            </tr>
+            <tr>
+              <td>평가</td>
+              <td>학생이 AI 접근권을 가질 때 진정한 이해는 무엇을 증명하는가?</td>
+              <td>과정, 성장, 비판적 사고를 평가하는 새로운 방식. AI가 단축할 수 없는 평가 설계</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>입장문 작성 4단계</h3>
+        <p><strong>1단계: 커리큘럼 혼란 탐색 (10분)</strong></p>
+        <ul>
+          <li>내 분야에서 AI가 현재 자동화하거나 곧 자동화할 가능성이 있는 일상 과제를 탐색한다</li>
+          <li>이러한 자동화가 어떤 기초 개념의 중요성을 높이거나 낮추는지 논의한다</li>
+          <li>AI가 일상적인 작업을 처리할 때 더욱 중요해지는 인간 역량을 파악한다</li>
+        </ul>
+
+        <p><strong>2단계: 교수법 변환 검토 (10분)</strong></p>
+        <ul>
+          <li>AI가 내 분야에서 더 나은 학습 경험을 가능하게 하는 구체적인 방법을 탐색한다</li>
+          <li>AI가 진정한 학습을 돕는 곳과 단순히 과제를 더 쉽게 만드는 곳을 구분한다</li>
+        </ul>
+
+        <p><strong>3단계: 평가 전략 재구상 (10분)</strong></p>
+        <ul>
+          <li>학생이 AI 접근권을 가질 때 내 분야에서 진정한 이해를 증명하는 것이 무엇인지 논의한다</li>
+          <li>AI로 쉽게 단축할 수 없는 평가를 브레인스토밍한다</li>
+        </ul>
+
+        <p><strong>4단계: 포지션 합성 (10분)</strong></p>
+        <ul>
+          <li>커리큘럼 진화, 교수법 변환, 평가 혁신에 대한 자신의 관점을 담은 입장문를 작성한다</li>
+          <li>AI가 내 분야에서 어떻게 사용되어야 하고 사용되어서는 안 되는지에 대한 명확한 원칙을 표현한다</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>내 분야에서 AI로 인한 혼란은 주로 기회인가, 아니면 해결해야 할 문제인가?</li>
+          <li>학생들이 AI를 학습 도구로 사용하면서 학습 대체물로 사용하지 않도록 어떻게 도울 것인가?</li>
+          <li>AI 유창성은 내 분야의 전문성을 어떻게 증폭시키는가?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 7 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 07</span>
+        <div class="lesson-title-block">
+          <h2>전문 지식을 AI 유창성에 적용하기</h2>
+          <div class="lesson-time">예상 시간: 40분</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+        <ul>
+          <li>분야별 전문 지식을 적용하여 4D의 분야 특수적 해석을 만들 수 있다</li>
+          <li>동료들과 협력하여 학과 내 AI 유창성에 대한 공유된 이해를 구축할 수 있다</li>
+          <li>암묵적 지식을 명시화하여 학생의 AI 협업을 준비시킬 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">핵심 요약</div>
+        <ul>
+          <li><strong>암묵적 학문 지식</strong>(모범 사례, 윤리, 연구 장르 등)을 명시화하는 것이 효과적인 AI 협업을 준비시킨다</li>
+          <li>4D 각각은 <strong>분야별 해석과 적용</strong>이 필요하다</li>
+          <li>동료와의 협력 작업이 공유된 이해와 더 강력한 프레임워크를 구축한다</li>
+          <li>내 분야의 품질, 방법론, 윤리를 이해하는 학생은 AI를 더 잘 이끌 수 있다</li>
+          <li>목표는 학생들이 <strong>대체 불가능한 존재</strong>가 되도록 인간 고유의 역량을 개발하는 것이다</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>암묵적 지식을 명시화하는 이유와 방법</h3>
+        <p>분야별 AI 유창성 개발은 암묵적 지식을 명시적으로 만드는 데서 시작합니다. 품질이 어떤 모습인지, 전문가가 어떻게 소통하는지, 어떤 문제가 중요한지, 어떤 기준이 적용되는지를 명확히 표현하는 것입니다.</p>
+        <p>이 심층적인 분야별 작업은 선순환을 만듭니다. 품질 기준을 명확히 표현할 수 있는 학생은 어떤 결과물이든 더 잘 평가할 수 있고, 방법론을 이해하는 학생은 어떤 과정이든 더 잘 안내할 수 있으며, 윤리를 내면화한 학생은 어떤 협업에서든 책임감 있게 탐색할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>동료 협력 토론: 4D를 분야에 적용하기</h3>
+        <p>이번 실습에서는 AI 파트너를 잠시 쉬게 하고 인간 동료와 대화합니다. 학과 동료들과 4D 프레임워크를 작업하기 위한 정리된 시간을 마련하세요.</p>
+
+        <h4>Discernment — "우리 분야에서 품질은 어떤 모습인가?"</h4>
+        <ul>
+          <li>막연한 표현을 넘어 분야에서 탁월함이 무엇을 의미하는지 함께 표현한다</li>
+          <li>뛰어난 작업과 평범한 작업을 구분하는 구체적인 특징을 파악한다</li>
+          <li>학생이 AI 생성 작업과 인간 작업 모두를 평가하는 데 도움이 되는 기준을 문서화한다</li>
+        </ul>
+
+        <h4>Description — "우리 분야에서 어떻게 소통하는가?"</h4>
+        <ul>
+          <li>분야의 핵심 산출물을 정밀하게 매핑한다 (예: 단순히 "보고서"가 아닌 특정 결과물과 그 의미)</li>
+          <li>전문가가 분야 내 문제에 접근할 때 사용하는 사고 과정을 문서화한다</li>
+          <li>전문적 실천을 정의하는 행동 규범과 관례를 파악한다</li>
+        </ul>
+
+        <h4>Delegation — "우리 분야에서 어떤 작업이 이루어지는가?"</h4>
+        <ul>
+          <li>분야의 전형적인 과제를 구성 요소로 분해한다</li>
+          <li>인간의 판단, 창의성, 전문성이 필요한 요소를 파악한다</li>
+          <li>AI가 자동화, 증강, 에이전트 역할을 할 수 있는 곳을 논의한다</li>
+          <li>AI를 분야 작업에 언제, 어떻게 참여시킬지에 대한 의사결정 프레임워크를 만든다</li>
+        </ul>
+
+        <h4>Diligence — "우리 분야의 가치와 기준은 무엇인가?"</h4>
+        <ul>
+          <li>분야 특수적 윤리 프레임워크를 체계화한다</li>
+          <li>투명성 규범과 공개 기대치를 명확히 한다</li>
+          <li>책임 기준과 전문적 의무를 논의한다</li>
+          <li>AI가 작업에 참여할 때 이것들이 어떻게 적용되는지 고려한다</li>
+        </ul>
+
+        <div class="tip-box">
+          <div class="tip-label">공유 문서 구축 팁</div>
+          동료들과의 논의를 바탕으로 각 D의 분야별 해석을 담은 공유 문서를 만드세요. 합의된 것과 의견이 다른 영역을 모두 포함하는 것이 중요합니다. 이 문서는 AI 유창성을 교과과정에 통합하는 귀중한 자원이 됩니다.
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">생각해 볼 것들</div>
+        <ul>
+          <li>내 분야의 암묵적 지식 중 가장 중요한데 가장 명시화하기 어려운 것은 무엇인가?</li>
+          <li>학생들이 AI와 협업할 때 "대체 불가능한" 존재가 되도록 어떤 역량을 키워야 하는가?</li>
+          <li>동료들과의 논의에서 어떤 부분에서 가장 큰 합의가 있었고, 어떤 부분에서 의견이 갈렸는가?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 레슨 8 -->
+    <div class="lesson-panel">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 08</span>
+        <div class="lesson-title-block">
+          <h2>수료 퀴즈 및 코스 완료</h2>
+          <div class="lesson-time">코스 최종 단계 — 15문항</div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">코스를 완료하면</div>
+        <ul>
+          <li>AI 유창성 프레임워크를 교수 맥락에 맞게 설계하고 실행할 준비가 완료된다</li>
+          <li>4D 역량과 두 루프에 대한 깊은 이해를 바탕으로 학생을 지도할 수 있다</li>
+          <li>분야 특수적 AI 유창성 교육의 선구자가 된다</li>
+          <li>Anthropic Academy 수료 인증서를 획득한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">코스 전체 핵심 요약</div>
+        <ul>
+          <li><strong>AI 유창성은 기술적 스킬이 아니라</strong> 효율적이고, 효과적이며, 윤리적이고, 안전하게 AI를 사용하는 통합적 역량이다</li>
+          <li><strong>4D Framework</strong>의 두 루프(위임-성실, 기술-식별)는 서로 다른 층위에서 작동하며, 함께 강력한 AI 협업 역량을 구성한다</li>
+          <li>교수 접근법의 선택은 학생의 배경, 학습 목표, 가용 시간에 따라 달라진다 — <strong>하나의 정답은 없다</strong></li>
+          <li>평가는 산출물, 과정, 성찰의 세 층위에서 이루어져야 하며, <strong>관찰 가능한 증거</strong>에 기반해야 한다</li>
+          <li>분야별 전문 지식을 AI 유창성에 통합하면 학생들이 <strong>대체 불가능한 인간 역량</strong>을 개발하도록 도울 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>퀴즈 핵심 개념 정리</h3>
+        <p>수료 퀴즈는 15문항으로 구성되며, 다음 핵심 개념 영역에서 출제됩니다.</p>
+        <ul>
+          <li><strong>선형 접근법의 순서:</strong> Delegation → Description → Discernment → Diligence</li>
+          <li><strong>두 루프의 차이:</strong> 위임-철저함 루프(전략적·윤리적 의사결정) vs. 기술-식별 루프(순간적 상호작용 기술)</li>
+          <li><strong>평가 접근법의 특성:</strong> 산출물 기반, 과정 기반, 성찰 기반 각각의 특징과 적합한 상황</li>
+          <li><strong>과제 설계 원칙:</strong> 진정성, 반복, 교육적 투명성</li>
+          <li><strong>분야 특수성:</strong> AI 유창성을 분야별 맥락에 적용하는 방법</li>
+        </ul>
+
+        <div class="tip-box">
+          <div class="tip-label">수료 후 활용 방법</div>
+          수료 인증서를 동료들과 공유하여 AI 유창성 교수법에 관한 대화를 시작하세요. 이 코스에서 배운 내용을 바탕으로 학과 내 공유 문서를 만들고, AI 유창성 커리큘럼 통합에 관한 논의를 이끌어가세요.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>다음 단계 제안</h3>
+        <ul>
+          <li>레슨 1에서 만든 교수 맥락 문서를 정기적으로 업데이트하세요</li>
+          <li>동료들과 분야별 4D 해석 문서를 공유하고 함께 발전시키세요</li>
+          <li>실제 수업에서 하나의 접근법을 시험해보고 학생들의 반응을 관찰하세요</li>
+          <li>Anthropic Academy의 관련 코스(AI Fluency for Students, AI Fluency for Educators)를 함께 활용하세요</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <div class="ref-title">코스 전체 성찰</div>
+        <ul>
+          <li>이 코스를 통해 AI 유창성 교수에 대한 나의 관점이 어떻게 변화했는가?</li>
+          <li>당장 내 수업에 적용할 수 있는 가장 중요한 통찰은 무엇인가?</li>
+          <li>내 학생들이 AI 유창성을 개발하면 어떤 가능성이 열리는가?</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function showLesson(idx) {
+    document.querySelectorAll('.lesson-panel').forEach((p,i) => p.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.nav-item').forEach((n,i) => n.classList.toggle('active', i === idx));
+    const total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = ((idx+1)/total*100) + '%';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+</script>
+
+</body>
+</html>

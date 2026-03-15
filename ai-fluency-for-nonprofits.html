@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>비영리단체를 위한 AI Fluency | AI Fluency for Nonprofits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --surface: #16161c;
+      --surface2: #1e1e28;
+      --surface3: #252530;
+      --border: #2e2e3e;
+      --border2: #3a3a50;
+      --text: #e8e8f0;
+      --text2: #a8a8c0;
+      --text3: #6868a0;
+      --accent: #d97f3a;
+      --accent2: #7b6ef6;
+      --accent3: #4ec9b0;
+      --accent4: #e06c75;
+      --accent5: #61afef;
+      --success: #4caf80;
+      --warn: #e6c84a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 270px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .sidebar-header {
+      padding: 24px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .course-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #e06c75, #c05060);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .sidebar-header h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .sidebar-header p { font-size: 11px; color: var(--text3); margin-top: 6px; }
+    .progress-bar-wrap {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .progress-label {
+      font-size: 11px; color: var(--text3); margin-bottom: 6px;
+      display: flex; justify-content: space-between;
+    }
+    .progress-track { height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e06c75, var(--accent));
+      border-radius: 2px;
+      width: 16.67%;
+      transition: width .4s;
+    }
+    .nav-list { padding: 10px 0; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 20px; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all .2s;
+    }
+    .nav-item:hover { background: var(--surface2); }
+    .nav-item.active { background: var(--surface2); border-left-color: #e06c75; }
+    .nav-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--surface3); color: var(--text3);
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s;
+    }
+    .nav-item.active .nav-num { background: #e06c75; color: #fff; }
+    .nav-text { font-size: 12.5px; color: var(--text2); line-height: 1.3; }
+    .nav-item.active .nav-text { color: var(--text); font-weight: 600; }
+    .main { margin-left: 270px; flex: 1; min-height: 100vh; }
+    .top-bar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 14px 32px; display: flex; align-items: center; gap: 8px;
+      overflow-x: auto; position: sticky; top: 0; z-index: 50;
+    }
+    .tab-btn {
+      flex-shrink: 0; padding: 7px 16px; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); font-family: 'Noto Sans KR', sans-serif;
+      font-size: 12px; cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .tab-btn:hover { border-color: #e06c75; color: var(--text); }
+    .tab-btn.active { background: #e06c75; border-color: #e06c75; color: #fff; font-weight: 600; }
+    .content-wrap { padding: 40px 48px 80px; max-width: 900px; }
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+    .lesson-hero { margin-bottom: 32px; }
+    .lesson-tag {
+      display: inline-block;
+      background: rgba(224,108,117,.18); color: #e06c75;
+      font-size: 11px; font-weight: 700; letter-spacing: .06em;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .lesson-hero h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 28px; font-weight: 700; line-height: 1.35;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .lesson-hero .subtitle { color: var(--text2); font-size: 15px; line-height: 1.7; }
+    .learn-box {
+      background: linear-gradient(135deg, rgba(224,108,117,.1), rgba(217,127,58,.08));
+      border: 1px solid rgba(224,108,117,.3);
+      border-radius: 12px; padding: 22px 26px; margin-bottom: 28px;
+    }
+    .learn-box h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: #e06c75; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .learn-box ul { list-style: none; padding: 0; }
+    .learn-box ul li {
+      padding: 6px 0; color: var(--text2); font-size: 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .learn-box ul li::before { content: '✓'; color: #e06c75; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .key-takeaways {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 10px 10px 0; padding: 22px 26px; margin-bottom: 28px;
+    }
+    .key-takeaways h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--accent); margin-bottom: 14px;
+    }
+    .key-takeaways ul { list-style: none; padding: 0; }
+    .key-takeaways ul li {
+      padding: 7px 0; color: var(--text2); font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .key-takeaways ul li:last-child { border-bottom: none; }
+    .key-takeaways ul li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+    .content-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px 28px; margin-bottom: 24px;
+    }
+    .content-section h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 18px; font-weight: 700; color: var(--text);
+      margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .content-section h3 { font-size: 15px; font-weight: 600; color: #e06c75; margin: 16px 0 10px; }
+    .content-section p { color: var(--text2); font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+    .content-section ul, .content-section ol {
+      padding-left: 22px; color: var(--text2); font-size: 14px; line-height: 1.8; margin-bottom: 12px;
+    }
+    .content-section li { margin-bottom: 4px; }
+    .content-section strong { color: var(--text); font-weight: 600; }
+    .priority-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px; margin-bottom: 24px;
+    }
+    .priority-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px; transition: border-color .2s;
+    }
+    .priority-card:hover { border-color: #e06c75; }
+    .priority-card .card-icon { font-size: 22px; margin-bottom: 10px; }
+    .priority-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .priority-card p { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+    .compare-table th {
+      background: var(--surface2); color: var(--text); font-weight: 600;
+      padding: 10px 14px; text-align: left; border: 1px solid var(--border);
+    }
+    .compare-table td {
+      padding: 10px 14px; border: 1px solid var(--border);
+      color: var(--text2); vertical-align: top;
+    }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .tip-box {
+      background: rgba(78,201,176,.08); border: 1px solid rgba(78,201,176,.25);
+      border-radius: 10px; padding: 18px 22px; margin-bottom: 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .tip-box .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .tip-box-content h4 { font-size: 13px; font-weight: 700; color: var(--accent3); margin-bottom: 6px; }
+    .tip-box-content p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .warn-box {
+      background: rgba(230,200,74,.08); border: 1px solid rgba(230,200,74,.25);
+      border-radius: 10px; padding: 18px 22px; margin-bottom: 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .warn-box .tip-box-content h4 { color: var(--warn); }
+    .reflection-box {
+      background: linear-gradient(135deg, rgba(224,108,117,.1), rgba(217,127,58,.08));
+      border: 1px solid rgba(224,108,117,.25);
+      border-radius: 12px; padding: 22px 26px; margin-top: 28px;
+    }
+    .reflection-box h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--accent); margin-bottom: 14px;
+    }
+    .reflection-box ul { list-style: none; padding: 0; }
+    .reflection-box ul li {
+      padding: 8px 0; color: var(--text2); font-size: 14px;
+      border-bottom: 1px dashed var(--border); display: flex; gap: 10px;
+    }
+    .reflection-box ul li:last-child { border-bottom: none; }
+    .reflection-box ul li::before { content: '💭'; flex-shrink: 0; }
+    .framework-4d {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0 24px;
+    }
+    .d-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .d-card .d-num {
+      display: inline-block;
+      background: linear-gradient(135deg, #e06c75, var(--accent));
+      color: #fff; font-size: 20px; font-weight: 900;
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .d-card h4 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .d-card p { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
+    .d-card .sub-list { list-style: none; padding: 0; }
+    .d-card .sub-list li {
+      font-size: 12px; color: var(--text3);
+      padding: 3px 0; display: flex; gap: 6px;
+    }
+    .d-card .sub-list li::before { content: '·'; color: #e06c75; font-weight: 700; }
+    .exercise-box {
+      background: rgba(123,110,246,.08); border: 1px solid rgba(123,110,246,.25);
+      border-radius: 10px; padding: 20px 24px; margin-bottom: 20px;
+    }
+    .exercise-box h4 { font-size: 14px; font-weight: 700; color: var(--accent2); margin-bottom: 12px; }
+    .exercise-box p { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 8px; }
+    .exercise-box ul {
+      list-style: none; padding: 0;
+    }
+    .exercise-box ul li {
+      font-size: 13px; color: var(--text2); padding: 4px 0;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .exercise-box ul li::before { content: '▸'; color: var(--accent2); flex-shrink: 0; }
+    .loop-diagram {
+      display: flex; gap: 20px; align-items: center;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+    }
+    .loop-side {
+      flex: 1; text-align: center;
+    }
+    .loop-side h4 {
+      font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px;
+    }
+    .loop-side p { font-size: 12px; color: var(--text2); }
+    .loop-arrow {
+      font-size: 24px; color: var(--accent2);
+    }
+    .checklist { list-style: none; padding: 0; margin-bottom: 20px; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
+      border-bottom: 1px solid var(--border); color: var(--text2); font-size: 14px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before { content: '□'; color: #e06c75; font-size: 16px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="course-badge">Nonprofit AI</div>
+    <h2>비영리단체를 위한 AI Fluency</h2>
+    <p>미션 중심 AI 협업 역량 개발</p>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>학습 진행도</span>
+      <span id="progressLabel">1 / 6</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+  </div>
+  <nav class="nav-list">
+    <div class="nav-item active" onclick="showLesson(0)">
+      <div class="nav-num">1</div>
+      <div class="nav-text">AI Fluency & 4D 프레임워크</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(1)">
+      <div class="nav-num">2</div>
+      <div class="nav-text">AI로 리서치하기</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(2)">
+      <div class="nav-num">3</div>
+      <div class="nav-text">AI로 글쓰기</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(3)">
+      <div class="nav-num">4</div>
+      <div class="nav-text">개인정보와 데이터 보호</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(4)">
+      <div class="nav-num">5</div>
+      <div class="nav-text">데이터 분석 & 워크플로우</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(5)">
+      <div class="nav-num">6</div>
+      <div class="nav-text">조직 통합 & 다음 단계</div>
+    </div>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="top-bar">
+    <button class="tab-btn active" onclick="showLesson(0)">4D 프레임워크</button>
+    <button class="tab-btn" onclick="showLesson(1)">리서치</button>
+    <button class="tab-btn" onclick="showLesson(2)">글쓰기</button>
+    <button class="tab-btn" onclick="showLesson(3)">개인정보</button>
+    <button class="tab-btn" onclick="showLesson(4)">데이터 & 자동화</button>
+    <button class="tab-btn" onclick="showLesson(5)">조직 통합</button>
+  </div>
+
+  <div class="content-wrap">
+
+    <!-- ── 레슨 1: AI Fluency & 4D 프레임워크 ── -->
+    <div class="lesson-panel active">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 1-2 · AI Fluency & 4D Framework</div>
+        <h1>AI Fluency와 4D 프레임워크</h1>
+        <p class="subtitle">비영리단체가 AI를 효율적이고, 효과적이며, 윤리적이고 안전하게 활용하기 위한 핵심 역량 체계를 소개합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>AI Fluency의 정의와 비영리 사업에서의 의미를 설명할 수 있다</li>
+          <li>4D 프레임워크의 네 가지 역량을 이해하고 적용할 수 있다</li>
+          <li>Delegation-Diligence 루프와 Description-Discernment 루프를 구분한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>AI Fluency</strong>: AI를 효율적·효과적·윤리적·안전하게 활용하는 실용적 기술, 지식, 통찰, 가치의 조합</li>
+          <li>비영리단체에서 AI 효율성 향상은 궁극적으로 섬기는 커뮤니티에 더 큰 임팩트로 이어져야 함</li>
+          <li>4D 프레임워크는 두 개의 루프: <strong>Delegation-Diligence</strong>(AI 사용 여부 결정)와 <strong>Description-Discernment</strong>(AI와의 일상적 협업)</li>
+          <li>기술이 아닌 미션이 모든 AI 의사결정의 나침반이어야 함</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>4D 프레임워크 상세</h2>
+        <p>4D 프레임워크는 Prof. Rick Dakan(링링 예술대학)과 Prof. Joseph Feller(유니버시티 칼리지 코크)가 공동 개발했습니다.</p>
+        <div class="framework-4d">
+          <div class="d-card">
+            <div class="d-num" style="background:linear-gradient(135deg,#e06c75,#c05060)">D</div>
+            <h4>Delegation (위임)</h4>
+            <p>어떤 업무를 AI에게, 어떤 업무를 사람이 해야 할지 결정합니다.</p>
+            <ul class="sub-list">
+              <li>Problem Awareness: 목표와 맥락 이해</li>
+              <li>Platform Awareness: AI 도구의 역량과 한계 파악</li>
+              <li>Task Delegation: 전략적 업무 분배</li>
+            </ul>
+          </div>
+          <div class="d-card">
+            <div class="d-num" style="background:linear-gradient(135deg,var(--accent),#b06020)">D</div>
+            <h4>Description (설명)</h4>
+            <p>AI 시스템과 효과적으로 소통하는 방법을 다룹니다.</p>
+            <ul class="sub-list">
+              <li>Product Description: 원하는 결과물 정의</li>
+              <li>Process Description: 접근 방식 안내</li>
+              <li>Performance Description: AI 행동 방식 형성</li>
+            </ul>
+          </div>
+          <div class="d-card">
+            <div class="d-num" style="background:linear-gradient(135deg,#4ec9b0,#30a090)">D</div>
+            <h4>Discernment (식별)</h4>
+            <p>AI 결과물을 비판적으로 평가합니다.</p>
+            <ul class="sub-list">
+              <li>Product Discernment: 품질과 정확성 평가</li>
+              <li>Process Discernment: AI의 접근 방식 평가</li>
+              <li>Performance Discernment: AI 행동 평가</li>
+            </ul>
+          </div>
+          <div class="d-card">
+            <div class="d-num" style="background:linear-gradient(135deg,#61afef,#4090cf)">D</div>
+            <h4>Diligence (철저함)</h4>
+            <p>AI 사용에 대한 책임을 집니다.</p>
+            <ul class="sub-list">
+              <li>Creation Diligence: 도구 선택에 신중</li>
+              <li>Transparency Diligence: AI 역할 투명하게 공개</li>
+              <li>Deployment Diligence: 결과물 검증 및 책임</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>두 가지 상호작용 루프</h2>
+        <div class="loop-diagram">
+          <div class="loop-side">
+            <h4>Delegation-Diligence 루프</h4>
+            <p>AI를 언제, 어떻게 사용할지에 대한 <strong>상위 수준 결정</strong>을 안내합니다.</p>
+            <p style="font-size:12px;color:var(--text3);margin-top:8px">예: "이 업무를 AI에게 맡겨야 하는가? 어떤 도구를 쓸까? 결과물을 내가 책임질 수 있는가?"</p>
+          </div>
+          <div class="loop-arrow">⇄</div>
+          <div class="loop-side">
+            <h4>Description-Discernment 루프</h4>
+            <p>일상적인 AI 상호작용에서 <strong>효과적인 실무 협업</strong>을 안내합니다.</p>
+            <p style="font-size:12px;color:var(--text3);margin-top:8px">예: "이 프롬프트가 충분히 구체적인가? AI 결과가 정확한가? 어떻게 개선할까?"</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>비영리단체를 위한 AI Fluency 원칙</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">🎯</div>
+            <h4>미션 중심 사고</h4>
+            <p>모든 AI 효율화가 섬기는 커뮤니티에 더 큰 임팩트로 이어지도록 설계</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🤝</div>
+            <h4>협업 마인드셋</h4>
+            <p>AI는 도구가 아닌 협력자 — 여러분의 전문성과 맥락이 AI를 의미있게 만든다</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔄</div>
+            <h4>반복적 학습</h4>
+            <p>첫 번째 결과가 완벽하지 않아도 괜찮음. AI Fluency는 실천으로 성장한다</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⚖️</div>
+            <h4>책임감</h4>
+            <p>AI 도움을 받은 결과물도 궁극적으로는 여러분의 책임. 항상 검토하고 서명</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise-box">
+        <h4>📝 실습: AI 사용에 대한 자기 반성</h4>
+        <p><strong>1단계: 자기 성찰</strong></p>
+        <ul>
+          <li>우리 단체의 미션과 비전은 무엇인가?</li>
+          <li>AI가 나를 ___하는 데 도와준다면, 나는 더 ___(고임팩트 활동)에 시간을 쓸 수 있다</li>
+          <li>우리 조직의 핵심 가치와 철학은 무엇인가?</li>
+        </ul>
+        <p style="margin-top:10px"><strong>2단계: AI와 협업</strong> — 재사용 가능한 조직 맥락 문서 만들기</p>
+        <ul>
+          <li>조직의 미션, 비전, 가치 / 주요 업무 영역과 역할 / 전형적인 도전과 기회 등 공유</li>
+          <li>AI에게 인터뷰 형식으로 도움을 받거나, 직접 정보를 공유하고 추가 질문을 유도</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>자기 성찰 질문에 대한 답이 AI와의 대화를 어떻게 형성했나요? 새로운 우선순위나 우려사항이 나타났나요?</li>
+          <li>4D 프레임워크 중 여러분의 현재 AI 활용에서 가장 취약한 역량은 무엇인가요?</li>
+          <li>비영리 맥락에서 AI 효율화가 오히려 인간적인 터치를 줄이는 위험은 없을까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 2: AI로 리서치하기 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 3 · Researching with AI</div>
+        <h1>AI로 리서치하기: Description-Discernment 루프 실전</h1>
+        <p class="subtitle">AI가 가져다준 정보를 비판적으로 평가하고, 더 나은 프롬프트로 반복하는 연구 워크플로우를 구축합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>비영리 업무에 관련된 정보를 수집하고 종합하는 효과적인 프롬프트를 작성할 수 있다</li>
+          <li>AI가 생성한 리서치의 정확성, 관련성, 적절성을 비판적으로 평가한다</li>
+          <li>Description-Discernment 루프를 반복하며 더 나은 결과를 얻는다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>효과적인 Description은 맥락을 제공한다</strong>: 광범위한 질문 대신 누가, 누구를 위해, 무엇이 필요한지 설명</li>
+          <li><strong>Discernment는 선택이 아닌 필수</strong>: 정확성이 중요한 경우 AI 결과물을 반드시 비판적으로 평가</li>
+          <li><strong>Description-Discernment 루프는 반복적</strong>: 첫 번째 프롬프트가 완벽한 결과를 내지 못해도 정상</li>
+          <li><strong>AI는 리서치를 가속하지만 전문성을 대체하지 않는다</strong>: 최종 판단은 항상 여러분의 몫</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>좋은 리서치 프롬프트의 요소</h2>
+        <p>Maria의 예시: 포틀랜드 주거 비영리단체가 시애틀로 확장하며 AI로 정책 환경을 연구하는 상황</p>
+        <div class="compare-table-wrap" style="overflow-x:auto">
+          <table class="compare-table">
+            <thead>
+              <tr><th>프롬프트 요소</th><th>왜 중요한가</th><th>예시</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>누구인가 (맥락)</strong></td>
+                <td>AI가 관련 정보를 선택하는 기준을 제공</td>
+                <td>"저는 저소득층 주거를 지원하는 비영리 단체의 디렉터입니다"</td>
+              </tr>
+              <tr>
+                <td><strong>누구를 위해 (대상)</strong></td>
+                <td>수혜자 중심 정보를 우선시하도록 안내</td>
+                <td>"저희가 지원하는 저소득 세입자에게 미치는 영향"</td>
+              </tr>
+              <tr>
+                <td><strong>무엇이 필요한가 (특수성)</strong></td>
+                <td>광범위한 답이 아닌 실행 가능한 정보 획득</td>
+                <td>"규정 준수 요건, 자금 지원 기회, 지지 활동 옵션"</td>
+              </tr>
+              <tr>
+                <td><strong>범위 및 시간 (한계)</strong></td>
+                <td>최신성과 지역적 관련성 보장</td>
+                <td>"2024년 이후 시애틀 및 킹 카운티 정책"</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Discernment 체크리스트: AI 리서치 평가</h2>
+        <p>AI가 리서치 결과를 반환하면 다음을 확인하세요:</p>
+        <ul class="checklist">
+          <li>적어도 2개의 주장을 독립적으로 검증했는가?</li>
+          <li>섬기는 커뮤니티의 관점이 누락되지 않았는가?</li>
+          <li>정보가 최신이며 지역적으로 관련이 있는가?</li>
+          <li>AI가 지나치게 일반적인 정보를 제공하지 않았는가?</li>
+          <li>이 정보를 실제 업무에 사용하기 전 추가 검증 계획이 있는가?</li>
+        </ul>
+      </div>
+
+      <div class="exercise-box">
+        <h4>📝 실습 1: 정책 및 입법 추적</h4>
+        <p>우리 조직의 업무와 관련된 정책 영역을 선택하세요. 다음을 포함한 리서치 프롬프트를 작성하세요:</p>
+        <ul>
+          <li>알고 싶은 특정 정책 또는 입법</li>
+          <li>우리 단체의 맥락 (누구를 위해, 왜 이것이 미션과 관련되는지)</li>
+          <li>알아야 할 내용 (수혜자 영향, 자금 함의, 지지 활동 기회)</li>
+          <li>시간적 범위 또는 지역 범위</li>
+        </ul>
+        <p style="margin-top:10px;color:var(--accent3)">💡 스트레치 목표: AI에게 핵심 주장의 원본 출처를 추적해 달라고 요청하고, 정보가 얼마나 정확하게 표현되었는지 비교해 보세요.</p>
+      </div>
+
+      <div class="exercise-box">
+        <h4>📝 실습 2: 기부자/보조금 발굴</h4>
+        <p>펀드레이징 리서치에 Description과 Discernment를 적용합니다. 프롬프트에 포함할 요소:</p>
+        <ul>
+          <li>우리 단체의 미션과 자금이 필요한 특정 프로그램</li>
+          <li>단체 특성 (예산 규모, 지역, 지원 인구)</li>
+          <li>자금 조건 (보조금 규모, 적격 비용, 신청 시기)</li>
+          <li>"좋은 적합성"의 기준 — 주제 일치를 넘어 가치 일치</li>
+        </ul>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-box-content">
+          <h4>리서치 워크플로우에 검증 습관 만들기</h4>
+          <p>AI 리서치를 사용할 때마다 "이 정보를 실제 업무에 적용하기 전 어떻게 검증할 것인가?"를 자문하세요. 특히 고위험 의사결정에는 이 습관이 필수적입니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>단체의 맥락을 구체적으로 제공했을 때 AI 리서치 품질이 어떻게 달라졌나요?</li>
+          <li>AI 리서치를 사용할 때 검증을 위한 어떤 습관을 워크플로우에 통합할 것인가요?</li>
+          <li>AI가 수집한 정보에서 지역 네트워크나 전문가만이 알 수 있는 내용이 빠진 경우는?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 3: AI로 글쓰기 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 4 · Writing with AI</div>
+        <h1>AI로 글쓰기: 진정성을 유지하면서 빠르게</h1>
+        <p class="subtitle">보조금 제안서, 소셜 미디어 포스트 등 비영리 커뮤니케이션에서 AI와 협업하되 조직의 목소리와 진정성을 지키는 방법을 배웁니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>조직의 목소리와 미션에 맞는 글쓰기를 안내하는 명확하고 맥락이 풍부한 프롬프트를 작성한다</li>
+          <li>AI 초안을 정확성, 진정성, 조직 가치와의 일치 여부로 평가한다</li>
+          <li>AI 글쓰기 과정 전반에서 Discernment를 유지하며 최종 결과물에 책임을 진다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>과거 성공적인 글 업로드</strong>: 조직의 목소리와 접근 방식을 AI가 이해하도록 돕는 가장 빠른 방법</li>
+          <li><strong>AI가 모를 수 있는 세부 정보 직접 제공</strong>: 실적, 파트너십, 직원 전문성, 실제 커뮤니티 관계</li>
+          <li><strong>구체적인 수정 요청</strong>: "더 설득력 있게" 대신 "커뮤니티 관계에 대한 이 구체적인 세부 정보를 추가해 주세요"</li>
+          <li><strong>최종 결과물에 책임</strong>: AI 도움으로 작성된 글도 모든 단어를 지지할 수 있어야 함</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>비영리 글쓰기에서 AI 활용 원칙</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">📄</div>
+            <h4>기존 자료 활용</h4>
+            <p>성공적인 보조금 제안서, 뉴스레터, 연례 보고서를 업로드해 AI가 여러분의 목소리를 학습하게 하세요</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🎯</div>
+            <h4>특수성이 핵심</h4>
+            <p>추상적인 "영향력"이 아닌 구체적인 숫자, 스토리, 커뮤니티 관계를 직접 제공하세요</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔄</div>
+            <h4>단계적 수정</h4>
+            <p>한 번에 모든 것을 완벽하게 하려 하지 말고 단계적으로 피드백하며 개선하세요</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">👁️</div>
+            <h4>Discernment 유지</h4>
+            <p>수혜자를 결핍 이미지로 묘사하거나 부적절한 언어 사용 여부를 항상 검토하세요</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>보조금 제안서 글쓰기 체크리스트</h2>
+        <p>AI 초안을 받은 후 Discernment 적용:</p>
+        <ul class="checklist">
+          <li>모든 데이터 포인트와 성과가 정확한가?</li>
+          <li>언어가 실제 조직의 목소리를 반영하는가, 아니면 일반적으로 들리는가?</li>
+          <li>수혜자에 대한 결핍 기반 프레이밍이나 문제적 언어가 없는가?</li>
+          <li>기부자의 우선순위를 다루고 있는가, 아니면 단순히 프로그램을 설명하는가?</li>
+          <li>오직 나만이 알고 있는 누락된 내용이 있는가?</li>
+        </ul>
+      </div>
+
+      <div class="exercise-box">
+        <h4>📝 실습 1: 보조금 제안서</h4>
+        <p>자금이 필요한 프로그램이나 이니셔티브를 선택하세요. 글쓰기 프롬프트에 포함할 요소:</p>
+        <ul>
+          <li>보조금 기회와 기부자의 관심사</li>
+          <li>프로그램의 핵심 세부 정보 (대상, 내용, 장소, 성과)</li>
+          <li>조직의 목소리와 가치</li>
+          <li>글자 수, 필수 요소, 어조 등 구체적 요건</li>
+          <li>우리 접근법을 독특하고 효과적으로 만드는 것</li>
+        </ul>
+      </div>
+
+      <div class="exercise-box">
+        <h4>📝 실습 2: 소셜 미디어 포스트</h4>
+        <p>콘텐츠 목표를 선택한 후 프롬프트에 포함할 요소:</p>
+        <ul>
+          <li>플랫폼과 형식 (인스타그램 캐러셀, 링크드인 포스트 등)</li>
+          <li>대상 독자와 그들의 동기</li>
+          <li>핵심 메시지와 행동 유도</li>
+          <li>조직의 소셜 미디어 목소리 (전문적, 유쾌한, 행동주의적 등)</li>
+          <li>제약 조건 (글자 수 제한, 해시태그 전략, 접근성 요건)</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>과거 자료를 업로드하거나 상세한 맥락을 제공했을 때 AI 글쓰기 품질이 어떻게 달라졌나요?</li>
+          <li>AI와 함께 글을 쓸 때 조직의 진정한 목소리를 유지하기 위해 어떤 전략을 쓸 것인가요?</li>
+          <li>AI가 생성한 보조금 제안서를 제출할 때 Diligence는 어떤 모습이어야 할까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 4: 개인정보와 데이터 보호 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 5 · Privacy & Data</div>
+        <h1>개인정보와 데이터 보호: 안전한 AI 활용</h1>
+        <p class="subtitle">AI 도구의 데이터 처리 정책을 평가하고, 민감한 정보를 안전하게 다루면서도 AI의 혜택을 온전히 누리는 방법을 익힙니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>AI 도구의 데이터 처리 정책을 평가하는 기준을 갖출 수 있다</li>
+          <li>민감한 정보를 AI와 안전하게 작업하기 위한 데이터 보안 관리 전략을 실천한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>AI는 새로운 개인정보 고려사항을 도입</strong>: 일부 AI는 입력값을 미래 모델 학습에 사용하여 데이터 패턴이 향후 출력에 영향을 줄 수 있음</li>
+          <li><strong>도구마다 규칙이 다르다</strong>: 무료 AI와 데이터 정책이 엄격한 유료 계정은 다름. 업무 민감도에 맞는 도구를 선택</li>
+          <li><strong>안전한 AI 활용 = 피하는 게 아닌 책임감 있는 사용</strong>: 작업을 분해하면 민감한 정보 없이도 도움을 받을 수 있음</li>
+          <li><strong>신원 정보는 대개 불필요</strong>: 패턴 분석에는 이름, 연락처 등 PII가 필요하지 않은 경우가 많음</li>
+          <li>Claude의 개인정보 설정: privacy.anthropic.com 및 trust.anthropic.com에서 확인 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>AI 데이터 민감도 분류</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>민감도 수준</th><th>예시</th><th>AI 도구 권장 사항</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>높음</strong></td>
+              <td>수혜자 개인 정보, 기부자 이름 및 금액, 직원 인사 정보</td>
+              <td>엄격한 데이터 정책의 유료 계정만, 익명화 후 공유</td>
+            </tr>
+            <tr>
+              <td><strong>중간</strong></td>
+              <td>집계된 프로그램 결과, 일반화된 재정 데이터</td>
+              <td>데이터 정책 확인 후 주의하여 공유</td>
+            </tr>
+            <tr>
+              <td><strong>낮음</strong></td>
+              <td>공개 프로그램 정보, 일반적인 업계 리서치</td>
+              <td>대부분의 AI 도구 사용 가능</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>데이터 보안 관리 실습</h2>
+        <p>AI와 작업하기 전 민감한 문서 준비 방법:</p>
+        <ul style="color:var(--text2);padding-left:20px;margin:10px 0">
+          <li>이름을 일반 식별자로 대체 (사람 A, 기부자 1 등)</li>
+          <li>필수적이지 않다면 위치 세부 정보 제거 또는 일반화</li>
+          <li>연락처 정보 완전 제거</li>
+          <li>특정 달러 금액이 꼭 정확해야 하는지, 범위로 대체 가능한지 고려</li>
+        </ul>
+      </div>
+
+      <div class="exercise-box">
+        <h4>📝 실습 1: 데이터 민감도 평가</h4>
+        <p>다음 시나리오 중 업무와 가장 관련 있는 것을 선택하세요:</p>
+        <ul>
+          <li>이름, 금액, 연락처가 있는 기부자 기부 이력 스프레드시트</li>
+          <li>인구 통계 세부 정보가 포함된 프로그램 참여자 설문 응답</li>
+          <li>수혜자 이야기와 성과 데이터가 있는 보조금 보고서 초안</li>
+        </ul>
+        <p style="margin-top:10px">선택한 시나리오에서 다음을 파악하세요: PII는 어느 필드에? 분석에 필수적인 정보는? 가치 손실 없이 제거 가능한 정보는? 노출 시 최악의 시나리오는?</p>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>실수 시 대응 방법</h4>
+          <p>민감한 정보를 공유했다면: 대화를 삭제하고, 플랫폼의 개인정보 보호 프로세스를 통해 데이터 삭제를 요청하고, 조직의 프로토콜을 따르세요.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>AI 개인정보를 이메일이나 클라우드 스토리지 같은 다른 소프트웨어 도구와 비교하면 어떤가요?</li>
+          <li>이 레슨을 바탕으로 AI와 데이터를 공유하는 방식에서 한 가지 바꿀 것은 무엇인가요?</li>
+          <li>취약 계층과 함께 일하는 비영리단체에서 데이터 보호가 특히 중요한 이유는?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 5: 데이터 분석 & 워크플로우 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 6-7 · Data Analysis & Workflow</div>
+        <h1>데이터 분석과 워크플로우 자동화</h1>
+        <p class="subtitle">AI 분석 결과를 검증하고 신뢰를 구축하는 방법, 반복적인 업무를 AI로 자동화하면서 4D 프레임워크 전체를 적용하는 방법을 학습합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>Delegation-Diligence 루프를 사용해 특정 업무에 대한 AI 분석 역량을 체계적으로 검증한다</li>
+          <li>데이터의 패턴을 찾으면서 AI의 한계를 인식한다</li>
+          <li>4D 프레임워크를 통합하여 반복 가능한 AI 자동화 절차를 구축한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>이미 아는 데이터로 AI를 테스트하라</strong>: 과거 데이터로 검증한 후 새 데이터에 AI를 신뢰하여 사용</li>
+          <li><strong>맹목적 신뢰가 아닌 검증된 접근법을 구축하라</strong>: 각 테스트에서 AI가 잘 하는 것과 가이드가 필요한 것을 문서화</li>
+          <li><strong>자동화 전 Problem Awareness 먼저</strong>: AI 도구를 만지기 전에 실제 업무 부하를 분석</li>
+          <li><strong>Task Delegation: "AI가 할 수 있는가?"가 아닌 "AI가 해야 하는가?"</strong></li>
+          <li><strong>Diligence의 세 유형</strong>: Creation(신중한 도구 선택) + Deployment(결과물 검토) + Transparency(AI 역할 공개)</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>AI 데이터 분석 검증 방법</h2>
+        <p>Rio의 예시: Valley Veterans Services 프로그램 디렉터가 과거 데이터로 AI 분석을 검증하는 방법</p>
+        <div class="flow-steps" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#e06c75;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">1</div>
+            <div>
+              <strong style="color:var(--text)">이미 아는 데이터 세트 선택</strong>
+              <p style="font-size:13px;color:var(--text2);margin-top:4px">올바른 결과를 알고 있는 과거 데이터로 시작하세요</p>
+            </div>
+          </div>
+          <div style="margin-left:14px;color:var(--text3)">↓</div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#e06c75;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">2</div>
+            <div>
+              <strong style="color:var(--text)">AI에게 동일한 분석 요청</strong>
+              <p style="font-size:13px;color:var(--text2);margin-top:4px">AI가 여러분과 같은 결과에 도달하는지 확인하세요</p>
+            </div>
+          </div>
+          <div style="margin-left:14px;color:var(--text3)">↓</div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#e06c75;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">3</div>
+            <div>
+              <strong style="color:var(--text)">Discernment 적용</strong>
+              <p style="font-size:13px;color:var(--text2);margin-top:4px">AI가 놓친 부분과 더 나은 Description이 필요한 부분을 메모하세요</p>
+            </div>
+          </div>
+          <div style="margin-left:14px;color:var(--text3)">↓</div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:50%;background:#e06c75;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">4</div>
+            <div>
+              <strong style="color:var(--text)">접근법 문서화</strong>
+              <p style="font-size:13px;color:var(--text2);margin-top:4px">무엇이 효과적인지 기록하여 새 데이터에 재사용할 수 있도록 하세요</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>워크플로우 자동화: 4D 전체 적용</h2>
+        <p>Emily의 예시: 연간 갈라 준비 중 AI 이메일 응답 시스템 구축</p>
+        <table class="compare-table">
+          <thead>
+            <tr><th>D 역량</th><th>적용 방법</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Delegation</strong></td>
+              <td>AI에게 적합한 업무 선별: 문서화된 질문 답변(AI 가능) vs 불만 처리(사람 필요) vs 고위험 요청(사람 필요)</td>
+            </tr>
+            <tr>
+              <td><strong>Description</strong></td>
+              <td>Product Description(최종 결과물), Process Description(단계), Performance Description(어조, 불확실성 처리 방법, 절대 하지 말아야 할 것)</td>
+            </tr>
+            <tr>
+              <td><strong>Discernment</strong></td>
+              <td>실제 예시로 테스트. 분류가 올바른가? 응답이 정확하고 적절한가? 설명을 어떻게 조정해야 하는가?</td>
+            </tr>
+            <tr>
+              <td><strong>Diligence</strong></td>
+              <td>Creation D: 이것이 자동화에 적합한가? / Deployment D: 정기적으로 결과물 검토 / Transparency D: AI 참여를 누구에게 공개할 것인가?</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>자동화 후보 선별 기준</h2>
+        <div class="priority-grid">
+          <div class="priority-card" style="border-color:rgba(78,201,176,.3)">
+            <div class="card-icon">✅</div>
+            <h4>AI 처리 적합</h4>
+            <p>표준화된 응답, 문서화된 정보, 명확한 프로세스</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(230,200,74,.3)">
+            <div class="card-icon">🤝</div>
+            <h4>AI 지원 + 사람 결정</h4>
+            <p>AI가 초안 작성, 검토 후 실행. 중간 복잡도 업무</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(224,108,117,.3)">
+            <div class="card-icon">👤</div>
+            <h4>사람이 처리해야</h4>
+            <p>고위험 결정, 감정적 상황, 복잡한 판단 필요 업무</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>AI 분석을 이미 아는 데이터로 테스트하는 것이 새 데이터에 대한 신뢰를 어떻게 구축했나요?</li>
+          <li>어떤 업무가 자동화에 적합한지 결정할 때 가장 중요한 기준은 무엇이었나요?</li>
+          <li>비영리 맥락에서 "효율성"과 "사람적 연결" 사이의 균형을 어떻게 맞출 것인가요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 6: 조직 통합 & 다음 단계 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 8-9 · Integration & Next Steps</div>
+        <h1>조직 통합과 지속 가능한 AI 활용</h1>
+        <p class="subtitle">AI 의존성을 피하면서 인간 역량을 강화하고, 조직 전체의 일관된 AI 활용을 위한 정책을 수립합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>AI 의존성 우려와 인간적 연결 보존에 대한 실용적 접근법을 갖춘다</li>
+          <li>조직의 가치를 반영하는 AI 정책을 초안으로 작성할 수 있다</li>
+          <li>4D 프레임워크를 실제 업무에 적용하여 AI Fluency를 실천한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>"루프 안의 인간"은 감독 이상의 의미</strong>: 어떤 문제를 AI가 해결해야 하는지 결정하고, 솔루션이 가치와 일치하는지 평가하며, 실질적 임팩트를 위한 관계 유지</li>
+          <li><strong>이해를 통한 의존성 방지, 회피를 통해서가 아니라</strong>: "AI가 무엇을 하는지 설명할 수 있는가?"를 정기적으로 자문</li>
+          <li><strong>AI가 더 많은 인간적 업무를 위해 해방시켜야 한다</strong>: 최선의 경우 AI는 수기 카드, 개인화된 연락, 커뮤니티와의 시간에 집중하도록 해줌</li>
+          <li><strong>AI 정책으로 이해를 확대</strong>: 플랫폼, 업무 위임, 품질 감독, 투명성, 가치 일치에 대한 결정을 문서화</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>조직 AI 정책 초안 — 주요 영역</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">🖥️</div>
+            <h4>플랫폼 지침</h4>
+            <p>어떤 AI 도구 허용/금지, 업무 유형별 데이터 보호 수준, 도구 및 정책 변경 모니터링 방법</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📋</div>
+            <h4>업무 위임 경계</h4>
+            <p>어떤 업무에 AI 지원 가능, 완전히 사람이 해야 하는 업무, 새 사용 사례 승인 프로세스</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">✅</div>
+            <h4>품질 및 감독</h4>
+            <p>AI 결과물 검토자, 다양한 콘텐츠 유형에 필요한 검증 단계, 실수 발생 시 처리 방법</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔍</div>
+            <h4>투명성</h4>
+            <p>이해관계자, 기부자, 서비스 대상자에게 AI 활용을 어떻게 공개할지</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⚖️</div>
+            <h4>가치 일치</h4>
+            <p>AI가 미션 수행에 기여하는지 확인 방법, 취약 계층과 AI 업무에서 존엄성 유지</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">👥</div>
+            <h4>역량 기대치</h4>
+            <p>AI 효율화로 절약된 시간을 어떻게 재배치할지, 팀 전체 AI 역량 구축 방법</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>코스 마무리: 최종 과제</h2>
+        <p>이번 주 AI 지원으로 처리할 실제 업무 한 가지를 선택하세요:</p>
+        <div class="priority-grid">
+          <div class="priority-card" style="border-color:rgba(224,108,117,.3)">
+            <div class="card-icon">📝</div>
+            <h4>Delegation</h4>
+            <p>어떤 부분이 AI 지원을 받을 것인가? 어떤 것은 나의 판단이 필요한가?</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(217,127,58,.3)">
+            <div class="card-icon">💬</div>
+            <h4>Description</h4>
+            <p>조직의 맥락, 업무 요건, AI에 접근하는 방식을 어떻게 전달할 것인가?</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(78,201,176,.3)">
+            <div class="card-icon">🔍</div>
+            <h4>Discernment</h4>
+            <p>돌아오는 것을 어떻게 평가하고 격차를 파악하며 접근법을 세분화할 것인가?</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(97,175,239,.3)">
+            <div class="card-icon">🤝</div>
+            <h4>Diligence</h4>
+            <p>최종 결과에 대해 어떻게 책임을 지고, 정확성을 검증하며, 적절한 경우 투명하게 공개할 것인가?</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="key-takeaways" style="margin-top:24px">
+        <h3>🎓 코스 전체 요약</h3>
+        <ul>
+          <li><strong>AI Fluency</strong>: 효율적·효과적·윤리적·안전한 AI 사용 능력 = 기술 + 지식 + 가치</li>
+          <li><strong>4D 프레임워크</strong>: Delegation(위임), Description(설명), Discernment(식별), Diligence(철저함)</li>
+          <li><strong>리서치</strong>: 맥락이 풍부한 프롬프트 + 비판적 평가 + 고위험 정보 검증</li>
+          <li><strong>글쓰기</strong>: 조직 자료 활용 + 전문 세부 정보 직접 제공 + 최종 결과물에 책임</li>
+          <li><strong>개인정보</strong>: 도구의 데이터 정책 파악 + 데이터 보안 관리 실천 + 책임감 있는 사용</li>
+          <li><strong>데이터 분석</strong>: 기존 데이터로 검증 후 신뢰 구축 + AI의 한계 인식</li>
+          <li><strong>자동화</strong>: "해야 하는가?" 먼저 + 세 가지 Diligence 적용</li>
+          <li><strong>조직 통합</strong>: AI 정책 수립으로 팀 전체의 일관된 이해와 실천</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 최종 성찰 질문</h3>
+        <ul>
+          <li>이 코스를 시작할 때와 비교해 AI에 대한 여러분의 관계가 어떻게 변했나요?</li>
+          <li>이번 주에 AI 지원으로 처리하겠다고 다짐하는 구체적인 업무는 무엇인가요?</li>
+          <li>우리 단체에서 이 코스로 혜택을 받을 수 있는 동료는 누가 있나요?</li>
+          <li>비영리 업무에서 AI가 가장 큰 가치를 더할 수 있는 영역은 어디라고 생각하나요?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function showLesson(idx) {
+    document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+    const total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+    document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

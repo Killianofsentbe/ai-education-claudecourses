@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude API로 개발하기 — Anthropic Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10; --surface: #16161c; --surface2: #1e1e27;
+      --border: #2a2a38; --accent: #d97f3a; --accent2: #7b6ef6;
+      --text: #e8e6f0; --text-muted: #8884a8; --text-dim: #5a5870;
+      --code-bg: #111118; --tag-bg: #1e1e2e;
+      --success: #4caf80; --warning: #e8a838;
+      --ca: #56b6c2;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.8; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #0d0f1a 100%); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 56px; }
+    .logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
+    .sep { color: var(--text-dim); }
+    .course-title-small { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 240px 1fr; gap: 0; padding: 0 2rem; }
+    aside { position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1.5rem 2rem 0; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .sidebar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
+    .lesson-nav { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-muted); font-size: 13px; line-height: 1.4; transition: all 0.15s; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--ca); }
+    .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ca); min-width: 18px; margin-top: 1px; }
+    .sidebar-progress { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .progress-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
+    .progress-bar-bg { height: 4px; background: var(--surface2); border-radius: 2px; }
+    .progress-bar-fill { height: 100%; background: var(--ca); border-radius: 2px; transition: width 0.3s; }
+    main { padding: 2rem 0 4rem 2.5rem; }
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+    .lesson-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .lesson-number-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ca); letter-spacing: 0.15em; background: rgba(86,182,194,0.1); border: 1px solid rgba(86,182,194,0.2); padding: 0.25rem 0.75rem; border-radius: 4px; display: inline-block; margin-bottom: 0.75rem; }
+    .lesson-header h2 { font-family: 'Noto Serif KR', serif; font-size: 1.8rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; }
+    .lesson-subtitle { font-size: 14px; color: var(--text-muted); }
+    .content-section { margin-bottom: 2rem; }
+    .content-section h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    .content-section h3::before { content: ''; display: inline-block; width: 3px; height: 1em; background: var(--ca); border-radius: 2px; }
+    .learn-box { background: linear-gradient(135deg, rgba(86,182,194,0.08) 0%, rgba(86,182,194,0.04) 100%); border: 1px solid rgba(86,182,194,0.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .learn-box h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
+    .learn-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .learn-box ul li { padding-left: 1.5rem; position: relative; color: var(--text-muted); font-size: 14px; }
+    .learn-box ul li::before { content: '◆'; position: absolute; left: 0; color: var(--ca); font-size: 8px; top: 6px; }
+    .key-takeaways { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ca); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+    .key-takeaways h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
+    .key-takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .key-takeaways ul li { padding-left: 1.5rem; position: relative; font-size: 14px; color: var(--text-muted); }
+    .key-takeaways ul li::before { content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: bold; }
+    p { margin-bottom: 1rem; color: var(--text-muted); }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; color: var(--text-muted); }
+    strong { color: var(--text); font-weight: 600; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--ca); border: 1px solid var(--border); }
+    pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0 1.5rem; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: #abb2bf; font-size: 13px; line-height: 1.6; }
+    .tip-box { background: rgba(76,175,128,0.08); border: 1px solid rgba(76,175,128,0.25); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+    .tip-box strong { color: var(--success); }
+    .warn-box { background: rgba(232,168,56,0.08); border: 1px solid rgba(232,168,56,0.25); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+    .warn-box strong { color: var(--warning); }
+    .reflection-box { background: rgba(123,110,246,0.08); border: 1px solid rgba(123,110,246,0.2); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+    .reflection-box h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem; }
+    .reflection-box ul { list-style: none; }
+    .reflection-box ul li { padding: 0.6rem 0 0.6rem 1.5rem; position: relative; border-bottom: 1px solid rgba(123,110,246,0.1); font-size: 14px; color: var(--text-muted); }
+    .reflection-box ul li:last-child { border-bottom: none; }
+    .reflection-box ul li::before { content: '?'; position: absolute; left: 0; color: var(--accent2); font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 14px; }
+    .compare-table th { background: var(--surface2); padding: 0.75rem 1rem; text-align: left; font-size: 12px; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 2px solid var(--border); }
+    .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--surface); }
+    .priority-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1rem 0 1.5rem; }
+    .priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; transition: border-color 0.15s; }
+    .priority-card:hover { border-color: var(--ca); }
+    .priority-card h5 { font-size: 13px; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+    .priority-card p { font-size: 13px; margin: 0; color: var(--text-muted); }
+    .flow-steps { display: flex; flex-direction: column; gap: 0; margin: 1rem 0 1.5rem; }
+    .flow-step { display: flex; gap: 1rem; align-items: flex-start; }
+    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(86,182,194,0.15); border: 1px solid rgba(86,182,194,0.4); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ca); flex-shrink: 0; margin-top: 3px; }
+    .flow-step-content { flex: 1; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+    .flow-step:last-child .flow-step-content { border-bottom: none; }
+    .flow-step-content strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 0.25rem; }
+    .flow-step-content p { font-size: 13px; margin: 0; }
+    .temp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0; }
+    .temp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .temp-card .temp-range { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ca); font-weight: 600; margin-bottom: 0.5rem; }
+    .temp-card .temp-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+    .temp-card ul { list-style: none; padding: 0; margin: 0; }
+    .temp-card ul li { font-size: 12px; color: var(--text-muted); padding: 0.2rem 0; padding-left: 1rem; position: relative; }
+    .temp-card ul li::before { content: '·'; position: absolute; left: 0; color: var(--ca); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <span class="logo">Anthropic Academy</span>
+      <span class="sep">/</span>
+      <span class="course-title-small">Claude API로 개발하기 (Building with the Claude API)</span>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="sidebar-label">목차</div>
+      <nav class="lesson-nav">
+        <a class="nav-item active" onclick="showLesson(0)"><span class="nav-num">01</span>API 기초 & Claude 모델 이해</a>
+        <a class="nav-item" onclick="showLesson(1)"><span class="nav-num">02</span>첫 API 요청 & 대화 관리</a>
+        <a class="nav-item" onclick="showLesson(2)"><span class="nav-num">03</span>시스템 프롬프트 & 출력 제어</a>
+        <a class="nav-item" onclick="showLesson(3)"><span class="nav-num">04</span>프롬프트 평가 (Evals)</a>
+        <a class="nav-item" onclick="showLesson(4)"><span class="nav-num">05</span>프롬프트 엔지니어링</a>
+        <a class="nav-item" onclick="showLesson(5)"><span class="nav-num">06</span>Tool Use (도구 사용)</a>
+        <a class="nav-item" onclick="showLesson(6)"><span class="nav-num">07</span>RAG (검색 증강 생성)</a>
+        <a class="nav-item" onclick="showLesson(7)"><span class="nav-num">08</span>Claude 고급 기능</a>
+        <a class="nav-item" onclick="showLesson(8)"><span class="nav-num">09</span>MCP (모델 컨텍스트 프로토콜)</a>
+        <a class="nav-item" onclick="showLesson(9)"><span class="nav-num">10</span>에이전트 & Claude Code</a>
+      </nav>
+      <div class="sidebar-progress">
+        <div class="progress-label"><span>진행률</span><span id="progressLabel">1 / 10</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width: 10%"></div></div>
+      </div>
+    </aside>
+    <main>
+
+      <!-- LESSON 1 -->
+      <div class="lesson-panel active" id="lesson-0">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 01</span>
+          <h2>API 기초 & Claude 모델 이해</h2>
+          <p class="lesson-subtitle">Anthropic API의 작동 원리와 Claude 모델 패밀리를 이해합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>API 요청이 처리되는 5단계 흐름 이해</li>
+            <li>Claude 모델 패밀리 (Opus, Sonnet, Haiku) 비교</li>
+            <li>토큰화 → 임베딩 → 문맥 반영 → 생성의 내부 처리 과정</li>
+            <li>왜 API 키를 서버에서만 사용해야 하는지 보안 원칙</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>API 요청의 5단계 흐름</h3>
+          <p>사용자가 채팅 인터페이스에서 "전송"을 클릭하는 순간부터 Claude의 응답이 화면에 나타나기까지, 모든 상호작용은 예측 가능한 5단계를 거칩니다.</p>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-content">
+                <strong>클라이언트 → 서버</strong>
+                <p>사용자의 브라우저나 앱이 여러분의 서버로 요청을 보냅니다. API 키는 절대 클라이언트에 노출되어서는 안 됩니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-content">
+                <strong>서버 → Anthropic API</strong>
+                <p>여러분의 서버가 보안 저장된 API 키를 사용해 Anthropic API에 요청을 전달합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-content">
+                <strong>Claude 내부 처리</strong>
+                <p>토큰화 → 임베딩 → 문맥 반영 → 생성의 4단계로 응답을 생성합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">4</div>
+              <div class="flow-step-content">
+                <strong>API → 서버 응답</strong>
+                <p>생성된 텍스트, 토큰 사용량, 중단 이유가 포함된 구조화된 응답을 반환합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">5</div>
+              <div class="flow-step-content">
+                <strong>서버 → 클라이언트</strong>
+                <p>서버가 생성된 텍스트를 클라이언트 앱으로 전달하여 사용자에게 표시합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Claude 내부 처리 4단계</h3>
+          <p>Anthropic API에 요청이 도착하면 Claude는 다음 4단계로 응답을 생성합니다:</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>1. 토큰화 (Tokenization)</h5>
+              <p>입력 텍스트를 토큰이라는 작은 단위로 분해합니다. 토큰은 단어, 단어의 일부, 공백, 기호일 수 있습니다. 간단히 말해 각 단어를 하나의 토큰으로 이해하면 됩니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>2. 임베딩 (Embedding)</h5>
+              <p>각 토큰을 숫자 목록(임베딩)으로 변환합니다. 이 숫자들이 단어의 의미를 포착합니다. 예: "quantum"은 물리학, 양자역학, 극소량 등 여러 의미를 가질 수 있습니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>3. 문맥 반영 (Contextualization)</h5>
+              <p>주변 단어를 기반으로 각 임베딩을 정제합니다. 문맥에 맞는 의미가 강조되도록 수치 표현을 조정합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>4. 생성 (Generation)</h5>
+              <p>문맥이 반영된 임베딩이 출력 레이어를 통과해 다음 단어의 확률을 계산합니다. Claude는 확률과 제어된 무작위성을 조합해 자연스러운 응답을 생성합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Claude 모델 패밀리 비교</h3>
+          <table class="compare-table">
+            <thead>
+              <tr><th>모델</th><th>특성</th><th>적합한 용도</th><th>비용/속도</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Claude Opus</strong></td><td>최고 성능, 가장 강력한 추론 능력</td><td>복잡한 분석, 연구, 전략적 작업</td><td>높음 / 느림</td></tr>
+              <tr><td><strong>Claude Sonnet</strong></td><td>성능과 속도의 균형</td><td>대부분의 프로덕션 사용 사례</td><td>중간 / 빠름</td></tr>
+              <tr><td><strong>Claude Haiku</strong></td><td>가장 빠르고 경제적</td><td>데이터 생성, 간단한 분류, 높은 처리량</td><td>낮음 / 매우 빠름</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="warn-box">
+          <strong>⚠️ 보안 원칙</strong>
+          <p>API 키를 클라이언트 코드에 직접 포함하면 심각한 보안 취약점이 생깁니다. 누구든 키를 추출해 무단으로 요청을 보낼 수 있습니다. 항상 <code>.env</code> 파일에 저장하고 <code>.gitignore</code>에 추가하세요.</p>
+        </div>
+
+        <div class="content-section">
+          <h3>필수 API 파라미터</h3>
+          <p>모든 요청에는 다음 필드가 포함되어야 합니다:</p>
+          <ul>
+            <li><strong>api_key</strong> — Anthropic에 요청을 식별하는 인증 키</li>
+            <li><strong>model</strong> — 사용할 모델 이름 (예: "claude-sonnet-4-0")</li>
+            <li><strong>messages</strong> — 사용자 입력을 담는 메시지 리스트</li>
+            <li><strong>max_tokens</strong> — Claude가 생성할 수 있는 최대 토큰 수 (안전 제한)</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>API 요청은 항상 클라이언트 → 내 서버 → Anthropic API 순서로 중개됩니다 (키 보안을 위해)</li>
+            <li>Claude는 토큰화 → 임베딩 → 문맥 반영 → 생성의 4단계로 응답을 만듭니다</li>
+            <li>Opus(복잡성) / Sonnet(균형) / Haiku(속도·비용) 용도에 맞게 모델을 선택하세요</li>
+            <li><code>max_tokens</code>는 목표치가 아니라 상한선입니다. Claude는 그 안에서 적절히 멈춥니다</li>
+            <li>생성 중단 이유: max_tokens 도달, 자연스러운 종료, 중단 시퀀스 감지</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>내 사용 사례에서 Claude Sonnet과 Haiku 중 어느 것이 더 적합할까? 기준은 무엇인가?</li>
+            <li>API 키를 환경 변수로 관리하는 것이 왜 단순한 관행을 넘어 필수 원칙인가?</li>
+            <li>토큰 비용을 최소화하면서도 충분한 응답 품질을 얻으려면 max_tokens를 어떻게 설정해야 할까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 2 -->
+      <div class="lesson-panel" id="lesson-1">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 02</span>
+          <h2>첫 API 요청 & 대화 관리</h2>
+          <p class="lesson-subtitle">client.messages.create()로 첫 요청을 만들고, 멀티턴 대화를 올바르게 관리합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Python SDK로 첫 API 요청 구성 및 실행</li>
+            <li>Claude가 대화 히스토리를 저장하지 않는다는 핵심 개념 이해</li>
+            <li>멀티턴 대화를 위한 메시지 히스토리 관리 패턴</li>
+            <li>응답 객체 구조와 텍스트 추출 방법</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>환경 설정 & 첫 요청</h3>
+          <pre><code># 패키지 설치
+%pip install anthropic python-dotenv
+
+# .env 파일에 API 키 저장 (절대 코드에 직접 쓰지 마세요)
+# ANTHROPIC_API_KEY="sk-ant-..."
+
+from dotenv import load_dotenv
+from anthropic import Anthropic
+
+load_dotenv()
+client = Anthropic()
+model = "claude-sonnet-4-0"
+
+# 첫 번째 API 요청
+message = client.messages.create(
+    model=model,
+    max_tokens=1000,
+    messages=[
+        {
+            "role": "user",
+            "content": "What is quantum computing? Answer in one sentence"
+        }
+    ]
+)
+
+# 응답 텍스트 추출
+print(message.content[0].text)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>Claude의 상태 없음(Stateless) 특성</h3>
+          <div class="warn-box">
+            <strong>⚠️ 핵심 개념: Claude는 대화 히스토리를 저장하지 않습니다!</strong>
+            <p>각 요청은 완전히 독립적입니다. "다른 문장을 써줘"라고 물으면 Claude는 무엇에 대한 문장인지 전혀 모릅니다. 이전 대화 내용을 매번 함께 전송해야 합니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>멀티턴 대화 관리 패턴</h3>
+          <pre><code># 대화 관리를 위한 헬퍼 함수들
+def add_user_message(messages, text):
+    messages.append({"role": "user", "content": text})
+
+def add_assistant_message(messages, text):
+    messages.append({"role": "assistant", "content": text})
+
+def chat(messages):
+    message = client.messages.create(
+        model=model,
+        max_tokens=1000,
+        messages=messages,
+    )
+    return message.content[0].text
+
+# 멀티턴 대화 예시
+messages = []
+
+# 1. 첫 번째 질문
+add_user_message(messages, "Define quantum computing in one sentence")
+answer = chat(messages)
+
+# 2. 응답을 히스토리에 추가 (중요!)
+add_assistant_message(messages, answer)
+
+# 3. 후속 질문 (Claude가 이전 맥락을 알 수 있음)
+add_user_message(messages, "Write another sentence expanding on that")
+final_answer = chat(messages)</code></pre>
+          <div class="tip-box">
+            <strong>💡 핵심 패턴</strong>
+            <p>Claude의 응답을 받은 후에는 반드시 <code>add_assistant_message()</code>로 히스토리에 추가하세요. 그래야 다음 요청 시 Claude가 이전 맥락을 인식할 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>응답 객체 구조</h3>
+          <table class="compare-table">
+            <thead><tr><th>필드</th><th>설명</th><th>접근 방법</th></tr></thead>
+            <tbody>
+              <tr><td><code>content[0].text</code></td><td>생성된 텍스트 (가장 자주 사용)</td><td><code>message.content[0].text</code></td></tr>
+              <tr><td><code>usage.input_tokens</code></td><td>입력 토큰 수</td><td>비용 추적에 활용</td></tr>
+              <tr><td><code>usage.output_tokens</code></td><td>출력 토큰 수</td><td>비용 추적에 활용</td></tr>
+              <tr><td><code>stop_reason</code></td><td>생성 중단 이유</td><td><code>end_turn</code>, <code>max_tokens</code>, <code>stop_sequence</code></td></tr>
+              <tr><td><code>model</code></td><td>사용된 모델 이름</td><td>응답 검증에 활용</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Claude는 무상태(stateless) — 모든 대화 히스토리를 매번 요청에 포함해야 합니다</li>
+            <li><code>add_user_message()</code> / <code>add_assistant_message()</code> 헬퍼 함수로 히스토리를 체계적으로 관리하세요</li>
+            <li>응답 텍스트는 <code>message.content[0].text</code>로 간단히 추출합니다</li>
+            <li>토큰 사용량을 추적해 비용을 모니터링하는 습관을 들이세요</li>
+            <li><code>stop_reason</code>을 확인해 응답이 완전히 끝났는지 확인하세요</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>대화 히스토리가 길어질수록 토큰 비용이 증가합니다. 히스토리를 어떻게 효율적으로 관리할 수 있을까?</li>
+            <li>대화 히스토리를 데이터베이스에 저장하고 불러오는 시스템을 어떻게 설계할까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 3 -->
+      <div class="lesson-panel" id="lesson-2">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 03</span>
+          <h2>시스템 프롬프트 & 출력 제어</h2>
+          <p class="lesson-subtitle">시스템 프롬프트로 Claude의 역할을 정의하고, Temperature·스트리밍·구조화 출력으로 응답을 제어합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>시스템 프롬프트로 Claude의 페르소나와 행동 방식 정의</li>
+            <li>Temperature 파라미터로 창의성과 일관성 사이 균형 조절</li>
+            <li>스트리밍으로 사용자 경험 개선 (실시간 텍스트 표시)</li>
+            <li>어시스턴트 메시지 프리필 + 중단 시퀀스로 구조화 출력 생성</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>시스템 프롬프트 활용</h3>
+          <p>시스템 프롬프트는 Claude가 어떻게 응답해야 하는지 안내합니다. 역할, 스타일, 제한 사항을 정의하는 데 사용합니다.</p>
+          <pre><code>system_prompt = """
+You are a patient math tutor.
+Do not directly answer a student's questions.
+Guide them to a solution step by step.
+Show examples of similar problems when helpful.
+"""
+
+def chat(messages, system=None):
+    params = {
+        "model": model,
+        "max_tokens": 1000,
+        "messages": messages,
+    }
+    if system:
+        params["system"] = system
+
+    message = client.messages.create(**params)
+    return message.content[0].text
+
+# 시스템 프롬프트와 함께 호출
+answer = chat(messages, system=system_prompt)</code></pre>
+          <div class="tip-box">
+            <strong>💡 중요</strong>
+            <p>Claude의 API는 <code>system=None</code>을 받지 않습니다. 조건부로 파라미터를 추가하도록 <code>if system:</code>으로 처리하세요.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Temperature 파라미터</h3>
+          <p>Temperature는 0~1 사이의 값으로 Claude 응답의 예측 가능성과 창의성을 조절합니다.</p>
+          <div class="temp-grid">
+            <div class="temp-card">
+              <div class="temp-range">0.0 – 0.3</div>
+              <div class="temp-name">낮은 온도 (결정적)</div>
+              <ul>
+                <li>팩트 응답</li>
+                <li>코딩 지원</li>
+                <li>데이터 추출</li>
+                <li>콘텐츠 검토</li>
+              </ul>
+            </div>
+            <div class="temp-card">
+              <div class="temp-range">0.4 – 0.7</div>
+              <div class="temp-name">중간 온도 (균형)</div>
+              <ul>
+                <li>요약</li>
+                <li>교육 콘텐츠</li>
+                <li>문제 해결</li>
+                <li>제약 있는 창작</li>
+              </ul>
+            </div>
+            <div class="temp-card">
+              <div class="temp-range">0.8 – 1.0</div>
+              <div class="temp-name">높은 온도 (창의적)</div>
+              <ul>
+                <li>브레인스토밍</li>
+                <li>창의적 글쓰기</li>
+                <li>마케팅 문안</li>
+                <li>아이디어 다양화</li>
+              </ul>
+            </div>
+          </div>
+          <pre><code>def chat(messages, system=None, temperature=1.0):
+    params = {
+        "model": model,
+        "max_tokens": 1000,
+        "messages": messages,
+        "temperature": temperature
+    }
+    if system:
+        params["system"] = system
+    message = client.messages.create(**params)
+    return message.content[0].text
+
+# 낮은 온도 - 일관된 결과
+answer = chat(messages, temperature=0.0)
+
+# 높은 온도 - 다양한 창의적 결과
+answer = chat(messages, temperature=1.0)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>스트리밍으로 UX 개선</h3>
+          <p>응답이 10-30초 걸릴 수 있습니다. 스트리밍은 텍스트가 생성되는 대로 실시간으로 보여줍니다.</p>
+          <pre><code># 스트리밍 구현
+with client.messages.stream(
+    model=model,
+    max_tokens=1000,
+    messages=messages
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)  # 실시간 출력
+
+    # 완전한 메시지 객체 (DB 저장용)
+    final_message = stream.get_final_message()</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>구조화 출력: 프리필 + 중단 시퀀스</h3>
+          <p>어시스턴트 메시지 프리필과 중단 시퀀스를 조합하면 JSON 등 순수 구조화 데이터를 얻을 수 있습니다.</p>
+          <pre><code>messages = []
+add_user_message(messages, "Generate an AWS EventBridge rule as JSON")
+add_assistant_message(messages, "```json")  # JSON 시작을 프리필
+
+# 닫는 코드 블록이 나오면 즉시 중단
+text = chat(messages, stop_sequences=["```"])
+
+# 결과: 순수 JSON만 반환 (마크다운 없음)
+import json
+data = json.loads(text)</code></pre>
+          <div class="tip-box">
+            <strong>💡 활용 패턴</strong>
+            <p>이 기법은 웹 앱에서 사용자가 바로 복사할 수 있는 순수 코드/JSON이 필요할 때 특히 유용합니다. Claude의 설명 텍스트를 제거하고 원하는 형식만 정확히 얻을 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>시스템 프롬프트는 Claude의 역할·스타일·제한을 정의하는 강력한 도구입니다</li>
+            <li>Temperature: 낮음(0~0.3)은 일관성, 높음(0.8~1)은 창의성에 적합합니다</li>
+            <li>스트리밍은 사용자 경험을 크게 개선하며 <code>client.messages.stream()</code>으로 구현합니다</li>
+            <li>프리필 + 중단 시퀀스 조합은 순수 구조화 출력(JSON, 코드)을 보장합니다</li>
+            <li>프리필된 어시스턴트 메시지는 응답의 시작점을 강제로 지정합니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>시스템 프롬프트와 사용자 메시지 중 어디에 제약 사항을 넣는 것이 더 효과적일까?</li>
+            <li>스트리밍을 사용할 때 부분적으로 도착한 응답을 어떻게 처리해야 할까?</li>
+            <li>다양한 사용 사례에서 최적의 Temperature를 어떻게 실험적으로 결정할 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 4 -->
+      <div class="lesson-panel" id="lesson-3">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 04</span>
+          <h2>프롬프트 평가 (Evals)</h2>
+          <p class="lesson-subtitle">데이터 기반으로 프롬프트 성능을 측정하고 체계적으로 개선하는 Eval 워크플로우를 구축합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>왜 주관적 판단 대신 객관적 평가가 필요한지 이해</li>
+            <li>5단계 Eval 워크플로우: 프롬프트 → 데이터셋 → 실행 → 채점 → 반복</li>
+            <li>Claude로 테스트 데이터셋 자동 생성</li>
+            <li>모델 기반 채점과 코드 기반 채점의 차이와 활용</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>왜 Eval이 필요한가?</h3>
+          <p>프롬프트를 변경할 때 "이게 더 나은가?"라는 질문에 직관으로 답하는 것은 위험합니다. Eval은 이 질문에 숫자로 답합니다.</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>Option 1: 수동 검토</h5>
+              <p>몇 가지 예시를 직접 테스트합니다. 빠르지만 주관적이고 샘플이 적어 신뢰하기 어렵습니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>Option 2: 히스토릭 테스트</h5>
+              <p>이전 버전의 결과물과 비교합니다. 개선은 보이지만 절대적 품질을 판단하기 어렵습니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>Option 3: Eval 파이프라인 ✓</h5>
+              <p>프롬프트를 체계적인 평가 파이프라인에 실행합니다. 객관적 점수로 변경 전후를 정확히 비교합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>실제 점수 비교 예시</h5>
+              <p>프롬프트 개선 전: 2.32점 → 명확성 추가 후: 3.92점 → 구체성 추가 후: 7.86점 (10점 만점)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>5단계 Eval 워크플로우</h3>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-content">
+                <strong>프롬프트 초안 작성</strong>
+                <p>테스트할 기준 프롬프트를 작성합니다. 처음에는 단순하게 시작해도 됩니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-content">
+                <strong>Eval 데이터셋 생성</strong>
+                <p>실제 사용 사례를 대표하는 입력 샘플을 수동으로 만들거나 Claude로 자동 생성합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-content">
+                <strong>Claude에 통과</strong>
+                <p>데이터셋의 각 입력을 프롬프트와 결합해 Claude에게 보내고 출력을 수집합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">4</div>
+              <div class="flow-step-content">
+                <strong>채점기로 평가</strong>
+                <p>모델 기반 또는 코드 기반 채점으로 각 출력에 점수를 매깁니다 (1-10 척도).</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">5</div>
+              <div class="flow-step-content">
+                <strong>프롬프트 수정 & 반복</strong>
+                <p>점수를 기준으로 프롬프트를 개선하고 전체 과정을 반복합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Claude로 테스트 데이터셋 자동 생성</h3>
+          <pre><code>def generate_dataset():
+    prompt = """
+Generate an evaluation dataset. Each object should contain a task
+for AWS-related Python/JSON/Regex generation.
+
+Example:
+```json
+[{"task": "Write a Lambda function to process S3 events"}, ...]
+```
+Generate 10 objects.
+"""
+    messages = []
+    add_user_message(messages, prompt)
+    add_assistant_message(messages, "```json")  # JSON 강제
+    text = chat(messages, stop_sequences=["```"])
+    return json.loads(text)
+
+# 데이터셋 저장
+dataset = generate_dataset()
+with open('dataset.json', 'w') as f:
+    json.dump(dataset, f, indent=2)</code></pre>
+          <div class="tip-box">
+            <strong>💡 Haiku 사용 추천</strong>
+            <p>테스트 데이터셋 생성에는 비용이 저렴한 Claude Haiku를 사용하세요. 데이터 생성 품질은 크게 다르지 않으면서 비용을 크게 절약할 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>채점 방법 비교</h3>
+          <table class="compare-table">
+            <thead><tr><th>채점 방법</th><th>작동 원리</th><th>장점</th><th>적합한 경우</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>모델 기반 채점</strong></td>
+                <td>Claude가 질문+응답을 보고 1-10점으로 평가, 이유 설명</td>
+                <td>복잡한 품질 평가 가능, 상세한 피드백</td>
+                <td>오픈 엔드 질문, 설명적 응답 품질 평가</td>
+              </tr>
+              <tr>
+                <td><strong>코드 기반 채점</strong></td>
+                <td>정규식, JSON 파싱, 문자열 검사로 자동 평가</td>
+                <td>빠르고, 비용 없음, 완전히 객관적</td>
+                <td>포맷 검사, 코드 실행 결과, 명확한 정답이 있는 경우</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Eval은 프롬프트 엔지니어링을 추측에서 과학으로 바꿉니다 — 점수가 모든 것을 말해줍니다</li>
+            <li>5단계: 초안 → 데이터셋 생성 → Claude 실행 → 채점 → 반복 개선</li>
+            <li>Claude Haiku로 테스트 데이터셋을 자동 생성하면 시간과 비용을 절약합니다</li>
+            <li>프리필 + 중단 시퀀스 조합은 Eval에서도 JSON 파싱에 필수입니다</li>
+            <li>모델 채점(유연, 비용有) vs 코드 채점(빠름, 무료) — 용도에 맞게 선택하세요</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>나의 사용 사례에서 "좋은 응답"의 기준은 무엇인가? 모델 채점으로 포착 가능한가?</li>
+            <li>Eval 데이터셋은 몇 개의 샘플이 있어야 통계적으로 신뢰할 수 있을까?</li>
+            <li>점수가 낮게 나왔을 때 어떤 방식으로 프롬프트를 수정해야 가장 효과적일까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 5 -->
+      <div class="lesson-panel" id="lesson-4">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 05</span>
+          <h2>프롬프트 엔지니어링</h2>
+          <p class="lesson-subtitle">명확성, 구체성, XML 태그, 예시 제공의 4가지 핵심 기법으로 프롬프트 품질을 극적으로 향상시킵니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>첫 줄의 명확성이 왜 가장 중요한지 이해</li>
+            <li>출력 품질 가이드라인과 프로세스 단계의 차이</li>
+            <li>XML 태그로 복잡한 프롬프트 구조화</li>
+            <li>One-shot / Multi-shot 예시로 엣지 케이스 처리</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 1: 명확하고 직접적으로</h3>
+          <p>프롬프트의 첫 줄이 가장 중요합니다. 불명확한 요청은 Claude를 헤매게 합니다.</p>
+          <table class="compare-table">
+            <thead><tr><th>나쁜 예 ❌</th><th>좋은 예 ✓</th><th>개선 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>"지붕에 붙이는 태양 에너지 쓰는 판 있잖아요..."</td>
+                <td>"Write three paragraphs about how solar panels work."</td>
+                <td>직접적인 행동 동사 + 명확한 형식 + 주제 명시</td>
+              </tr>
+              <tr>
+                <td>"재생에너지 읽다가 지열 에너지 나왔는데 어느 나라가?"</td>
+                <td>"Identify 3 countries using geothermal energy. Include generation stats."</td>
+                <td>동사로 시작, 수량 명시, 포함할 내용 지정</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="tip-box">
+            <strong>💡 결과</strong>
+            <p>이 하나의 변경만으로 Eval 점수가 2.32 → 3.92로 상승했습니다 (69% 향상).</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 2: 구체적으로</h3>
+          <p>가이드라인을 제공하면 Claude는 원하는 방향으로 정확히 움직입니다.</p>
+          <pre><code># 구체적 출력 가이드라인 예시
+prompt = f"""
+Generate a one-day meal plan for an athlete.
+
+<athlete_information>
+{athlete_data}
+</athlete_information>
+
+Guidelines:
+1. Include accurate daily calorie amount
+2. Show protein, fat, and carb amounts
+3. Specify when to eat each meal
+4. Use only foods that fit restrictions
+5. List all portion sizes in grams
+6. Keep budget-friendly if mentioned
+"""</code></pre>
+          <div class="tip-box">
+            <strong>💡 결과</strong>
+            <p>가이드라인 추가 후 Eval 점수가 3.92 → 7.86으로 두 배 이상 상승했습니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 3: XML 태그로 구조화</h3>
+          <p>대용량 데이터나 여러 종류의 콘텐츠를 포함할 때 XML 태그로 명확한 경계를 만드세요.</p>
+          <pre><code># 나쁜 예: 코드와 문서가 섞임
+prompt = f"Debug this code {my_code} using {docs}"
+
+# 좋은 예: XML 태그로 명확히 분리
+prompt = f"""
+Debug the following code using the provided documentation.
+
+<my_code>
+{my_code}
+</my_code>
+
+<docs>
+{docs}
+</docs>
+"""</code></pre>
+          <p>설명적인 태그 이름을 사용하세요: <code>&lt;sales_records&gt;</code>는 <code>&lt;data&gt;</code>보다 낫고, <code>&lt;athlete_information&gt;</code>이 <code>&lt;info&gt;</code>보다 낫습니다.</p>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 4: 예시 제공 (Few-shot)</h3>
+          <p>예시는 엣지 케이스 처리에 특히 강력합니다. 일반적인 지시로는 포착하기 어려운 미묘한 패턴을 보여줄 수 있습니다.</p>
+          <pre><code># 반어법 처리를 위한 Few-shot 예시
+prompt = f"""
+Classify the sentiment of this tweet as positive or negative.
+
+<examples>
+<example>
+<sample_input>Great game tonight!</sample_input>
+<ideal_output>Positive</ideal_output>
+</example>
+<example>
+<sample_input>Oh yeah, I really needed a flight delay tonight! Excellent!</sample_input>
+<ideal_output>Negative</ideal_output>
+<!-- Note: This is sarcastic - appears positive but means the opposite -->
+</example>
+</examples>
+
+<tweet>{tweet}</tweet>
+"""</code></pre>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li><strong>명확성:</strong> 직접적인 행동 동사로 시작하고 모호한 표현을 제거하세요</li>
+            <li><strong>구체성:</strong> 출력 품질 가이드라인은 거의 모든 프롬프트에 포함해야 합니다</li>
+            <li><strong>XML 태그:</strong> 대용량 데이터나 혼합 콘텐츠에서 명확한 경계를 만듭니다</li>
+            <li><strong>예시:</strong> 반어법, 엣지 케이스, 특수 포맷에는 Few-shot이 가장 효과적입니다</li>
+            <li>각 기법을 독립적으로 적용하고 Eval로 효과를 측정하며 개선하세요</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>현재 사용 중인 프롬프트에서 개선이 가장 필요한 기법은 무엇인가?</li>
+            <li>예시를 너무 많이 제공하면 어떤 문제가 생길 수 있을까?</li>
+            <li>프로세스 단계(process steps)를 언제 출력 가이드라인 대신 사용해야 할까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 6 -->
+      <div class="lesson-panel" id="lesson-5">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 06</span>
+          <h2>Tool Use (도구 사용)</h2>
+          <p class="lesson-subtitle">Claude가 외부 함수와 API를 호출할 수 있도록 도구를 정의하고, 멀티턴 도구 대화와 구조화 데이터 추출을 구현합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Claude에게 부족한 능력(시간 인식, 외부 API 등)을 도구로 확장하는 방법</li>
+            <li>도구 함수와 JSON Schema 정의</li>
+            <li>멀티블록 응답 처리: TextBlock + ToolUseBlock</li>
+            <li>도구 결과 전송과 도구 기반 구조화 데이터 추출</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>도구 함수 작성</h3>
+          <p>도구 함수는 Claude가 추가 정보가 필요할 때 자동으로 호출하는 Python 함수입니다.</p>
+          <pre><code>from datetime import datetime
+
+def get_current_datetime(date_format="%Y-%m-%d %H:%M:%S"):
+    if not date_format:
+        raise ValueError("date_format cannot be empty")
+    return datetime.now().strftime(date_format)
+
+def add_duration_to_datetime(dt_string, days=0, hours=0, minutes=0):
+    from datetime import timedelta
+    dt = datetime.strptime(dt_string, "%Y-%m-%d %H:%M:%S")
+    result = dt + timedelta(days=days, hours=hours, minutes=minutes)
+    return result.strftime("%Y-%m-%d %H:%M:%S")
+
+def set_reminder(message, datetime_string):
+    # 실제 구현에서는 알림 시스템과 연결
+    return f"Reminder set: '{message}' for {datetime_string}"</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>JSON Schema 정의</h3>
+          <p>JSON Schema는 Claude에게 도구를 언제, 어떻게 사용할지 알려주는 문서입니다.</p>
+          <pre><code>get_current_datetime_schema = {
+    "name": "get_current_datetime",
+    "description": "Returns the current date and time. Use this when the user asks about
+                    the current time or needs to know what time it is now.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "date_format": {
+                "type": "string",
+                "description": "Format string using Python strftime codes. Default: %Y-%m-%d %H:%M:%S",
+                "default": "%Y-%m-%d %H:%M:%S"
+            }
+        },
+        "required": []
+    }
+}</code></pre>
+          <div class="tip-box">
+            <strong>💡 Schema 자동 생성</strong>
+            <p>Claude에게 함수 코드를 주고 "write a JSON schema for tool calling for this function"이라고 요청하면 Schema를 자동으로 생성해줍니다. Anthropic 문서를 함께 첨부하면 더 정확합니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>도구 호출 전체 흐름</h3>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-content">
+                <strong>사용자 메시지 + 도구 스키마 전송</strong>
+                <p><code>tools=[schema]</code> 파라미터와 함께 Claude에게 요청을 보냅니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-content">
+                <strong>멀티블록 응답 수신</strong>
+                <p>Claude가 TextBlock + ToolUseBlock을 포함한 복합 응답을 반환합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-content">
+                <strong>도구 실행</strong>
+                <p><code>response.content[1].input</code>에서 파라미터를 추출해 실제 함수를 호출합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">4</div>
+              <div class="flow-step-content">
+                <strong>도구 결과 전송</strong>
+                <p>tool_result 블록을 user 메시지에 담아 전체 히스토리와 함께 다시 전송합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">5</div>
+              <div class="flow-step-content">
+                <strong>최종 응답 수신</strong>
+                <p>Claude가 도구 결과를 활용해 사용자에게 최종 응답을 생성합니다.</p>
+              </div>
+            </div>
+          </div>
+
+          <pre><code># 도구 결과 전송 예시
+tool_result = {
+    "type": "tool_result",
+    "tool_use_id": response.content[1].id,  # ToolUse ID와 매칭
+    "content": str(get_current_datetime(**response.content[1].input))
+}
+
+messages.append({"role": "user", "content": [tool_result]})
+final_response = chat(messages, tools=[get_current_datetime_schema])</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>도구로 구조화 데이터 추출</h3>
+          <p><code>tool_choice</code>로 특정 도구 사용을 강제하면 신뢰할 수 있는 구조화 데이터를 추출할 수 있습니다.</p>
+          <pre><code>article_summary_schema = {
+    "name": "article_summary",
+    "description": "Extracts structured data from articles",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "title": {"type": "string"},
+            "author": {"type": "string"},
+            "key_insights": {"type": "array", "items": {"type": "string"}}
+        }
+    }
+}
+
+response = client.messages.create(
+    model=model,
+    max_tokens=1000,
+    messages=messages,
+    tools=[article_summary_schema],
+    tool_choice={"type": "tool", "name": "article_summary"}  # 강제 사용
+)
+
+structured_data = response.content[0].input  # 깔끔한 구조화 데이터</code></pre>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>도구는 Claude의 한계(실시간 정보, 외부 API, 계산)를 Python 함수로 확장합니다</li>
+            <li>JSON Schema의 <code>description</code> 필드가 Claude가 도구를 올바르게 사용하는 핵심입니다</li>
+            <li>도구 호출 시 응답은 TextBlock + ToolUseBlock의 복합 구조입니다</li>
+            <li><code>tool_choice: {"type": "tool"}</code>로 특정 도구를 강제해 구조화 데이터를 추출합니다</li>
+            <li>멀티턴 도구 대화에서는 전체 히스토리(도구 결과 포함)를 항상 유지해야 합니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>내 애플리케이션에서 어떤 기능을 도구로 구현하면 가장 큰 가치를 얻을 수 있을까?</li>
+            <li>도구가 오류를 반환할 때 Claude가 스스로 수정 시도를 할 수 있도록 에러 메시지를 어떻게 설계해야 할까?</li>
+            <li>도구 기반 구조화 데이터 추출과 프리필+정지시퀀스 방식 중 어떤 것이 더 안정적인가?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 7 -->
+      <div class="lesson-panel" id="lesson-6">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 07</span>
+          <h2>RAG (검색 증강 생성)</h2>
+          <p class="lesson-subtitle">텍스트 청킹, 임베딩, 벡터 검색을 활용해 외부 문서를 Claude에게 효율적으로 제공하는 RAG 파이프라인을 구축합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>RAG가 필요한 이유 — Claude의 컨텍스트 창 한계 극복</li>
+            <li>3가지 청킹 전략: 구조 기반, 문장 기반, 크기 기반</li>
+            <li>텍스트 임베딩과 코사인 유사도로 의미 기반 검색 구현</li>
+            <li>BM25 어휘 검색, 재랭킹, 컨텍스트 검색으로 정확도 향상</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>RAG가 필요한 이유</h3>
+          <p>Claude는 학습 데이터 기준의 지식만 갖고 있습니다. 최신 정보, 사내 문서, 개인 데이터를 활용하려면 RAG가 필요합니다. 또한 모든 문서를 컨텍스트에 넣는 것은 비용과 성능 측면에서 비효율적입니다.</p>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">A</div>
+              <div class="flow-step-content">
+                <strong>전처리 단계 (사전 실행)</strong>
+                <p>문서 청킹 → 임베딩 생성 → 벡터 DB 저장. 이 작업은 한 번만 실행합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">B</div>
+              <div class="flow-step-content">
+                <strong>쿼리 단계 (실시간 처리)</strong>
+                <p>사용자 질문 임베딩 → 유사 청크 검색 → Claude에 관련 청크 + 질문 전달.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>3가지 청킹 전략</h3>
+          <table class="compare-table">
+            <thead><tr><th>전략</th><th>방법</th><th>장점</th><th>적합한 경우</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>구조 기반</strong></td>
+                <td>제목, 섹션, 헤더 기준으로 분할</td>
+                <td>의미론적으로 완전한 단위 유지</td>
+                <td>구조가 잘 잡힌 내부 문서, 기술 매뉴얼</td>
+              </tr>
+              <tr>
+                <td><strong>문장 기반</strong></td>
+                <td>문장 단위로 분할, 일정 개수씩 묶음</td>
+                <td>문법적으로 완전한 청크</td>
+                <td>일반 텍스트 문서, 블로그, 기사</td>
+              </tr>
+              <tr>
+                <td><strong>크기 기반 (권장)</strong></td>
+                <td>고정 문자 수로 분할, 오버랩 적용</td>
+                <td>모든 콘텐츠 유형에 적용 가능</td>
+                <td>코드, 다양한 형식의 문서, 프로덕션 환경</td>
+              </tr>
+            </tbody>
+          </table>
+          <pre><code>def chunk_by_size(text, chunk_size=1000, overlap=200):
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = min(start + chunk_size, len(text))
+        chunks.append(text[start:end])
+        start += chunk_size - overlap  # 오버랩으로 경계 문맥 유지
+    return chunks</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>텍스트 임베딩 & 코사인 유사도</h3>
+          <pre><code>import voyageai
+
+client_voyage = voyageai.Client()  # VOYAGE_API_KEY 필요
+
+def generate_embedding(text, input_type="document"):
+    result = client_voyage.embed([text], model="voyage-3-large", input_type=input_type)
+    return result.embeddings[0]
+
+# 코사인 유사도로 관련 청크 검색
+import numpy as np
+
+def cosine_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+def find_relevant_chunks(query, chunk_embeddings, chunks, top_k=3):
+    query_embedding = generate_embedding(query, input_type="query")
+    similarities = [cosine_similarity(query_embedding, ce) for ce in chunk_embeddings]
+    top_indices = np.argsort(similarities)[-top_k:][::-1]
+    return [chunks[i] for i in top_indices]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>고급 검색 전략</h3>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>BM25 어휘 검색</h5>
+              <p>키워드 매칭 기반 검색. "quantum" 같은 특수 용어나 정확한 단어 검색에 강합니다. 시맨틱 검색의 단점을 보완합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>하이브리드 검색</h5>
+              <p>임베딩(시맨틱) + BM25(어휘) 결과를 결합합니다. 두 방식의 장점을 모두 활용해 검색 정확도를 높입니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>재랭킹 (Reranking)</h5>
+              <p>초기 검색 결과를 더 정밀한 모델로 재정렬합니다. VoyageAI의 rerank API 활용. 비용이 있지만 정확도가 크게 향상됩니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>컨텍스트 검색</h5>
+              <p>각 청크에 문서 맥락 요약을 추가합니다. Claude로 각 청크에 컨텍스트 정보를 자동 생성해 검색 정확도를 향상시킵니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>RAG = 문서 청킹 → 임베딩 저장 → 쿼리 시 관련 청크 검색 → Claude에 컨텍스트 제공</li>
+            <li>프로덕션에서는 크기 기반 청킹(오버랩 포함)이 가장 안정적입니다</li>
+            <li>Anthropic은 자체 임베딩 서비스가 없으므로 VoyageAI를 권장합니다</li>
+            <li>코사인 유사도로 시맨틱 검색, BM25로 어휘 검색 — 하이브리드가 최선입니다</li>
+            <li>재랭킹은 비용이 있지만 검색 정확도를 크게 향상시킵니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>나의 문서 유형에 가장 적합한 청킹 전략은 무엇이고, 그 이유는?</li>
+            <li>시맨틱 검색이 실패하는 경우(특수 용어, 코드)에는 어떤 전략을 보완해야 할까?</li>
+            <li>RAG 시스템의 품질을 어떻게 Eval로 측정하고 개선할 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 8 -->
+      <div class="lesson-panel" id="lesson-7">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 08</span>
+          <h2>Claude 고급 기능</h2>
+          <p class="lesson-subtitle">확장 사고, 이미지·PDF·인용, 프롬프트 캐싱 등 Claude의 강력한 고급 기능들을 실무에 적용합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Extended Thinking으로 복잡한 추론 문제 해결</li>
+            <li>이미지·PDF 입력 처리와 효과적인 프롬프팅</li>
+            <li>Citations로 투명한 출처 추적 구현</li>
+            <li>프롬프트 캐싱으로 비용 최대 90% 절감</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>Extended Thinking (확장 사고)</h3>
+          <p>복잡한 수학, 다단계 추론, 전략적 분석에서 Claude가 응답 전 내부적으로 더 깊이 사고할 수 있도록 합니다.</p>
+          <pre><code>def chat_with_thinking(messages, budget_tokens=10000):
+    response = client.messages.create(
+        model="claude-sonnet-4-0",
+        max_tokens=16000,
+        temperature=1,  # 확장 사고는 temperature=1 필수
+        thinking={
+            "type": "enabled",
+            "budget_tokens": budget_tokens  # 사고에 할당할 최대 토큰
+        },
+        messages=messages
+    )
+
+    thinking_text = ""
+    response_text = ""
+
+    for block in response.content:
+        if block.type == "thinking":
+            thinking_text = block.thinking  # 내부 사고 과정
+        elif block.type == "text":
+            response_text = block.text      # 최종 응답
+
+    return thinking_text, response_text</code></pre>
+          <div class="warn-box">
+            <strong>⚠️ 비용 고려</strong>
+            <p>확장 사고는 더 많은 토큰을 사용합니다. 먼저 일반 프롬프트를 최적화하고, 그래도 부족할 때만 확장 사고를 활성화하세요.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>이미지 & PDF 지원</h3>
+          <pre><code># 이미지 처리
+import base64
+
+with open("image.png", "rb") as f:
+    image_bytes = base64.standard_b64encode(f.read()).decode("utf-8")
+
+add_user_message(messages, [
+    {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": image_bytes}},
+    {"type": "text", "text": "Analyze this image with step-by-step methodology"}
+])
+
+# PDF 처리
+with open("document.pdf", "rb") as f:
+    pdf_bytes = base64.standard_b64encode(f.read()).decode("utf-8")
+
+add_user_message(messages, [
+    {"type": "document", "source": {"type": "base64", "media_type": "application/pdf", "data": pdf_bytes}},
+    {"type": "text", "text": "Summarize the key findings"}
+])</code></pre>
+          <div class="tip-box">
+            <strong>💡 이미지 프롬프팅 팁</strong>
+            <p>단순한 질문보다 단계별 분석 방법론을 제공하세요. "How many marbles?" 보다 "Step 1: Identify each marble one at a time. Step 2: Verify by counting from bottom-left..." 방식이 훨씬 정확합니다.</p>
+          </div>
+          <p><strong>이미지 제한:</strong> 최대 100개/요청, 이미지당 최대 5MB, 단일 이미지 최대 8000px, 토큰 계산: <code>width × height / 750</code></p>
+        </div>
+
+        <div class="content-section">
+          <h3>Citations (출처 추적)</h3>
+          <pre><code>add_user_message(messages, [
+    {
+        "type": "document",
+        "source": {"type": "base64", "media_type": "application/pdf", "data": pdf_bytes},
+        "title": "annual_report_2024.pdf",
+        "citations": {"enabled": True}  # 출처 추적 활성화
+    },
+    {"type": "text", "text": "What were the key financial results?"}
+])
+
+response = chat(messages)
+
+# 인용 정보 추출
+for block in response.content:
+    if hasattr(block, 'citations'):
+        for citation in block.citations:
+            print(f"출처: {citation.document_title}, p.{citation.start_page_number}")
+            print(f"인용: {citation.cited_text}")</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>프롬프트 캐싱</h3>
+          <p>반복적으로 사용하는 대용량 컨텍스트(시스템 프롬프트, RAG 문서 등)를 캐시해 비용과 지연을 줄입니다.</p>
+          <pre><code>response = client.messages.create(
+    model=model,
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": large_system_prompt,  # 수천 토큰의 시스템 프롬프트
+            "cache_control": {"type": "ephemeral"}  # 캐시 마킹
+        }
+    ],
+    messages=messages
+)
+
+# 사용량 확인
+print(f"캐시 생성: {response.usage.cache_creation_input_tokens}")
+print(f"캐시 히트: {response.usage.cache_read_input_tokens}")</code></pre>
+          <div class="tip-box">
+            <strong>💡 캐싱 효과</strong>
+            <p>캐시 읽기는 일반 입력 토큰 비용의 약 10%만 청구됩니다. RAG 파이프라인에서 수천 토큰의 문서를 반복 전송할 때 비용을 최대 90% 절감할 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Extended Thinking은 복잡한 추론에 강력하지만 비용이 높습니다 — 최후 수단으로 활용하세요</li>
+            <li>이미지/PDF는 base64 인코딩으로 전송하며, 단계별 분석 프롬프트가 정확도를 높입니다</li>
+            <li>Citations는 문서 기반 Q&A에서 투명성과 신뢰성을 크게 향상시킵니다</li>
+            <li>프롬프트 캐싱은 반복 요청이 많은 프로덕션 환경에서 비용을 90%까지 절감합니다</li>
+            <li>캐싱 활성화: <code>cache_control: {"type": "ephemeral"}</code>를 시스템 프롬프트나 문서 블록에 추가하세요</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>내 애플리케이션에서 프롬프트 캐싱을 적용하면 얼마나 비용을 절감할 수 있을까?</li>
+            <li>Citations가 사용자 신뢰에 어떤 영향을 미칠 수 있으며, 어떤 사용 사례에 가장 적합한가?</li>
+            <li>확장 사고의 내부 사고 과정을 사용자에게 보여줘야 할까, 말까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 9 -->
+      <div class="lesson-panel" id="lesson-8">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 09</span>
+          <h2>MCP (모델 컨텍스트 프로토콜)</h2>
+          <p class="lesson-subtitle">MCP의 아키텍처를 이해하고, 클라이언트·서버를 직접 구현해 외부 서비스와 통합하는 방법을 배웁니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>MCP가 일반 Tool Use와 다른 점 이해</li>
+            <li>MCP 클라이언트-서버 아키텍처와 메시지 타입</li>
+            <li>MCP 서버에서 도구, 리소스, 프롬프트 정의 방법</li>
+            <li>CLI 챗봇 프로젝트로 MCP 실습</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP vs 일반 Tool Use</h3>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>일반 Tool Use</h5>
+              <p>개발자가 직접 도구 함수와 JSON Schema를 모두 작성해야 합니다. GitHub API를 연결하려면 수십 개의 함수를 직접 구현해야 합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>MCP</h5>
+              <p>도구 정의와 실행이 MCP 서버에 패키징되어 있습니다. 누군가 이미 만들어둔 서버에 연결만 하면 됩니다. 개발자 생산성이 크게 향상됩니다.</p>
+            </div>
+          </div>
+          <p>MCP는 도구 사용의 대안이 아닌 <strong>보완적 개념</strong>입니다. "누가 도구를 만드느냐"의 문제를 해결합니다.</p>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP 통신 흐름</h3>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-content">
+                <strong>ListToolsRequest → ListToolsResult</strong>
+                <p>클라이언트가 서버에 "어떤 도구가 있나요?"를 물어봅니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-content">
+                <strong>도구 목록 + 사용자 쿼리 → Claude 전송</strong>
+                <p>수집된 도구 스키마와 사용자 질문을 함께 Claude에게 전달합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-content">
+                <strong>CallToolRequest → CallToolResult</strong>
+                <p>Claude가 도구 호출을 요청하면, 클라이언트가 서버에 실제 실행을 요청합니다.</p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-step-num">4</div>
+              <div class="flow-step-content">
+                <strong>도구 결과 → Claude → 최종 응답</strong>
+                <p>실행 결과를 Claude에게 전달하면 최종 사용자 응답을 생성합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP 서버의 3가지 제공 요소</h3>
+          <table class="compare-table">
+            <thead><tr><th>요소</th><th>역할</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Tools (도구)</strong></td>
+                <td>Claude가 호출할 수 있는 함수들. 데이터 조회, 수정, 외부 서비스 호출 등</td>
+                <td><code>read_document(doc_id)</code>, <code>update_document(doc_id, content)</code></td>
+              </tr>
+              <tr>
+                <td><strong>Resources (리소스)</strong></td>
+                <td>Claude가 읽을 수 있는 데이터 소스. 파일, DB 레코드, 설정 등</td>
+                <td><code>resource://docs/list</code>, <code>resource://docs/{id}</code></td>
+              </tr>
+              <tr>
+                <td><strong>Prompts (프롬프트)</strong></td>
+                <td>재사용 가능한 고품질 프롬프트 템플릿. 인수를 받아 동적 생성</td>
+                <td><code>format_document(doc_id)</code>, <code>summarize_with_context(topic)</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP 클라이언트 구현 (핵심 부분)</h3>
+          <pre><code">from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+class MCPClient:
+    async def connect(self, server_command: list[str]):
+        server_params = StdioServerParameters(command=server_command[0], args=server_command[1:])
+        self._stdio, self._write = await stdio_client(server_params).__aenter__()
+        self._session = ClientSession(self._stdio, self._write)
+        await self._session.initialize()
+
+    async def list_tools(self):
+        result = await self._session.list_tools()
+        return result.tools
+
+    async def call_tool(self, name: str, arguments: dict):
+        result = await self._session.call_tool(name, arguments)
+        return result.content
+
+    async def list_resources(self):
+        result = await self._session.list_resources()
+        return result.resources
+
+    async def get_prompt(self, name: str, args: dict):
+        result = await self._session.get_prompt(name, args)
+        return result.messages</code></pre>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>MCP는 도구 구현의 부담을 서버로 이전합니다 — 연결만 하면 수백 개의 도구를 즉시 사용 가능</li>
+            <li>MCP 서버는 Tools·Resources·Prompts의 3가지 요소를 제공합니다</li>
+            <li>ListTools/CallTool 두 가지 핵심 메시지 타입으로 통신합니다</li>
+            <li>MCP는 STDIO, HTTP, WebSocket 등 다양한 트랜스포트를 지원합니다</li>
+            <li>실제 프로젝트에서는 클라이언트 또는 서버 중 하나만 구현하는 경우가 대부분입니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>내가 자주 사용하는 서비스(Notion, Slack, GitHub 등)의 MCP 서버가 이미 존재하는가?</li>
+            <li>MCP 서버를 직접 만든다면 어떤 도구·리소스·프롬프트를 제공해야 가장 유용할까?</li>
+            <li>MCP 서버를 오픈소스로 공개하면 어떤 가치를 가질 수 있는가?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 10 -->
+      <div class="lesson-panel" id="lesson-9">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 10</span>
+          <h2>에이전트 & Claude Code</h2>
+          <p class="lesson-subtitle">자율적으로 작업을 수행하는 AI 에이전트의 핵심 특성을 이해하고, Claude Code와 Computer Use를 실무에 적용합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>AI 에이전트의 정의와 핵심 특성 4가지</li>
+            <li>Claude Code의 작동 방식과 실무 활용</li>
+            <li>Computer Use로 데스크탑 환경 자동화</li>
+            <li>에이전트 설계 시 고려해야 할 신뢰성과 안전성</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>에이전트란 무엇인가?</h3>
+          <p>에이전트는 도구를 사용하고, 환경과 상호작용하며, 자율적으로 다단계 작업을 수행하는 AI 시스템입니다. Claude Code와 Computer Use가 대표적인 사례입니다.</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>1. 도구 통합</h5>
+              <p>외부 서비스와 상호작용하기 위해 다양한 도구를 활용합니다. 파일 시스템, 웹 브라우저, API 등을 조합합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>2. 다단계 실행</h5>
+              <p>단일 프롬프트-응답을 넘어 여러 단계의 작업을 자율적으로 계획하고 실행합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>3. 환경 상호작용</h5>
+              <p>텍스트 대화를 넘어 파일, 데스크탑, 웹 등 실제 환경과 직접 상호작용합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>4. 자율적 문제 해결</h5>
+              <p>명확한 지시 없이도 목표를 향해 스스로 접근 방식을 결정하고 반복적으로 개선합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Claude Code</h3>
+          <p>터미널 기반 코딩 어시스턴트로, 실제 개발 환경에서 파일 수정, 버그 수정, 코드 설명 등을 자율적으로 수행합니다.</p>
+          <table class="compare-table">
+            <thead><tr><th>기능</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><strong>파일 편집</strong></td><td>코드베이스를 읽고 직접 수정하며 변경 사항을 설명합니다</td></tr>
+              <tr><td><strong>버그 수정</strong></td><td>오류 메시지를 분석하고 근본 원인을 찾아 수정합니다</td></tr>
+              <tr><td><strong>코드 질문 응답</strong></td><td>"이 함수는 어떻게 작동하나?"와 같은 질문에 컨텍스트 기반으로 답합니다</td></tr>
+              <tr><td><strong>개발 워크플로우</strong></td><td>테스트 실행, Git 작업, 리팩토링 등 다양한 작업을 지원합니다</td></tr>
+              <tr><td><strong>MCP 통합</strong></td><td>MCP 서버를 연결해 GitHub, Jira 등 외부 서비스와 연동합니다</td></tr>
+            </tbody>
+          </table>
+          <div class="tip-box">
+            <strong>💡 Claude Code 설정</strong>
+            <p><code>npm install -g @anthropic-ai/claude-code</code>로 설치 후, 터미널에서 <code>claude</code>를 입력하면 시작됩니다. ANTHROPIC_API_KEY가 환경 변수에 설정되어야 합니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Computer Use</h3>
+          <p>스크린샷을 보고 화면을 이해하며, 키보드/마우스 조작으로 실제 데스크탑 환경을 자동화합니다.</p>
+          <pre><code># Computer Use 도구 목록
+tools = [
+    {"type": "computer_20241022", "name": "computer", "display_width_px": 1024, "display_height_px": 768},
+    {"type": "text_editor_20241022", "name": "str_replace_editor"},
+    {"type": "bash_20241022", "name": "bash"}
+]
+
+response = client.messages.create(
+    model="claude-opus-4-0",  # Computer Use는 Opus 권장
+    max_tokens=4096,
+    tools=tools,
+    messages=[{"role": "user", "content": "Open a browser and search for Anthropic's documentation"}]
+)</code></pre>
+          <div class="warn-box">
+            <strong>⚠️ 보안 주의</strong>
+            <p>Computer Use는 실제 시스템을 제어합니다. 격리된 환경(VM, 컨테이너)에서 실행하고, 민감한 계정이나 파일에 대한 접근을 제한하세요.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>에이전트 설계 원칙</h3>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>최소 권한 원칙</h5>
+              <p>에이전트에게 작업에 필요한 최소한의 권한만 부여하세요. 실수로 인한 피해를 최소화합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>인간 감독 포함</h5>
+              <p>중요한 단계에서 사람의 확인을 받도록 설계하세요. 완전 자율 실행은 신중하게 결정하세요.</p>
+            </div>
+            <div class="priority-card">
+              <h5>오류 처리</h5>
+              <p>실패 케이스를 명시적으로 처리하고, 루프에 빠지지 않도록 최대 시도 횟수를 제한하세요.</p>
+            </div>
+            <div class="priority-card">
+              <h5>관찰 가능성</h5>
+              <p>에이전트가 무엇을 하고 있는지 로그를 남기고 모니터링할 수 있어야 합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>에이전트 = 도구 통합 + 다단계 실행 + 환경 상호작용 + 자율적 문제 해결</li>
+            <li>Claude Code는 터미널에서 실제 코드베이스를 읽고 수정하는 강력한 코딩 에이전트입니다</li>
+            <li>Computer Use는 스크린샷 기반으로 데스크탑 환경을 자동화합니다 — 격리 환경에서 사용하세요</li>
+            <li>에이전트 설계 시 최소 권한, 인간 감독, 오류 처리, 관찰 가능성의 4원칙을 지키세요</li>
+            <li>이 코스에서 배운 API, Tool Use, RAG, MCP 모두가 에이전트를 구성하는 핵심 요소입니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>내 팀이나 조직에서 에이전트로 자동화하면 가장 가치 있을 반복 작업은 무엇인가?</li>
+            <li>에이전트가 실수를 했을 때 그 결과를 어떻게 복구할 수 있을까? 되돌릴 수 없는 작업을 어떻게 보호해야 할까?</li>
+            <li>이 코스에서 배운 기술들을 결합해 어떤 에이전트를 만들고 싶은가?</li>
+          </ul>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  <script>
+    function showLesson(idx) {
+      document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+      document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+      const total = document.querySelectorAll('.lesson-panel').length;
+      document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+      document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

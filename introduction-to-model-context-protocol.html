@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCP 입문 — Anthropic Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --surface: #16161c;
+      --surface2: #1e1e27;
+      --border: #2a2a38;
+      --accent: #d97f3a;
+      --accent2: #7b6ef6;
+      --text: #e8e6f0;
+      --text-muted: #8884a8;
+      --text-dim: #5a5870;
+      --code-bg: #111118;
+      --tag-bg: #1e1e2e;
+      --success: #4caf80;
+      --warning: #e8a838;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.8; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #0d0f1a 100%); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 56px; }
+    .logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
+    .sep { color: var(--text-dim); }
+    .course-title-small { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 240px 1fr; gap: 0; padding: 0 2rem; }
+    aside { position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1.5rem 2rem 0; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .sidebar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
+    .lesson-nav { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-muted); font-size: 13px; line-height: 1.4; transition: all 0.15s; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
+    .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); min-width: 18px; margin-top: 1px; }
+    main { padding: 3rem 0 3rem 3rem; min-width: 0; }
+    .course-hero { margin-bottom: 3rem; }
+    .course-badge { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); background: rgba(217, 127, 58, 0.1); border: 1px solid rgba(217, 127, 58, 0.25); padding: 0.3rem 0.75rem; border-radius: 100px; margin-bottom: 1.25rem; letter-spacing: 0.08em; }
+    .course-hero h1 { font-family: 'Noto Serif KR', serif; font-size: 2.4rem; font-weight: 700; line-height: 1.25; color: var(--text); margin-bottom: 1rem; }
+    .course-meta { display: flex; gap: 1.5rem; color: var(--text-muted); font-size: 13px; }
+    .meta-item { display: flex; align-items: center; gap: 0.4rem; }
+    .lesson-section { margin-bottom: 4rem; padding-bottom: 4rem; border-bottom: 1px solid var(--border); }
+    .lesson-section:last-child { border-bottom: none; }
+    .lesson-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+    .lesson-number-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--bg); background: var(--accent); padding: 0.25rem 0.6rem; border-radius: 4px; white-space: nowrap; margin-top: 4px; letter-spacing: 0.05em; }
+    .lesson-title-block h2 { font-family: 'Noto Serif KR', serif; font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 0.4rem; }
+    .lesson-time { font-size: 12px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+    .learn-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+    .learn-box-title { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.75rem; }
+    .learn-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .learn-box ul li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 13.5px; color: var(--text-muted); }
+    .learn-box ul li::before { content: '→'; color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+    .key-takeaways { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+    .key-takeaways-title { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .key-takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .key-takeaways ul li { display: flex; gap: 0.75rem; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+    .key-takeaways ul li::before { content: '✦'; color: var(--accent); font-size: 11px; margin-top: 3px; flex-shrink: 0; }
+    .content-section { margin-bottom: 2rem; }
+    .content-section h3 { font-family: 'Noto Serif KR', serif; font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+    .content-section p { color: var(--text-muted); margin-bottom: 0.75rem; font-size: 14px; line-height: 1.85; }
+    .content-section ul { list-style: none; padding: 0; margin: 0.5rem 0 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .content-section ul li { display: flex; gap: 0.6rem; align-items: flex-start; color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+    .content-section ul li::before { content: '·'; color: var(--accent); font-size: 18px; line-height: 1.2; flex-shrink: 0; }
+    pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; overflow-x: auto; position: relative; }
+    pre code { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #b8b4d0; line-height: 1.7; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; background: var(--tag-bg); color: #c8c4e0; padding: 0.15em 0.4em; border-radius: 4px; border: 1px solid var(--border); }
+    strong { color: var(--text); font-weight: 600; }
+    .priority-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1rem 0; }
+    .priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+    .priority-card .rank { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .priority-card .name { font-weight: 600; color: var(--text); font-size: 14px; }
+    .priority-card .desc { font-size: 12px; color: var(--text-muted); margin-top: 0.2rem; }
+    .priority-card.p1 { border-left: 3px solid #e84040; }
+    .priority-card.p2 { border-left: 3px solid var(--accent); }
+    .priority-card.p3 { border-left: 3px solid var(--accent2); }
+    .priority-card.p4 { border-left: 3px solid var(--text-dim); }
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13.5px; }
+    .compare-table th { background: var(--surface2); padding: 0.75rem 1rem; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
+    .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-muted); line-height: 1.6; }
+    .compare-table tr:hover td { background: var(--surface); }
+    .compare-table td:first-child { font-weight: 600; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12.5px; white-space: nowrap; }
+    .tip-box { background: rgba(76, 175, 128, 0.07); border: 1px solid rgba(76, 175, 128, 0.25); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 13.5px; color: var(--text-muted); }
+    .tip-box .tip-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--success); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .warn-box { background: rgba(232, 168, 56, 0.07); border: 1px solid rgba(232, 168, 56, 0.25); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 13.5px; color: var(--text-muted); }
+    .warn-box .warn-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--warning); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin: 1rem 0; }
+    .checklist li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+    .checklist li::before { content: '□'; font-family: 'JetBrains Mono', monospace; color: var(--accent); margin-top: 1px; flex-shrink: 0; }
+    .reflection-box { background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+    .reflection-box .ref-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .reflection-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .reflection-box ul li { display: flex; gap: 0.6rem; font-size: 13.5px; color: var(--text-muted); font-style: italic; }
+    .reflection-box ul li::before { content: '◇'; color: var(--text-dim); flex-shrink: 0; }
+    .tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--border); overflow-x: auto; }
+    .tab-btn { padding: 0.6rem 1rem; font-size: 12.5px; color: var(--text-muted); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; font-family: 'Noto Sans KR', sans-serif; transition: all 0.15s; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+    .kw { color: #c792ea; }
+    .str { color: #c3e88d; }
+    .cm { color: #546e7a; }
+    .key { color: #82aaff; }
+    .val { color: var(--accent); }
+    .progress-bar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width 0.4s ease; }
+    .flow-step { display: flex; align-items: flex-start; gap: 1rem; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; }
+    .flow-step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--bg); background: var(--accent2); padding: 0.2rem 0.5rem; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+    .flow-step-content { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+    .flow-step-content strong { color: var(--text); }
+    @media (max-width: 800px) { .layout { grid-template-columns: 1fr; padding: 0 1rem; } aside { display: none; } main { padding: 2rem 0; } .priority-grid { grid-template-columns: 1fr; } .course-hero h1 { font-size: 1.8rem; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="logo">Anthropic Academy</span>
+    <span class="sep">/</span>
+    <span class="course-title-small">MCP 입문 — Introduction to Model Context Protocol</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="sidebar-label">강의 목록</div>
+    <nav class="lesson-nav">
+      <a class="nav-item active" onclick="showLesson(0)"><span class="nav-num">01</span>코스 소개</a>
+      <a class="nav-item" onclick="showLesson(1)"><span class="nav-num">02</span>MCP 소개</a>
+      <a class="nav-item" onclick="showLesson(2)"><span class="nav-num">03</span>MCP 클라이언트</a>
+      <a class="nav-item" onclick="showLesson(3)"><span class="nav-num">04</span>프로젝트 설정</a>
+      <a class="nav-item" onclick="showLesson(4)"><span class="nav-num">05</span>도구 정의하기</a>
+      <a class="nav-item" onclick="showLesson(5)"><span class="nav-num">06</span>서버 인스펙터</a>
+      <a class="nav-item" onclick="showLesson(6)"><span class="nav-num">07</span>만족도 설문</a>
+      <a class="nav-item" onclick="showLesson(7)"><span class="nav-num">08</span>클라이언트 구현</a>
+      <a class="nav-item" onclick="showLesson(8)"><span class="nav-num">09</span>리소스 정의</a>
+      <a class="nav-item" onclick="showLesson(9)"><span class="nav-num">10</span>리소스 접근</a>
+      <a class="nav-item" onclick="showLesson(10)"><span class="nav-num">11</span>프롬프트 정의</a>
+      <a class="nav-item" onclick="showLesson(11)"><span class="nav-num">12</span>클라이언트의 프롬프트</a>
+      <a class="nav-item" onclick="showLesson(12)"><span class="nav-num">13</span>최종 평가</a>
+      <a class="nav-item" onclick="showLesson(13)"><span class="nav-num">14</span>MCP 복습</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="course-hero">
+      <div class="course-badge">COURSE 07 · MCP</div>
+      <h1>MCP 입문<br>Introduction to Model Context Protocol</h1>
+      <div class="course-meta">
+        <span class="meta-item">14개 레슨</span>
+        <span class="meta-item">Python SDK</span>
+        <span class="meta-item">Anthropic Academy</span>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width: 7.14%"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showLesson(0)">01 코스 소개</button>
+      <button class="tab-btn" onclick="showLesson(1)">02 MCP 소개</button>
+      <button class="tab-btn" onclick="showLesson(2)">03 클라이언트</button>
+      <button class="tab-btn" onclick="showLesson(3)">04 프로젝트</button>
+      <button class="tab-btn" onclick="showLesson(4)">05 도구 정의</button>
+      <button class="tab-btn" onclick="showLesson(5)">06 인스펙터</button>
+      <button class="tab-btn" onclick="showLesson(6)">07 설문</button>
+      <button class="tab-btn" onclick="showLesson(7)">08 클라이언트 구현</button>
+      <button class="tab-btn" onclick="showLesson(8)">09 리소스 정의</button>
+      <button class="tab-btn" onclick="showLesson(9)">10 리소스 접근</button>
+      <button class="tab-btn" onclick="showLesson(10)">11 프롬프트 정의</button>
+      <button class="tab-btn" onclick="showLesson(11)">12 프롬프트 클라이언트</button>
+      <button class="tab-btn" onclick="showLesson(12)">13 평가</button>
+      <button class="tab-btn" onclick="showLesson(13)">14 복습</button>
+    </div>
+
+    <!-- 레슨 1: 코스 소개 -->
+    <div class="lesson-panel active">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 01</span>
+          <div class="lesson-title-block">
+            <h2>코스에 오신 것을 환영합니다</h2>
+            <div class="lesson-time">Welcome to the course</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 코스의 전반적인 구성과 학습 목표를 이해할 수 있다</li>
+            <li>Python 패키지 관리 도구 UV를 설치하고 환경을 준비할 수 있다</li>
+            <li>MCP 공식 문서 위치를 파악하고 참고할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li><strong>UV 패키지 매니저</strong>를 사용하여 Python 환경을 설정하는 것이 이 코스의 시작점이다</li>
+            <li>MCP 공식 문서는 <strong>modelcontextprotocol.io/introduction</strong>에서 확인할 수 있다</li>
+            <li>이 코스는 MCP 서버와 클라이언트를 <strong>직접 구현</strong>하는 실습 중심으로 진행된다</li>
+            <li>UV 설치 가이드는 <strong>docs.astral.sh/uv/</strong>에서 확인 가능하다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>코스 개요</h3>
+          <p>이 코스는 Model Context Protocol(MCP)의 기초부터 실습까지 체계적으로 배우는 입문 과정입니다. MCP가 무엇인지, 왜 필요한지, 그리고 어떻게 직접 구현하는지를 단계적으로 학습합니다.</p>
+          <p>실습 환경으로는 Python과 UV 패키지 매니저를 사용합니다. UV는 빠르고 현대적인 Python 패키지 관리 도구로, 이 코스에서 사용하는 모든 의존성을 간편하게 관리할 수 있습니다.</p>
+        </div>
+
+        <div class="content-section">
+          <h3>학습 준비 — 참고 링크</h3>
+          <ul>
+            <li>UV 설치 가이드: <strong>https://docs.astral.sh/uv/</strong></li>
+            <li>MCP 공식 소개 문서: <strong>https://modelcontextprotocol.io/introduction</strong></li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-label">학습 팁</div>
+          이 코스는 MCP 서버(제공자)와 MCP 클라이언트(소비자) 양쪽을 모두 직접 구현합니다. 실제 프로젝트에서는 보통 한 쪽만 구현하게 되지만, 전체 흐름을 이해하기 위해 양쪽 모두 다룹니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>현재 개발 중인 또는 관심 있는 AI 애플리케이션에서 어떤 외부 서비스 연동이 필요한가?</li>
+            <li>기존에 API 통합 코드를 직접 작성해본 경험이 있다면, 어떤 불편함이 있었는가?</li>
+            <li>MCP를 배운 후 어떤 프로젝트에 적용해보고 싶은가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 2: MCP 소개 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 02</span>
+          <div class="lesson-title-block">
+            <h2>MCP 소개</h2>
+            <div class="lesson-time">Introducing MCP</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP가 해결하는 핵심 문제를 설명할 수 있다</li>
+            <li>MCP의 기본 아키텍처(클라이언트-서버 구조)를 이해할 수 있다</li>
+            <li>MCP와 일반 도구 사용(Tool Use)의 차이점을 구분할 수 있다</li>
+            <li>MCP 서버가 제공하는 세 가지 핵심 요소를 파악할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>MCP는 <strong>커뮤니케이션 레이어</strong>로, Claude에게 도구와 컨텍스트를 제공하면서도 복잡한 통합 코드 작성을 피하게 해준다</li>
+            <li>MCP 서버는 <strong>도구(Tools), 프롬프트(Prompts), 리소스(Resources)</strong>를 표준화된 방식으로 노출한다</li>
+            <li>GitHub처럼 방대한 기능을 가진 서비스를 통합할 때, MCP는 <strong>이미 구현된 도구 정의</strong>를 재사용할 수 있게 한다</li>
+            <li>서비스 제공자(AWS, GitHub 등)가 <strong>공식 MCP 서버</strong>를 직접 배포하는 경우도 많다</li>
+            <li>MCP와 도구 사용은 보완적이며, <strong>누가 도구를 구현하는가</strong>가 핵심 차이점이다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP가 해결하는 문제</h3>
+          <p>사용자가 "내 모든 저장소에 열려 있는 Pull Request가 뭐야?"라고 물었을 때, Claude는 GitHub API에 접근하는 도구가 필요합니다. GitHub는 저장소, PR, 이슈, 프로젝트 등 방대한 기능을 제공합니다. MCP 없이는 이 모든 기능에 대한 도구 스키마와 함수를 직접 작성, 테스트, 유지보수해야 합니다. 이는 엄청난 노력과 지속적인 유지보수 부담을 의미합니다.</p>
+
+          <div class="priority-grid">
+            <div class="priority-card p1">
+              <div class="rank">Without MCP</div>
+              <div class="name">직접 구현</div>
+              <div class="desc">모든 도구 스키마를 수동으로 작성, 유지보수 부담 높음</div>
+            </div>
+            <div class="priority-card p3">
+              <div class="rank">With MCP</div>
+              <div class="name">재사용</div>
+              <div class="desc">기존 MCP 서버의 도구 정의를 그대로 활용, 통합 비용 절감</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP 서버의 세 가지 핵심 요소</h3>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>요소</th>
+                <th>설명</th>
+                <th>제어 주체</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tools</td>
+                <td>Claude가 호출할 수 있는 함수들 (외부 API 호출, 계산 등)</td>
+                <td>Claude (모델)</td>
+              </tr>
+              <tr>
+                <td>Resources</td>
+                <td>읽기 전용 데이터 접근 (파일, DB 조회 등)</td>
+                <td>애플리케이션</td>
+              </tr>
+              <tr>
+                <td>Prompts</td>
+                <td>미리 정의된 고품질 프롬프트 템플릿</td>
+                <td>사용자</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>자주 묻는 질문</h3>
+          <div class="warn-box">
+            <div class="warn-label">흔한 오해</div>
+            "MCP는 그냥 도구 사용(Tool Use)과 같은 거 아닌가요?" — MCP와 도구 사용은 보완적이지만 다른 개념입니다. 도구 사용은 Claude가 어떻게 도구를 호출하는지에 관한 것이고, MCP는 누가 도구를 정의하고 실행하는지에 관한 것입니다. MCP를 사용하면 다른 누군가가 이미 도구를 구현해 두었습니다.
+          </div>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>내가 자주 사용하는 외부 서비스(Slack, GitHub, Google Drive 등)에 이미 공식 MCP 서버가 있다면 어떻게 활용할 수 있을까?</li>
+            <li>MCP 서버를 직접 만들어야 할 상황은 언제이고, 기존 서버를 사용하면 충분한 상황은 언제인가?</li>
+            <li>도구 정의를 외부 MCP 서버에 맡기는 것의 장단점은 무엇인가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 3: MCP 클라이언트 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 03</span>
+          <div class="lesson-title-block">
+            <h2>MCP 클라이언트</h2>
+            <div class="lesson-time">MCP Clients</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 클라이언트의 역할과 책임을 설명할 수 있다</li>
+            <li>전송 방식 독립성(Transport Agnostic)의 의미를 이해할 수 있다</li>
+            <li>ListTools 및 CallTool 메시지 타입의 용도를 구분할 수 있다</li>
+            <li>사용자 질문이 시스템을 통해 처리되는 전체 흐름(12단계)을 설명할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>MCP 클라이언트는 <strong>서버와 애플리케이션 사이의 통신 브리지</strong> 역할을 한다</li>
+            <li>MCP는 <strong>전송 방식 독립적</strong>으로, stdio, HTTP, WebSocket 등 다양한 프로토콜을 지원한다</li>
+            <li>주요 메시지 타입은 <strong>ListToolsRequest/Result</strong>와 <strong>CallToolRequest/Result</strong> 두 쌍이다</li>
+            <li>클라이언트는 프로토콜 세부 사항을 추상화하여 <strong>애플리케이션 로직에 집중</strong>할 수 있게 한다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>전송 방식 독립성</h3>
+          <p>MCP의 강점 중 하나는 전송 방식 독립적(Transport Agnostic)이라는 점입니다. 클라이언트와 서버는 설정에 따라 서로 다른 프로토콜로 통신할 수 있습니다.</p>
+          <ul>
+            <li>가장 일반적인 설정: <strong>같은 머신에서 stdio(표준 입출력)</strong>를 통해 통신</li>
+            <li>네트워크를 통한 연결: <strong>HTTP</strong> 또는 <strong>WebSocket</strong> 사용 가능</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>사용자 질문 처리 전체 흐름</h3>
+          <p>"내 저장소 목록이 뭐야?"라는 질문이 시스템을 통해 처리되는 과정입니다:</p>
+          <div class="flow-step"><span class="flow-step-num">01</span><div class="flow-step-content"><strong>사용자 질문 수신:</strong> 사용자가 서버에 질문을 제출</div></div>
+          <div class="flow-step"><span class="flow-step-num">02</span><div class="flow-step-content"><strong>도구 탐색:</strong> 서버가 Claude에게 보낼 도구 목록 필요</div></div>
+          <div class="flow-step"><span class="flow-step-num">03</span><div class="flow-step-content"><strong>ListTools 교환:</strong> 서버가 MCP 클라이언트에게 도구 목록 요청</div></div>
+          <div class="flow-step"><span class="flow-step-num">04</span><div class="flow-step-content"><strong>MCP 통신:</strong> 클라이언트가 <code>ListToolsRequest</code>를 MCP 서버에 보내고 <code>ListToolsResult</code>를 받음</div></div>
+          <div class="flow-step"><span class="flow-step-num">05</span><div class="flow-step-content"><strong>Claude 요청:</strong> 서버가 사용자 질문과 도구 목록을 Claude에게 전송</div></div>
+          <div class="flow-step"><span class="flow-step-num">06</span><div class="flow-step-content"><strong>도구 사용 결정:</strong> Claude가 질문 답변을 위해 특정 도구 호출 결정</div></div>
+          <div class="flow-step"><span class="flow-step-num">07</span><div class="flow-step-content"><strong>도구 실행 요청:</strong> 서버가 MCP 클라이언트에게 Claude가 지정한 도구 실행 요청</div></div>
+          <div class="flow-step"><span class="flow-step-num">08</span><div class="flow-step-content"><strong>외부 API 호출:</strong> MCP 클라이언트가 <code>CallToolRequest</code>를 보내고 서버가 GitHub API 실제 호출</div></div>
+          <div class="flow-step"><span class="flow-step-num">09</span><div class="flow-step-content"><strong>결과 반환:</strong> GitHub 데이터가 <code>CallToolResult</code>로 흐름을 따라 되돌아옴</div></div>
+          <div class="flow-step"><span class="flow-step-num">10</span><div class="flow-step-content"><strong>도구 결과를 Claude에게:</strong> 서버가 도구 결과를 Claude에게 전송</div></div>
+          <div class="flow-step"><span class="flow-step-num">11</span><div class="flow-step-content"><strong>최종 응답:</strong> Claude가 저장소 데이터를 활용해 최종 답변 작성</div></div>
+          <div class="flow-step"><span class="flow-step-num">12</span><div class="flow-step-content"><strong>사용자에게 전달:</strong> 서버가 Claude의 응답을 사용자에게 전달</div></div>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-label">핵심 포인트</div>
+          단계가 많아 보이지만, 각 컴포넌트는 명확한 책임을 가집니다. MCP 클라이언트는 서버 통신의 복잡성을 추상화하여 강력한 외부 도구에 접근하면서도 애플리케이션 로직에 집중할 수 있게 합니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>이 긴 통신 흐름에서 병목이 발생할 수 있는 지점은 어디인가?</li>
+            <li>같은 머신에서 stdio로 통신하는 것과 HTTP로 원격 통신하는 것의 트레이드오프는?</li>
+            <li>MCP 클라이언트가 없다면 이 흐름을 어떻게 직접 구현해야 할까?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 4: 프로젝트 설정 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 04</span>
+          <div class="lesson-title-block">
+            <h2>프로젝트 설정</h2>
+            <div class="lesson-time">Project Setup</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>UV를 사용하여 MCP 프로젝트 환경을 설정할 수 있다</li>
+            <li>제공된 스타터 파일을 활용하여 실습 프로젝트를 시작할 수 있다</li>
+            <li>코스 실습에 필요한 의존성을 설치할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>이 레슨에서는 <strong>cli_project.zip</strong>(스타터)과 <strong>cli_project_COMPLETE.zip</strong>(완성본) 두 파일을 제공한다</li>
+            <li>UV를 사용하면 <strong>가상환경 생성과 의존성 설치</strong>를 한 번에 처리할 수 있다</li>
+            <li>완성본 파일은 막히는 경우의 <strong>참고용</strong>으로 활용 가능하다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>UV 기본 명령어</h3>
+          <pre><code><span class="cm"># 프로젝트 초기화 (pyproject.toml 사용)</span>
+<span class="kw">uv</span> sync
+
+<span class="cm"># 스크립트 실행</span>
+<span class="kw">uv</span> run main.py
+
+<span class="cm"># 특정 패키지 추가</span>
+<span class="kw">uv</span> add mcp anthropic</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>프로젝트 구조</h3>
+          <p>이 코스의 프로젝트는 다음 파일들로 구성됩니다:</p>
+          <ul>
+            <li><strong>mcp_server.py</strong> — MCP 서버 구현 (Tools, Resources, Prompts 정의)</li>
+            <li><strong>mcp_client.py</strong> — MCP 클라이언트 구현 (서버와의 통신 처리)</li>
+            <li><strong>main.py</strong> — CLI 애플리케이션 진입점</li>
+            <li><strong>pyproject.toml</strong> — UV 의존성 정의 파일</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-label">실습 팁</div>
+          스타터 파일과 완성본 파일을 나란히 열어두세요. 막히는 부분이 생기면 완성본을 참고하되, 최대한 스스로 코드를 작성해보는 것이 학습 효과를 높입니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>pip, poetry 등 기존 패키지 매니저와 비교했을 때 UV의 장점은 무엇인가?</li>
+            <li>프로젝트 파일 구조를 보며 MCP 서버와 클라이언트가 어떻게 분리되어 있는지 파악할 수 있는가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 5: 도구 정의 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 05</span>
+          <div class="lesson-title-block">
+            <h2>MCP로 도구 정의하기</h2>
+            <div class="lesson-time">Defining Tools with MCP</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>Python MCP SDK를 사용하여 MCP 서버를 초기화할 수 있다</li>
+            <li>데코레이터 패턴으로 MCP 도구를 정의하고 스키마를 자동 생성할 수 있다</li>
+            <li>Pydantic Field를 활용해 파라미터 설명을 추가할 수 있다</li>
+            <li>문서 읽기 및 편집 도구를 완성할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li><strong>FastMCP</strong> 클래스를 사용하면 단 한 줄로 MCP 서버를 초기화할 수 있다</li>
+            <li><code>@mcp.tool()</code> <strong>데코레이터</strong>를 사용하면 JSON 스키마를 수동으로 작성할 필요가 없다</li>
+            <li>Python <strong>타입 힌트</strong>가 자동 검증을 제공하며 SDK가 적절한 스키마를 생성한다</li>
+            <li>Pydantic의 <strong>Field 클래스</strong>로 파라미터 설명을 추가하면 Claude가 도구 사용법을 정확히 이해한다</li>
+            <li>Python <strong>예외(Exception)</strong>가 도구 오류 처리로 자연스럽게 통합된다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP 서버 초기화</h3>
+          <pre><code><span class="kw">from</span> mcp.server.fastmcp <span class="kw">import</span> FastMCP
+
+mcp = FastMCP(<span class="str">"DocumentMCP"</span>, log_level=<span class="str">"ERROR"</span>)
+
+<span class="cm"># 인메모리 문서 저장소</span>
+docs = {
+    <span class="str">"deposition.md"</span>: <span class="str">"This deposition covers the testimony of Angela Smith, P.E."</span>,
+    <span class="str">"report.pdf"</span>: <span class="str">"The report details the state of a 20m condenser tower."</span>,
+    <span class="str">"financials.docx"</span>: <span class="str">"These financials outline the project's budget and expenditures"</span>,
+    <span class="str">"plan.md"</span>: <span class="str">"The plan outlines the steps for the project's implementation."</span>,
+    <span class="str">"spec.txt"</span>: <span class="str">"These specifications define the technical requirements..."</span>
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>문서 읽기 도구</h3>
+          <pre><code><span class="kw">@mcp.tool</span>(
+    name=<span class="str">"read_doc_contents"</span>,
+    description=<span class="str">"Read the contents of a document and return it as a string."</span>
+)
+<span class="kw">def</span> <span class="key">read_document</span>(
+    doc_id: <span class="kw">str</span> = Field(description=<span class="str">"Id of the document to read"</span>)
+):
+    <span class="kw">if</span> doc_id <span class="kw">not in</span> docs:
+        <span class="kw">raise</span> ValueError(<span class="str">f"Doc with id {doc_id} not found"</span>)
+    <span class="kw">return</span> docs[doc_id]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>문서 편집 도구</h3>
+          <pre><code><span class="kw">@mcp.tool</span>(
+    name=<span class="str">"edit_document"</span>,
+    description=<span class="str">"Edit a document by replacing a string in the document content."</span>
+)
+<span class="kw">def</span> <span class="key">edit_document</span>(
+    doc_id: <span class="kw">str</span> = Field(description=<span class="str">"Id of the document to edit"</span>),
+    old_str: <span class="kw">str</span> = Field(description=<span class="str">"Text to replace. Must match exactly."</span>),
+    new_str: <span class="kw">str</span> = Field(description=<span class="str">"New text to insert in place of the old text."</span>)
+):
+    <span class="kw">if</span> doc_id <span class="kw">not in</span> docs:
+        <span class="kw">raise</span> ValueError(<span class="str">f"Doc with id {doc_id} not found"</span>)
+    docs[doc_id] = docs[doc_id].replace(old_str, new_str)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>SDK 접근 방식의 이점</h3>
+          <ul>
+            <li>JSON 스키마를 수동으로 작성할 필요 없음</li>
+            <li>타입 힌트가 자동 검증 제공</li>
+            <li>명확한 파라미터 설명으로 Claude가 도구 사용법을 정확히 이해</li>
+            <li>Python 예외를 통한 자연스러운 오류 처리</li>
+            <li>데코레이터를 통한 자동 도구 등록</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>수동 JSON 스키마 작성 대비 SDK 데코레이터 방식의 유지보수 측면 차이는?</li>
+            <li>파라미터 description이 Claude의 도구 선택에 얼마나 중요한 역할을 할까?</li>
+            <li>이 문서 관리 서버 외에 어떤 종류의 MCP 서버를 만들어 볼 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 6: 서버 인스펙터 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 06</span>
+          <div class="lesson-title-block">
+            <h2>서버 인스펙터</h2>
+            <div class="lesson-time">The Server Inspector</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 인스펙터를 실행하고 브라우저에서 접속할 수 있다</li>
+            <li>인스펙터를 통해 도구를 테스트하고 결과를 확인할 수 있다</li>
+            <li>도구 상호작용과 상태 관리를 검증하는 개발 워크플로우를 구축할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>Python MCP SDK에는 <strong>브라우저 기반 인스펙터</strong>가 내장되어 있어 별도 클라이언트 없이 테스트 가능하다</li>
+            <li><code>mcp dev mcp_server.py</code> 명령으로 개발 서버와 인스펙터를 함께 실행한다</li>
+            <li>인스펙터는 <strong>Resources, Tools, Prompts</strong> 탭으로 구성된다</li>
+            <li>서버 <strong>상태가 도구 호출 사이에 유지</strong>되어 복잡한 워크플로우 테스트가 가능하다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>인스펙터 시작하기</h3>
+          <pre><code><span class="cm"># 인스펙터 실행</span>
+mcp dev mcp_server.py
+
+<span class="cm"># 브라우저에서 접속: http://127.0.0.1:6274</span></code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>인스펙터 사용 흐름</h3>
+          <div class="flow-step"><span class="flow-step-num">1</span><div class="flow-step-content"><strong>Connect 버튼</strong> 클릭하여 MCP 서버 초기화</div></div>
+          <div class="flow-step"><span class="flow-step-num">2</span><div class="flow-step-content"><strong>Tools 탭</strong>으로 이동하여 "List Tools" 클릭</div></div>
+          <div class="flow-step"><span class="flow-step-num">3</span><div class="flow-step-content">테스트할 <strong>도구를 선택</strong>하면 오른쪽 패널에 입력 필드 표시</div></div>
+          <div class="flow-step"><span class="flow-step-num">4</span><div class="flow-step-content">파라미터를 입력하고 <strong>"Run Tool" 클릭</strong>하여 결과 확인</div></div>
+        </div>
+
+        <div class="content-section">
+          <h3>개발 워크플로우에서의 인스펙터</h3>
+          <ul>
+            <li>도구 구현을 빠르게 반복 개선</li>
+            <li>엣지 케이스와 오류 조건 테스트</li>
+            <li>도구 상호작용과 상태 관리 검증</li>
+            <li>실시간 디버깅으로 조기 문제 발견</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-label">개발 팁</div>
+          편집 도구로 문서를 수정한 후 즉시 읽기 도구로 확인하는 방식으로 복잡한 워크플로우를 테스트할 수 있습니다. 인스펙터는 도구 호출 사이에 서버 상태를 유지합니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>인스펙터 없이 MCP 서버를 테스트하려면 어떻게 해야 할까?</li>
+            <li>프로덕션 환경에서 MCP 서버를 모니터링하기 위해 어떤 도구가 필요할까?</li>
+            <li>Resources, Tools, Prompts 탭 외에 어떤 기능이 추가되면 유용할까?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 7: 설문 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 07</span>
+          <div class="lesson-title-block">
+            <h2>코스 만족도 설문</h2>
+            <div class="lesson-time">Course Satisfaction Survey</div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">중간 점검 — 지금까지 배운 내용</div>
+          <ul>
+            <li>MCP의 등장 배경과 해결하는 문제</li>
+            <li>MCP 아키텍처 (클라이언트 — 서버 구조)</li>
+            <li>사용자 질문 처리 전체 흐름 (12단계)</li>
+            <li>FastMCP를 활용한 서버 초기화 및 데코레이터 패턴으로 도구 정의</li>
+            <li>MCP 인스펙터로 도구 테스트</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">중간 점검 질문</div>
+          <ul>
+            <li>MCP의 세 가지 핵심 요소(Tools, Resources, Prompts)를 각각 한 문장으로 설명할 수 있는가?</li>
+            <li>MCP 클라이언트와 MCP 서버의 역할 차이를 명확히 이해하고 있는가?</li>
+            <li>지금까지의 내용 중 가장 어려웠던 개념은 무엇인가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 8: 클라이언트 구현 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 08</span>
+          <div class="lesson-title-block">
+            <h2>클라이언트 구현하기</h2>
+            <div class="lesson-time">Implementing a Client</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 클라이언트의 두 가지 핵심 구성 요소를 설명할 수 있다</li>
+            <li>list_tools()와 call_tool() 함수를 구현할 수 있다</li>
+            <li>클라이언트를 테스트하고 전체 MCP 플로우를 검증할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>MCP 클라이언트는 <strong>MCP Client 클래스</strong>(편의성)와 <strong>Client Session</strong>(실제 연결) 두 부분으로 구성된다</li>
+            <li>Client Session은 <strong>리소스 관리</strong>가 필요하며, 래퍼 클래스로 자동 정리를 구현한다</li>
+            <li>핵심 함수는 <strong>list_tools()</strong>와 <strong>call_tool()</strong> 두 가지다</li>
+            <li>실제 프로젝트에서는 MCP 클라이언트 또는 MCP 서버 중 <strong>한 쪽만</strong> 구현하는 것이 일반적이다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>핵심 클라이언트 함수 구현</h3>
+          <pre><code><span class="cm"># 도구 목록 조회</span>
+<span class="kw">async def</span> <span class="key">list_tools</span>(self) -> list[types.Tool]:
+    result = <span class="kw">await</span> self.session().list_tools()
+    <span class="kw">return</span> result.tools
+
+<span class="cm"># 도구 실행</span>
+<span class="kw">async def</span> <span class="key">call_tool</span>(
+    self, tool_name: <span class="kw">str</span>, tool_input: <span class="kw">dict</span>
+) -> types.CallToolResult | None:
+    <span class="kw">return</span> <span class="kw">await</span> self.session().call_tool(tool_name, tool_input)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>클라이언트 테스트</h3>
+          <pre><code><span class="cm"># 클라이언트 단독 테스트</span>
+uv run mcp_client.py
+
+<span class="cm"># 전체 애플리케이션 실행</span>
+uv run main.py</code></pre>
+
+          <p>전체 테스트 시 "What is the contents of the report.pdf document?"라고 물어보면:</p>
+          <div class="flow-step"><span class="flow-step-num">1</span><div class="flow-step-content">클라이언트로 사용 가능한 도구 조회</div></div>
+          <div class="flow-step"><span class="flow-step-num">2</span><div class="flow-step-content">도구 목록과 질문을 Claude에게 전송</div></div>
+          <div class="flow-step"><span class="flow-step-num">3</span><div class="flow-step-content">Claude가 <code>read_doc_contents</code> 도구 호출 결정</div></div>
+          <div class="flow-step"><span class="flow-step-num">4</span><div class="flow-step-content">클라이언트가 도구를 실행하고 결과를 Claude에게 반환</div></div>
+          <div class="flow-step"><span class="flow-step-num">5</span><div class="flow-step-content">Claude가 최종 답변을 작성하여 사용자에게 전달</div></div>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>Client Session을 래퍼 클래스로 감싸는 이유는 무엇인가?</li>
+            <li>비동기(async) 함수로 구현하는 이유는 무엇인가?</li>
+            <li>실제 프로덕션 환경에서 클라이언트 세션을 관리할 때 주의해야 할 사항은?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 9: 리소스 정의 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 09</span>
+          <div class="lesson-title-block">
+            <h2>리소스 정의하기</h2>
+            <div class="lesson-time">Defining Resources</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 리소스의 개념과 도구와의 차이를 설명할 수 있다</li>
+            <li>직접 리소스(Direct Resource)와 템플릿 리소스(Templated Resource)를 구분하고 구현할 수 있다</li>
+            <li>MIME 타입을 적절히 지정하여 클라이언트가 데이터를 올바르게 처리하도록 할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>리소스는 <strong>읽기 전용 데이터 접근</strong>을 위한 것으로, HTTP 서버의 GET 핸들러와 유사하다</li>
+            <li><strong>직접 리소스</strong>는 정적 URI를 사용하고, <strong>템플릿 리소스</strong>는 URI에 파라미터를 포함한다</li>
+            <li>SDK가 자동으로 반환값을 직렬화하므로 <strong>JSON 변환을 수동으로 할 필요가 없다</strong></li>
+            <li>리소스는 @멘션 자동완성 UI나 <strong>프롬프트 컨텍스트 보강</strong>에 활용된다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>직접 리소스 — 정적 URI</h3>
+          <pre><code><span class="kw">@mcp.resource</span>(
+    <span class="str">"docs://documents"</span>,
+    mime_type=<span class="str">"application/json"</span>
+)
+<span class="kw">def</span> <span class="key">list_docs</span>() -> list[str]:
+    <span class="kw">return</span> list(docs.keys())</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>템플릿 리소스 — 동적 URI</h3>
+          <pre><code><span class="kw">@mcp.resource</span>(
+    <span class="str">"docs://documents/{doc_id}"</span>,
+    mime_type=<span class="str">"text/plain"</span>
+)
+<span class="kw">def</span> <span class="key">fetch_doc</span>(doc_id: <span class="kw">str</span>) -> <span class="kw">str</span>:
+    <span class="kw">if</span> doc_id <span class="kw">not in</span> docs:
+        <span class="kw">raise</span> ValueError(<span class="str">f"Doc with id {doc_id} not found"</span>)
+    <span class="kw">return</span> docs[doc_id]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>MIME 타입 가이드</h3>
+          <table class="compare-table">
+            <thead><tr><th>MIME 타입</th><th>용도</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr><td>application/json</td><td>구조화된 데이터</td><td>문서 목록, 설정</td></tr>
+              <tr><td>text/plain</td><td>일반 텍스트</td><td>문서 내용, 로그</td></tr>
+              <tr><td>application/pdf</td><td>바이너리 파일</td><td>PDF 문서</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>리소스 대신 도구를 사용하면 어떤 단점이 있을까?</li>
+            <li>실시간으로 변하는 데이터를 리소스로 제공할 때 주의할 점은?</li>
+            <li>인스펙터의 Resources 탭과 Resource Templates 탭이 별도로 존재하는 이유는?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 10: 리소스 접근 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 10</span>
+          <div class="lesson-title-block">
+            <h2>리소스 접근하기</h2>
+            <div class="lesson-time">Accessing Resources</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 클라이언트에서 read_resource() 함수를 구현할 수 있다</li>
+            <li>MIME 타입에 따라 응답을 적절히 처리할 수 있다</li>
+            <li>리소스를 CLI 애플리케이션의 @멘션 기능에 통합할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li><code>read_resource()</code> 함수는 <strong>AnyUrl</strong>로 URI를 변환하여 MCP 서버에 요청한다</li>
+            <li>응답은 <strong>MIME 타입에 따라 다르게 처리</strong>된다 (JSON 파싱 vs 텍스트 반환)</li>
+            <li>리소스를 활용하면 <strong>@멘션</strong>으로 별도 도구 호출 없이 문서 내용을 즉시 주입할 수 있다</li>
+            <li>리소스가 <strong>초기 컨텍스트</strong>에 포함되므로 AI 모델이 즉시 데이터에 응답 가능하다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>리소스 읽기 함수 구현</h3>
+          <pre><code><span class="kw">import</span> json
+<span class="kw">from</span> pydantic <span class="kw">import</span> AnyUrl
+
+<span class="kw">async def</span> <span class="key">read_resource</span>(self, uri: <span class="kw">str</span>) -> Any:
+    result = <span class="kw">await</span> self.session().read_resource(AnyUrl(uri))
+    resource = result.contents[<span class="val">0</span>]
+
+    <span class="kw">if</span> isinstance(resource, types.TextResourceContents):
+        <span class="kw">if</span> resource.mimeType == <span class="str">"application/json"</span>:
+            <span class="kw">return</span> json.loads(resource.text)
+
+    <span class="kw">return</span> resource.text</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>CLI @멘션 기능</h3>
+          <p>리소스 기능이 구현되면 "@"를 입력 시:</p>
+          <ul>
+            <li>자동완성 목록에 사용 가능한 리소스 표시</li>
+            <li>화살표 키와 스페이스로 리소스 선택</li>
+            <li>선택한 리소스 내용이 프롬프트에 직접 포함됨</li>
+            <li>추가 도구 호출 없이 AI 모델에게 즉시 전송</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-label">성능 이점</div>
+          리소스를 사용하면 Claude가 별도의 도구 호출 없이 데이터에 즉시 접근할 수 있습니다. 추가적인 API 왕복을 줄여 응답 시간을 단축하고 비용을 절감합니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>리소스 내용을 초기 프롬프트에 직접 주입하는 것과 도구를 통해 나중에 가져오는 것의 트레이드오프는?</li>
+            <li>매우 큰 문서를 리소스로 제공할 때 컨텍스트 윈도우 한계를 어떻게 처리해야 할까?</li>
+            <li>이 @멘션 패턴을 웹 인터페이스에서는 어떻게 구현할 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 11: 프롬프트 정의 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 11</span>
+          <div class="lesson-title-block">
+            <h2>프롬프트 정의하기</h2>
+            <div class="lesson-time">Defining Prompts</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>MCP 프롬프트의 개념과 도구/리소스와의 차이를 설명할 수 있다</li>
+            <li>데코레이터 패턴으로 MCP 프롬프트를 정의하고 메시지 리스트를 반환할 수 있다</li>
+            <li>인스펙터를 통해 프롬프트와 변수 보간 결과를 확인할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li>프롬프트는 MCP 서버 작성자가 <strong>미리 정의하고 최적화한 고품질 프롬프트 템플릿</strong>이다</li>
+            <li>사용자가 직접 작성하는 것보다 <strong>전문가가 테스트한 프롬프트</strong>를 활용하면 더 나은 결과를 얻는다</li>
+            <li><code>@mcp.prompt()</code> 데코레이터로 정의하며, 함수가 <strong>메시지 리스트</strong>를 반환한다</li>
+            <li>프롬프트는 <strong>사용자 트리거</strong>로 실행되며 (슬래시 명령 등), 재사용 가능하다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>포맷 명령 구현</h3>
+          <p>사용자가 <code>/format doc_id</code>를 입력하면 문서를 마크다운으로 변환하는 예제:</p>
+          <pre><code><span class="kw">@mcp.prompt</span>(
+    name=<span class="str">"format"</span>,
+    description=<span class="str">"Rewrites the contents of the document in Markdown format."</span>
+)
+<span class="kw">def</span> <span class="key">format_document</span>(
+    doc_id: <span class="kw">str</span> = Field(description=<span class="str">"Id of the document to format"</span>)
+) -> list[base.Message]:
+    prompt = <span class="str">f"""
+Your goal is to reformat a document to be written with markdown syntax.
+
+The id of the document you need to reformat is:
+&lt;document_id&gt;
+{doc_id}
+&lt;/document_id&gt;
+
+Add in headers, bullet points, tables, etc as necessary. Feel free to add structure.
+Use the 'edit_document' tool to edit the document.
+"""</span>
+
+    <span class="kw">return</span> [base.UserMessage(prompt)]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>프롬프트의 핵심 이점</h3>
+          <div class="priority-grid">
+            <div class="priority-card p2">
+              <div class="rank">Consistency</div>
+              <div class="name">일관성</div>
+              <div class="desc">매번 동일한 품질의 결과 보장</div>
+            </div>
+            <div class="priority-card p3">
+              <div class="rank">Expertise</div>
+              <div class="name">전문 지식</div>
+              <div class="desc">도메인 지식이 담긴 최적화된 프롬프트</div>
+            </div>
+            <div class="priority-card p3">
+              <div class="rank">Reusability</div>
+              <div class="name">재사용성</div>
+              <div class="desc">여러 클라이언트가 같은 프롬프트 활용</div>
+            </div>
+            <div class="priority-card p4">
+              <div class="rank">Maintenance</div>
+              <div class="name">유지보수</div>
+              <div class="desc">한 곳 업데이트로 모든 클라이언트에 반영</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>어떤 종류의 작업이 미리 정의된 프롬프트에서 가장 큰 혜택을 받을 수 있을까?</li>
+            <li>사용자 작성 프롬프트와 전문가 작성 프롬프트의 품질 차이가 두드러지는 시나리오는?</li>
+            <li>프롬프트를 버전 관리하고 A/B 테스트하는 방법은 어떻게 구현할 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 12: 클라이언트의 프롬프트 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 12</span>
+          <div class="lesson-title-block">
+            <h2>클라이언트에서 프롬프트 사용하기</h2>
+            <div class="lesson-time">Prompts in the Client</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>list_prompts() 함수를 구현하여 서버의 프롬프트 목록을 조회할 수 있다</li>
+            <li>get_prompt() 함수를 구현하여 변수가 보간된 프롬프트를 가져올 수 있다</li>
+            <li>CLI에서 슬래시 명령으로 프롬프트를 활성화하는 전체 흐름을 이해할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li><code>list_prompts()</code>는 세션의 목록 조회 함수를 호출하는 <strong>단순한 함수</strong>다</li>
+            <li><code>get_prompt()</code>는 이름과 인수 딕셔너리를 받아 <strong>변수가 보간된 메시지 리스트</strong>를 반환한다</li>
+            <li>인수 딕셔너리 (예: <code>{"doc_id": "plan.md"}</code>)가 프롬프트 함수의 <strong>키워드 인수</strong>로 전달된다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>클라이언트에서의 프롬프트 함수 구현</h3>
+          <pre><code><span class="cm"># 프롬프트 목록 조회</span>
+<span class="kw">async def</span> <span class="key">list_prompts</span>(self) -> list[types.Prompt]:
+    result = <span class="kw">await</span> self.session().list_prompts()
+    <span class="kw">return</span> result.prompts
+
+<span class="cm"># 개별 프롬프트 가져오기 (변수 보간 포함)</span>
+<span class="kw">async def</span> <span class="key">get_prompt</span>(self, prompt_name, args: dict[str, str]):
+    result = <span class="kw">await</span> self.session().get_prompt(prompt_name, args)
+    <span class="kw">return</span> result.messages</code></pre>
+
+          <p>예시: <code>format_document</code> 프롬프트 호출 시 인수:</p>
+          <pre><code>args = {<span class="str">"doc_id"</span>: <span class="str">"plan.md"</span>}
+messages = <span class="kw">await</span> client.get_prompt(<span class="str">"format"</span>, args)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>프롬프트 전체 워크플로우</h3>
+          <div class="flow-step"><span class="flow-step-num">1</span><div class="flow-step-content">서버의 기능과 관련된 프롬프트를 작성하고 평가</div></div>
+          <div class="flow-step"><span class="flow-step-num">2</span><div class="flow-step-content"><code>@mcp.prompt</code> 데코레이터로 MCP 서버에 정의</div></div>
+          <div class="flow-step"><span class="flow-step-num">3</span><div class="flow-step-content">클라이언트가 <code>list_prompts()</code>로 사용 가능한 프롬프트 조회</div></div>
+          <div class="flow-step"><span class="flow-step-num">4</span><div class="flow-step-content">사용자가 슬래시(/) 명령으로 프롬프트 선택</div></div>
+          <div class="flow-step"><span class="flow-step-num">5</span><div class="flow-step-content">인수와 함께 <code>get_prompt()</code> 호출하여 완성된 메시지 리스트 수신</div></div>
+          <div class="flow-step"><span class="flow-step-num">6</span><div class="flow-step-content">메시지 리스트를 AI 모델에게 직접 전송</div></div>
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">생각해 볼 것들</div>
+          <ul>
+            <li>프롬프트가 단순한 텍스트 템플릿과 다른 점은 무엇인가?</li>
+            <li>복잡한 멀티턴 대화를 프롬프트 메시지 리스트로 어떻게 구현할 수 있을까?</li>
+            <li>서버의 프롬프트가 업데이트될 때 클라이언트에서 이를 어떻게 알 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 13: 최종 평가 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 13</span>
+          <div class="lesson-title-block">
+            <h2>MCP 최종 평가</h2>
+            <div class="lesson-time">Final Assessment on MCP</div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">평가 준비 — 핵심 개념 정리</div>
+          <ul>
+            <li>MCP는 Claude에게 도구와 컨텍스트를 제공하는 <strong>통신 레이어</strong>다</li>
+            <li>세 가지 핵심 요소: <strong>Tools, Resources, Prompts</strong></li>
+            <li>MCP 클라이언트의 핵심 함수: <strong>list_tools(), call_tool(), read_resource(), get_prompt()</strong></li>
+            <li>FastMCP SDK에서 모든 요소는 <strong>데코레이터 패턴</strong>으로 정의한다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>평가 전 체크리스트</h3>
+          <ul class="checklist">
+            <li>MCP가 해결하는 핵심 문제를 설명할 수 있다</li>
+            <li>MCP 클라이언트-서버 통신 전체 흐름(12단계)을 설명할 수 있다</li>
+            <li>@mcp.tool() 데코레이터로 도구를 정의하는 방법을 안다</li>
+            <li>직접 리소스와 템플릿 리소스의 차이를 알고 구현할 수 있다</li>
+            <li>@mcp.prompt() 데코레이터로 프롬프트를 정의하는 방법을 안다</li>
+            <li>MCP 인스펙터를 사용해 서버 기능을 테스트할 수 있다</li>
+            <li>클라이언트 함수들(list_tools, call_tool, read_resource, get_prompt)의 역할을 안다</li>
+          </ul>
+        </div>
+
+        <div class="warn-box">
+          <div class="warn-label">평가 주의사항</div>
+          이 레슨은 온라인 평가로 구성됩니다. 특히 세 가지 서버 프리미티브(Tools, Resources, Prompts)의 차이와 각각의 제어 주체(모델, 앱, 사용자)를 잘 이해하고 있어야 합니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">최종 성찰 질문</div>
+          <ul>
+            <li>이 코스에서 가장 놀라웠거나 예상치 못했던 MCP의 특성은 무엇인가?</li>
+            <li>MCP를 활용한 나만의 프로젝트 아이디어는 무엇인가?</li>
+            <li>MCP 심화 과정에서 더 배우고 싶은 주제는 무엇인가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 레슨 14: MCP 복습 -->
+    <div class="lesson-panel">
+      <div class="lesson-section">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 14</span>
+          <div class="lesson-title-block">
+            <h2>MCP 복습</h2>
+            <div class="lesson-time">MCP Review</div>
+          </div>
+        </div>
+
+        <div class="learn-box">
+          <div class="learn-box-title">이 레슨을 마치면 할 수 있는 것</div>
+          <ul>
+            <li>세 가지 서버 프리미티브의 차이와 각각의 제어 주체를 명확하게 설명할 수 있다</li>
+            <li>사용 사례에 맞는 적절한 프리미티브를 선택하는 기준을 세울 수 있다</li>
+            <li>MCP의 세 요소가 애플리케이션 스택의 어느 계층에서 동작하는지 이해할 수 있다</li>
+          </ul>
+        </div>
+
+        <div class="key-takeaways">
+          <div class="key-takeaways-title">핵심 요약</div>
+          <ul>
+            <li><strong>Tools(도구)는 모델이 제어</strong>한다 — Claude가 자율적으로 언제 호출할지 결정</li>
+            <li><strong>Resources(리소스)는 앱이 제어</strong>한다 — 애플리케이션 코드가 언제 데이터를 가져오고 사용할지 결정</li>
+            <li><strong>Prompts(프롬프트)는 사용자가 제어</strong>한다 — 사용자가 버튼 클릭, 슬래시 명령 등으로 트리거</li>
+            <li>세 프리미티브는 각각 <strong>모델, 앱, 사용자</strong> 계층을 담당한다</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>세 가지 서버 프리미티브 비교</h3>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>프리미티브</th>
+                <th>제어 주체</th>
+                <th>활용 시점</th>
+                <th>실제 예시</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tools</td>
+                <td>Claude (모델)</td>
+                <td>Claude에게 새로운 능력이 필요할 때</td>
+                <td>코드 실행, GitHub API 호출, 계산</td>
+              </tr>
+              <tr>
+                <td>Resources</td>
+                <td>애플리케이션</td>
+                <td>UI나 컨텍스트 보강을 위한 데이터</td>
+                <td>자동완성 목록, Google Drive 문서</td>
+              </tr>
+              <tr>
+                <td>Prompts</td>
+                <td>사용자</td>
+                <td>미리 정의된 워크플로우 제공</td>
+                <td>슬래시 명령, 워크플로우 버튼</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>프리미티브 선택 가이드</h3>
+          <div class="priority-grid">
+            <div class="priority-card p1">
+              <div class="rank">Use Tools When</div>
+              <div class="name">Claude에게 새 능력 부여</div>
+              <div class="desc">Claude가 자율적으로 사용할 함수 필요. 예: 계산, API 호출, 파일 접근</div>
+            </div>
+            <div class="priority-card p2">
+              <div class="rank">Use Resources When</div>
+              <div class="name">앱에서 데이터 가져오기</div>
+              <div class="desc">UI 표시나 컨텍스트 보강을 위한 데이터. 예: @멘션, 문서 목록</div>
+            </div>
+            <div class="priority-card p3">
+              <div class="rank">Use Prompts When</div>
+              <div class="name">사용자 워크플로우 정의</div>
+              <div class="desc">사용자가 온디맨드 트리거. 예: /format, /summarize 명령</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Claude 인터페이스에서의 실제 사례</h3>
+          <ul>
+            <li><strong>채팅 입력창 하단 워크플로우 버튼</strong> → Prompts 예시</li>
+            <li><strong>Google Drive 문서 추가 기능</strong> → Resources 예시</li>
+            <li><strong>Claude가 코드를 실행하거나 계산을 수행할 때</strong> → Tools 예시</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-label">핵심 원칙</div>
+          어떤 프리미티브를 사용할지 결정할 때 "누가 이것을 제어해야 하는가?"를 물어보세요. 도구는 모델을 위해, 리소스는 앱을 위해, 프롬프트는 사용자를 위해 존재합니다.
+        </div>
+
+        <div class="reflection-box">
+          <div class="ref-title">코스 마무리 성찰</div>
+          <ul>
+            <li>이 코스를 통해 MCP에 대한 이해가 어떻게 변했는가?</li>
+            <li>당장 내 프로젝트에 적용할 수 있는 MCP 패턴은 무엇인가?</li>
+            <li>MCP 심화 과정(Sampling, Transport, Roots)에서 더 깊이 배울 준비가 되었는가?</li>
+            <li>MCP 생태계가 성장하면서 어떤 새로운 가능성이 열릴 것으로 예상하는가?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function showLesson(idx) {
+    document.querySelectorAll('.lesson-panel').forEach((p,i) => {
+      p.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.nav-item').forEach((n,i) => {
+      n.classList.toggle('active', i === idx);
+    });
+    const total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = ((idx+1)/total*100) + '%';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude 101 | Claude 기초 완전 가이드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --surface: #16161c;
+      --surface2: #1e1e28;
+      --surface3: #252530;
+      --border: #2e2e3e;
+      --border2: #3a3a50;
+      --text: #e8e8f0;
+      --text2: #a8a8c0;
+      --text3: #6868a0;
+      --accent: #d97f3a;
+      --accent2: #7b6ef6;
+      --accent3: #4ec9b0;
+      --accent4: #e06c75;
+      --accent5: #61afef;
+      --success: #4caf80;
+      --warn: #e6c84a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px; line-height: 1.75;
+      display: flex; min-height: 100vh;
+    }
+    .sidebar {
+      width: 270px; min-height: 100vh;
+      background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; overflow-y: auto; z-index: 100;
+    }
+    .sidebar-header { padding: 24px 20px 18px; border-bottom: 1px solid var(--border); }
+    .course-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #61afef, #4090cf);
+      color: #fff; font-size: 10px; font-weight: 700;
+      letter-spacing: .08em; padding: 3px 10px; border-radius: 20px;
+      margin-bottom: 10px; text-transform: uppercase;
+    }
+    .sidebar-header h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.4;
+    }
+    .sidebar-header p { font-size: 11px; color: var(--text3); margin-top: 6px; }
+    .progress-bar-wrap { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .progress-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .progress-track { height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, #61afef, var(--accent2));
+      border-radius: 2px; width: 12.5%; transition: width .4s;
+    }
+    .nav-list { padding: 10px 0; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 11px 20px;
+      cursor: pointer; border-left: 3px solid transparent; transition: all .2s;
+    }
+    .nav-item:hover { background: var(--surface2); }
+    .nav-item.active { background: var(--surface2); border-left-color: #61afef; }
+    .nav-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--surface3); color: var(--text3);
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s;
+    }
+    .nav-item.active .nav-num { background: #61afef; color: #fff; }
+    .nav-text { font-size: 12.5px; color: var(--text2); line-height: 1.3; }
+    .nav-item.active .nav-text { color: var(--text); font-weight: 600; }
+    .main { margin-left: 270px; flex: 1; min-height: 100vh; }
+    .top-bar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 14px 32px; display: flex; align-items: center; gap: 8px;
+      overflow-x: auto; position: sticky; top: 0; z-index: 50;
+    }
+    .tab-btn {
+      flex-shrink: 0; padding: 7px 16px; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); font-family: 'Noto Sans KR', sans-serif;
+      font-size: 12px; cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .tab-btn:hover { border-color: #61afef; color: var(--text); }
+    .tab-btn.active { background: #61afef; border-color: #61afef; color: #fff; font-weight: 600; }
+    .content-wrap { padding: 40px 48px 80px; max-width: 900px; }
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+    .lesson-hero { margin-bottom: 32px; }
+    .lesson-tag {
+      display: inline-block;
+      background: rgba(97,175,239,.18); color: #61afef;
+      font-size: 11px; font-weight: 700; letter-spacing: .06em;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .lesson-hero h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 28px; font-weight: 700; line-height: 1.35;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .lesson-hero .subtitle { color: var(--text2); font-size: 15px; line-height: 1.7; }
+    .learn-box {
+      background: linear-gradient(135deg, rgba(97,175,239,.1), rgba(123,110,246,.08));
+      border: 1px solid rgba(97,175,239,.3);
+      border-radius: 12px; padding: 22px 26px; margin-bottom: 28px;
+    }
+    .learn-box h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: #61afef; margin-bottom: 14px;
+    }
+    .learn-box ul { list-style: none; padding: 0; }
+    .learn-box ul li {
+      padding: 6px 0; color: var(--text2); font-size: 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .learn-box ul li::before { content: '✓'; color: #61afef; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .key-takeaways {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 10px 10px 0; padding: 22px 26px; margin-bottom: 28px;
+    }
+    .key-takeaways h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--accent); margin-bottom: 14px;
+    }
+    .key-takeaways ul { list-style: none; padding: 0; }
+    .key-takeaways ul li {
+      padding: 7px 0; color: var(--text2); font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .key-takeaways ul li:last-child { border-bottom: none; }
+    .key-takeaways ul li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+    .content-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px 28px; margin-bottom: 24px;
+    }
+    .content-section h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 18px; font-weight: 700; color: var(--text);
+      margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    .content-section h3 { font-size: 15px; font-weight: 600; color: #61afef; margin: 16px 0 10px; }
+    .content-section p { color: var(--text2); font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+    .content-section ul, .content-section ol {
+      padding-left: 22px; color: var(--text2); font-size: 14px; line-height: 1.8; margin-bottom: 12px;
+    }
+    .content-section li { margin-bottom: 4px; }
+    .content-section strong { color: var(--text); font-weight: 600; }
+    .priority-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px; margin-bottom: 24px;
+    }
+    .priority-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px; transition: border-color .2s;
+    }
+    .priority-card:hover { border-color: #61afef; }
+    .priority-card .card-icon { font-size: 22px; margin-bottom: 10px; }
+    .priority-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .priority-card p { font-size: 12px; color: var(--text2); line-height: 1.6; }
+    .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+    .compare-table th {
+      background: var(--surface2); color: var(--text); font-weight: 600;
+      padding: 10px 14px; text-align: left; border: 1px solid var(--border);
+    }
+    .compare-table td {
+      padding: 10px 14px; border: 1px solid var(--border); color: var(--text2); vertical-align: top;
+    }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .tip-box {
+      background: rgba(78,201,176,.08); border: 1px solid rgba(78,201,176,.25);
+      border-radius: 10px; padding: 18px 22px; margin-bottom: 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .tip-box .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .tip-box-content h4 { font-size: 13px; font-weight: 700; color: var(--accent3); margin-bottom: 6px; }
+    .tip-box-content p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .warn-box {
+      background: rgba(230,200,74,.08); border: 1px solid rgba(230,200,74,.25);
+      border-radius: 10px; padding: 18px 22px; margin-bottom: 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .warn-box .tip-box-content h4 { color: var(--warn); }
+    .reflection-box {
+      background: linear-gradient(135deg, rgba(97,175,239,.1), rgba(217,127,58,.08));
+      border: 1px solid rgba(97,175,239,.25);
+      border-radius: 12px; padding: 22px 26px; margin-top: 28px;
+    }
+    .reflection-box h3 {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--accent); margin-bottom: 14px;
+    }
+    .reflection-box ul { list-style: none; padding: 0; }
+    .reflection-box ul li {
+      padding: 8px 0; color: var(--text2); font-size: 14px;
+      border-bottom: 1px dashed var(--border); display: flex; gap: 10px;
+    }
+    .reflection-box ul li:last-child { border-bottom: none; }
+    .reflection-box ul li::before { content: '💭'; flex-shrink: 0; }
+    .prompt-example {
+      background: rgba(97,175,239,.08); border: 1px solid rgba(97,175,239,.25);
+      border-radius: 8px; padding: 14px 18px; margin: 12px 0;
+      font-size: 13px; color: var(--text2); line-height: 1.7;
+      font-style: italic;
+    }
+    .prompt-label {
+      font-size: 11px; font-weight: 700; color: #61afef;
+      text-transform: uppercase; letter-spacing: .06em;
+      margin-bottom: 6px; display: block;
+    }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    }
+    .badge-blue { background: rgba(97,175,239,.15); color: var(--accent5); border: 1px solid rgba(97,175,239,.3); }
+    .badge-purple { background: rgba(123,110,246,.15); color: var(--accent2); border: 1px solid rgba(123,110,246,.3); }
+    .badge-green { background: rgba(78,201,176,.15); color: var(--accent3); border: 1px solid rgba(78,201,176,.3); }
+    .badge-orange { background: rgba(217,127,58,.15); color: var(--accent); border: 1px solid rgba(217,127,58,.3); }
+    .step-list { list-style: none; padding: 0; margin: 14px 0; }
+    .step-list li {
+      display: flex; align-items: flex-start; gap: 14px; padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step-list li:last-child { border-bottom: none; }
+    .step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #61afef; color: #fff;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+    }
+    .step-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .step-content p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="course-badge">Claude 101</div>
+    <h2>Claude 기초 완전 가이드</h2>
+    <p>Claude.ai 핵심 기능 마스터</p>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>학습 진행도</span>
+      <span id="progressLabel">1 / 8</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+  </div>
+  <nav class="nav-list">
+    <div class="nav-item active" onclick="showLesson(0)">
+      <div class="nav-num">1</div>
+      <div class="nav-text">Claude란? 첫 대화</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(1)">
+      <div class="nav-num">2</div>
+      <div class="nav-text">더 나은 결과 얻기</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(2)">
+      <div class="nav-num">3</div>
+      <div class="nav-text">데스크탑 앱: Chat·Cowork·Code</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(3)">
+      <div class="nav-num">4</div>
+      <div class="nav-text">프로젝트로 작업 조직하기</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(4)">
+      <div class="nav-num">5</div>
+      <div class="nav-text">아티팩트 & 스킬</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(5)">
+      <div class="nav-num">6</div>
+      <div class="nav-text">커넥터 & 엔터프라이즈 검색</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(6)">
+      <div class="nav-num">7</div>
+      <div class="nav-text">리서치 모드 & 역할별 활용</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(7)">
+      <div class="nav-num">8</div>
+      <div class="nav-text">다양한 Claude 활용 방법</div>
+    </div>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="top-bar">
+    <button class="tab-btn active" onclick="showLesson(0)">Claude 소개</button>
+    <button class="tab-btn" onclick="showLesson(1)">결과 개선</button>
+    <button class="tab-btn" onclick="showLesson(2)">데스크탑 앱</button>
+    <button class="tab-btn" onclick="showLesson(3)">프로젝트</button>
+    <button class="tab-btn" onclick="showLesson(4)">아티팩트·스킬</button>
+    <button class="tab-btn" onclick="showLesson(5)">커넥터</button>
+    <button class="tab-btn" onclick="showLesson(6)">리서치 모드</button>
+    <button class="tab-btn" onclick="showLesson(7)">확장 도구</button>
+  </div>
+
+  <div class="content-wrap">
+
+    <!-- ── 레슨 1: Claude란? & 첫 대화 ── -->
+    <div class="lesson-panel active">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 1-2 · What is Claude</div>
+        <h1>Claude란? — 생각하는 파트너와의 첫 대화</h1>
+        <p class="subtitle">Claude가 단순한 챗봇을 넘어 복잡한 문제를 함께 해결하는 사고 파트너인 이유와, 효과적인 첫 대화를 위한 프롬프트 방법론을 배웁니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>Claude의 설계 원칙(도움이 되고, 무해하며, 정직한)을 설명할 수 있다</li>
+          <li>Claude의 핵심 역량과 접근 방법(웹, 데스크탑, 모바일)을 파악한다</li>
+          <li>명확한 맥락 설정 + 작업 정의 + 규칙 명시로 효과적인 프롬프트를 작성한다</li>
+          <li>파일 업로드와 후속 메시지로 대화를 반복하며 개선할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>Constitutional AI</strong>: Claude는 인간의 가치와 일치하도록 학습된 원칙 기반 AI — 해로운 출력 최소화</li>
+          <li>Claude는 단순 Q&A를 넘어 요약, 검색, 창작 글쓰기, 코딩, 복잡한 추론까지 가능한 사고 파트너</li>
+          <li>효과적인 프롬프트의 3요소: <strong>맥락 설정(Setting the stage)</strong> + <strong>작업 정의(행동)</strong> + <strong>규칙 명시(형식·톤)</strong></li>
+          <li>대화는 반복적 과정 — 첫 번째 응답이 완벽하지 않아도 정상. 대화로 개선</li>
+          <li>200K+ 토큰 컨텍스트 창으로 500페이지 이상의 문서를 단일 대화에서 처리 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>Claude의 핵심 역량</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">✍️</div>
+            <h4>글쓰기 & 콘텐츠</h4>
+            <p>소셜 미디어 포스트부터 전문 보고서까지. 톤과 스타일을 반복적으로 조정 가능</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔬</div>
+            <h4>리서치 & 분석</h4>
+            <p>문서 업로드 후 복잡한 정보 파악. 대형 컨텍스트 창으로 방대한 자료 처리</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">💻</div>
+            <h4>코딩 지원</h4>
+            <p>여러 언어로 코드 작성, 디버깅, 설명. Claude Opus 4.5는 실제 코딩 작업에서 세계 최고 수준</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🧠</div>
+            <h4>문제 해결</h4>
+            <p>복잡한 인지 작업, 수학 문제, 전략적 분석. 확장 사고 모드로 단계별 심층 추론</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📚</div>
+            <h4>학습 지원</h4>
+            <p>새로운 기술, 낯선 도메인 탐색. 학습 스타일과 페이스에 적응</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔄</div>
+            <h4>확장 사고</h4>
+            <p>Opus 4.5/Sonnet 4.5의 하이브리드 모드 — 빠른 응답 또는 깊은 추론 선택 가능</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>효과적인 프롬프트 작성법</h2>
+        <p>Claude와 대화할 때는 동료에게 이야기하듯 자연스럽고 간결하게. 다음 세 요소를 고려하세요:</p>
+        <table class="compare-table">
+          <thead>
+            <tr><th>요소</th><th>의미</th><th>예시 질문</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>맥락 설정 (Setting the stage)</strong></td>
+              <td>역할, 목표, 맥락 제공</td>
+              <td>"나는 인디 스트리밍 스타트업의 마케팅 리드이며, 투자자 피치 덱을 준비 중입니다"</td>
+            </tr>
+            <tr>
+              <td><strong>작업 정의 (Defining the task)</strong></td>
+              <td>원하는 구체적 행동</td>
+              <td>"독립 영화 스트리밍 시장의 주요 트렌드, 경쟁사 포지셔닝, 성장 기회를 리서치해 주세요"</td>
+            </tr>
+            <tr>
+              <td><strong>규칙 명시 (Specifying rules)</strong></td>
+              <td>형식, 톤, 예시 지정</td>
+              <td>"현재 웹 리서치와 인용 포함, 전문 보고서 형식으로 구성해 주세요"</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <span class="prompt-label">완성된 예시 프롬프트</span>
+        <div class="prompt-example">
+          "저는 인디 스트리밍 스타트업의 마케팅 리드로, 투자자 피치 덱을 준비하고 있습니다. 현재 독립 영화 스트리밍 시장 조사를 통해 주요 트렌드, 경쟁사 포지셔닝, 성장 기회를 파악해 주세요. 현재 웹 리서치와 인용 출처를 포함하고, 전문 보고서 형식으로 구성해 주세요."
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>파일 업로드와 반복적 대화</h2>
+        <h3>파일 업로드 활용법</h3>
+        <p>지원 형식: PDF, DOCX, CSV, TXT, PNG, JPEG. Claude는 텍스트와 시각적 요소 모두 분석 가능.</p>
+        <ul>
+          <li>문서 업로드 → 핵심 내용 요약 요청</li>
+          <li>이미지 업로드 → 분석 또는 설명 요청</li>
+          <li>스프레드시트 → 데이터 트렌드 파악</li>
+          <li>코드 파일 → 작동 방식 설명 또는 버그 찾기</li>
+        </ul>
+
+        <h3>반복 대화 전략</h3>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">💬</div>
+            <h4>후속 질문</h4>
+            <p>"두 번째 포인트를 더 자세히 설명해 주세요" / "더 간결하게 해줄 수 있나요?"</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📝</div>
+            <h4>구체적 피드백</h4>
+            <p>"이건 좋은데 톤이 너무 형식적입니다. 더 대화체로 바꿔주세요"</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔄</div>
+            <h4>방향 재설정</h4>
+            <p>대화가 잘못된 방향이면 새 채팅 시작. "실제로 Y가 아닌 X에 대해 물어봤어요"</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Claude 접근 방법</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>플랫폼</th><th>최적 사용 사례</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Claude.ai</strong> (웹/데스크탑/모바일)</td><td>대화, 글쓰기, 리서치, 분석, 파일 생성. 이 코스의 주요 초점</td></tr>
+            <tr><td><strong>Claude Code</strong></td><td>파일 직접 편집, 명령어 실행, 커밋 생성. 개발자용이지만 파일 조작에도 사용 가능</td></tr>
+            <tr><td><strong>Claude for Slack</strong></td><td>채널에서 직접 Claude와 채팅. Slack 워크스페이스 컨텍스트 검색</td></tr>
+            <tr><td><strong>Claude for Excel</strong></td><td>Excel 사이드바에서 스프레드시트 읽기/분석/수정</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>현재 업무 중 Claude를 사고 파트너로 활용할 수 있는 작업 3가지는 무엇인가요?</li>
+          <li>단순 질문과 잘 구성된 프롬프트(무대+작업+규칙)의 응답 품질 차이는 어떻게 느껴졌나요?</li>
+          <li>Claude와의 첫 대화에서 어떤 점이 예상과 달랐나요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 2: 더 나은 결과 얻기 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 3 · Getting Better Results</div>
+        <h1>더 나은 결과 얻기: 문제 해결과 AI Fluency</h1>
+        <p class="subtitle">일반적인 Claude 사용 문제를 진단하고 해결하는 방법, 그리고 반복 마인드셋으로 지속적으로 더 나은 결과를 얻는 방법을 학습합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>흔한 AI 사용 문제를 인식하고 수정 기법을 적용할 수 있다</li>
+          <li>AI Fluency의 4D 프레임워크를 정의하고 자신의 활용에 연결한다</li>
+          <li>특정 워크플로우에서 Claude 성능을 평가하는 간단한 방법을 갖춘다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>첫 번째 프롬프트가 완벽한 결과를 내지 못해도 정상 — 반복 마인드셋이 핵심</li>
+          <li>AI Fluency의 4D: <strong>Delegation</strong>(위임) + <strong>Description</strong>(설명) + <strong>Discernment</strong>(식별) + <strong>Diligence</strong>(성실)</li>
+          <li>가장 중요한 교훈: 특정 고위험 정보는 항상 독립적으로 검증해야 함</li>
+          <li>간단한 Eval 접근법으로 Claude가 내 업무에 얼마나 적합한지 체계적으로 파악 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>흔한 문제와 해결책</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>문제</th><th>원인</th><th>해결책</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>너무 일반적인 응답</strong></td>
+              <td>맥락이 부족한 프롬프트</td>
+              <td>대상, 역할, 제약 조건 추가. "이메일 써줘" → "엔터프라이즈 고객에게 2주 지연을 설명하는 전문적이지만 사과의 어조의 이메일 써줘"</td>
+            </tr>
+            <tr>
+              <td><strong>너무 길거나 짧은 응답</strong></td>
+              <td>적절한 길이를 추측함</td>
+              <td>명시적으로: "두 단락 요약" / "100 단어 이하" / "포괄적 분석 — 길이 제한 없음"</td>
+            </tr>
+            <tr>
+              <td><strong>형식이 맞지 않음</strong></td>
+              <td>무엇을 원하는지 알지만 어떻게 원하는지 모름</td>
+              <td>예시 제공 또는 구체적 설명: "각 섹션에 굵은 제목과 함께 글머리 기호 사용"</td>
+            </tr>
+            <tr>
+              <td><strong>자신감 있어 보이는 오류 정보</strong></td>
+              <td>특정 사실이나 틈새 주제에서 오류 발생 가능</td>
+              <td>고위험 업무 시 핵심 사실 독립 검증. 출처 인용 또는 신뢰도 표시 요청</td>
+            </tr>
+            <tr>
+              <td><strong>톤이 맞지 않음</strong></td>
+              <td>기본값이 도움이 되는 전문적 톤</td>
+              <td>"더 대화체로" / "권위 있고 공식적으로". 원하는 스타일의 글 예시 제공</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>AI Fluency — 4D 프레임워크</h2>
+        <p>Prof. Rick Dakan과 Prof. Joseph Feller가 공동 개발한 프레임워크:</p>
+        <div class="priority-grid">
+          <div class="priority-card" style="border-color:rgba(97,175,239,.3)">
+            <div class="card-icon">🎯</div>
+            <h4>Delegation (위임)</h4>
+            <p>어떤 업무를 AI에게, 어떤 것은 사람이 할지 결정. AI 역량 이해와 전략적 분배</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(123,110,246,.3)">
+            <div class="card-icon">💬</div>
+            <h4>Description (설명)</h4>
+            <p>AI와 효과적으로 소통. 결과물 정의, 프로세스 안내, 행동 방식 지정</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(78,201,176,.3)">
+            <div class="card-icon">🔍</div>
+            <h4>Discernment (식별)</h4>
+            <p>AI 결과물을 비판적 평가. 품질, 정확성, 적절성 판단 및 개선 영역 파악</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(217,127,58,.3)">
+            <div class="card-icon">🛡️</div>
+            <h4>Diligence (철저함)</h4>
+            <p>AI를 책임감 있고 윤리적으로 사용. AI 역할 투명하게 공개, AI 지원 업무 책임</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>내 워크플로우에서 Claude 평가하기 (Evals)</h2>
+        <p>Claude가 특정 반복 업무에 얼마나 효과적인지 체계적으로 평가하는 방법:</p>
+        <ul class="step-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>예시 수집</h4>
+              <p>내가 정기적으로 하는 업무의 예시 5~10개 수집 (내가 작성한 이메일, 보고서, 분석 등)</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>테스트 프롬프트 작성</h4>
+              <p>유사한 결과물을 생성할 프롬프트 작성. 업무 시 자연스럽게 갖게 되는 맥락 포함</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>결과 비교</h4>
+              <p>Claude 응답을 내 예시와 비교: 핵심 정보를 담았는가? 톤과 스타일이 적절한가? 무엇이 빠졌는가?</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>접근법 개선</h4>
+              <p>배운 것을 바탕으로 프롬프트 수정, 더 많은 예시 추가, 인간 검토가 필수적인 부분 파악</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>이미 경험한 흔한 문제 중 어떤 수정 기법을 다음에 시도해볼 것인가요?</li>
+          <li>4D 프레임워크 중 가장 자연스럽게 실천하는 것은? 가장 발전이 필요한 것은?</li>
+          <li>반복 업무 중 간단한 Eval로 Claude 적합성을 테스트해볼 만한 것은 무엇인가요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 3: 데스크탑 앱 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 4 · Desktop App</div>
+        <h1>Claude 데스크탑 앱: Chat·Cowork·Code</h1>
+        <p class="subtitle">세 가지 모드의 역할과 고유 기능을 이해하고, 작업 유형에 맞는 모드를 선택하는 방법을 배웁니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>Chat, Cowork, Code 세 모드와 각 모드의 설계 목적을 설명할 수 있다</li>
+          <li>각 모드의 고유 기능(빠른 입력, 예약 작업, 로컬/원격 개발 등)을 파악한다</li>
+          <li>특정 업무에 맞는 모드를 선택할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><strong>Chat</strong>: claude.ai와 동일한 Claude + 빠른 입력, 스크린샷, 받아쓰기, 데스크탑 커넥터</li>
+          <li><strong>Cowork</strong>: 복잡한 리서치·분석·문서 작성에 특화. 폴더 접근, 예약 작업, 브라우저 사용 지원</li>
+          <li><strong>Code</strong>: 코딩 전용 환경. Claude Code 기반, 시각적 diff, git 통합, 로컬/원격 환경</li>
+          <li>Cowork와 Code는 같은 엔진(Claude Code) 사용 — 둘 다 독립적 장기 작업 처리 가능</li>
+          <li>Cowork는 현재 연구 미리보기 (Pro, Max, Team, Enterprise 사용자)</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>세 모드 비교</h2>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th>Chat</th>
+              <th>Cowork</th>
+              <th>Code</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>최적화 대상</strong></td>
+              <td>빠른 교환: 아이디어 탐색, 초안 작성, 빠른 답변</td>
+              <td>복잡하거나 지속적인 작업: 리서치, 분석, 완성된 문서</td>
+              <td>소프트웨어 개발: 코드 작성, 테스트, 배포</td>
+            </tr>
+            <tr>
+              <td><strong>주요 기능</strong></td>
+              <td>빠른 입력, 받아쓰기, 스크린샷</td>
+              <td>폴더 접근, 플러그인, 서브에이전트, 예약 작업</td>
+              <td>Ask/Code/Plan 모드, 시각적 diff, git 통합</td>
+            </tr>
+            <tr>
+              <td><strong>파일 시스템</strong></td>
+              <td>커넥터로 클라우드 접근</td>
+              <td>공유 폴더 내 보호 환경</td>
+              <td>로컬 프로젝트 전체 파일 시스템 접근</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>Chat 모드 독특한 기능</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">⚡</div>
+            <h4>빠른 입력</h4>
+            <p>Mac에서 Option 키 더블 탭으로 다른 앱 위에 Claude 오버레이. 전환 없이 질문 가능</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📸</div>
+            <h4>스크린샷 & 창 공유</h4>
+            <p>화면을 캡처하거나 창을 공유해 Claude가 직접 볼 수 있도록. 텍스트 설명보다 빠르고 정확</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🎤</div>
+            <h4>받아쓰기</h4>
+            <p>타이핑 대신 말하기. 문제를 생각으로 풀어낼 때 유용</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Cowork 모드 고급 기능</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">📁</div>
+            <h4>폴더 접근</h4>
+            <p>Claude에게 컴퓨터의 폴더를 제공하면 관련 내용을 읽고 완성된 작업물을 같은 위치에 저장</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⏰</div>
+            <h4>예약 작업</h4>
+            <p>반복 업무를 일정에 따라 자동 실행. 일일 브리핑, 주간 요약, 아침 받은편지함 분류 등</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🌐</div>
+            <h4>브라우저 사용</h4>
+            <p>Chrome에서 Claude가 웹사이트 탐색 및 상호작용 가능. 경쟁사 가격 비교 등 자동화</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">🔌</div>
+            <h4>플러그인</h4>
+            <p>실시간 재무 데이터, 내부 지식 베이스, 특정 규정 준수 프레임워크 등 확장 기능 추가</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Code 모드 — 세 가지 상호작용 모드</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>모드</th><th>Claude의 자율성</th><th>사용 시기</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Ask</strong></td><td>모든 변경 제안 후 승인 대기. 시각적 diff 제공</td><td>세밀한 검토가 필요할 때</td></tr>
+            <tr><td><strong>Code</strong></td><td>파일 변경은 자동, 터미널 명령 전 확인</td><td>일반 개발 작업</td></tr>
+            <tr><td><strong>Plan</strong></td><td>전체 접근 방법을 먼저 개요로 제시 후 실행</td><td>복잡한 리팩토링, 신중한 계획 필요 시</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>현재 주로 사용하는 Claude 업무들 중 Chat, Cowork, Code 중 어느 모드가 가장 잘 맞을까요?</li>
+          <li>Cowork의 예약 작업 기능으로 자동화하면 좋을 아침 루틴 업무가 있나요?</li>
+          <li>Code 모드의 Ask/Code/Plan 중 어느 것이 코드 리뷰에 가장 유용할 것 같나요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 4: 프로젝트 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 5 · Projects</div>
+        <h1>프로젝트: 지속적인 작업을 위한 전용 공간</h1>
+        <p class="subtitle">관련 대화, 지식 베이스, 맞춤 지시사항을 하나의 프로젝트로 묶어 Claude를 더 똑똑하게 활용하는 방법을 배웁니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>프로젝트가 무엇인지, 언제 사용해야 하는지 설명할 수 있다</li>
+          <li>이름, 설명, 가시성 설정을 포함한 새 프로젝트를 생성할 수 있다</li>
+          <li>프로젝트 지시사항과 지식 베이스를 효과적으로 구성한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>프로젝트 = 자체 메모리, 대화 기록, 지식 베이스, 맞춤 지시사항을 갖춘 독립 작업 공간</li>
+          <li>같은 파일을 반복 업로드하거나 매번 동일한 맥락을 설명해야 하는 경우 프로젝트가 해결책</li>
+          <li>지식 베이스가 컨텍스트 한계에 가까워지면 RAG 모드 자동 활성화 — 용량을 10배까지 확장</li>
+          <li>팀 사용자(Claude for Work): 프로젝트를 팀원과 공유해 동일한 맥락, 지시사항, 지식 활용</li>
+          <li>파일 이름을 설명적으로 지정: Claude가 파일 이름으로 관련 정보를 찾음</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>프로젝트를 만들어야 할 때</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">📚</div>
+            <h4>반복 참조 자료</h4>
+            <p>회의록, 설문 결과, 보고서, 기록 데이터 등 계속 재사용하는 문서</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⚙️</div>
+            <h4>일관된 요건</h4>
+            <p>항상 공식 언어 사용, 항상 출처 인용, 항상 우리 템플릿 따르기 등</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">👥</div>
+            <h4>팀 협업</h4>
+            <p>여러 사람이 동일한 기반 위에서 작업해야 하는 경우</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>프로젝트 생성 단계</h2>
+        <ul class="step-list">
+          <li>
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>프로젝트 설정</h4>
+              <p>왼쪽 사이드바에서 "Projects" 클릭 → "+ New Project" → 설명적인 이름 입력 → 가시성 설정 (비공개 또는 조직 공유)</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>프로젝트 지시사항 작성</h4>
+              <p>"Instructions" 클릭. 작업 맥락, 프로세스 지시사항, 톤/스타일, 특정 요건을 포함하세요. "Save instructions" 클릭 — 이 프로젝트의 모든 대화에 적용됩니다.</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>지식 베이스 구축</h4>
+              <p>오른쪽의 파일 메뉴에서 "+" 클릭. PDF, DOCX, CSV, TXT, HTML 등 업로드. Google Drive 연결 가능. 파일 이름은 설명적으로 지정 ("Q4-2024-브랜드가이드.pdf"가 "document1.pdf"보다 효과적)</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>프로젝트 활용 사례</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>프로젝트 이름</th><th>지식 베이스에 포함할 내용</th><th>지시사항 예시</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q4 제품 출시</td>
+              <td>제품 사양, 경쟁사 분석, 메시징 브레인스토밍 노트</td>
+              <td>"항상 B2B 기술 제품에 적합한 전문적이되 친근한 톤 사용"</td>
+            </tr>
+            <tr>
+              <td>고객 계정 허브</td>
+              <td>브랜드 가이드라인, 과거 결과물, 커뮤니케이션 이력</td>
+              <td>"제안서나 보고서 작성 시 항상 클라이언트 톤을 반영하고 특정 맥락 참조"</td>
+            </tr>
+            <tr>
+              <td>리서치 지원</td>
+              <td>경쟁사 검토, 사용자 리서치 데이터, 고객 피드백</td>
+              <td>"출처 종합, 보고서 초안, 추천 사항 일관성 유지"</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-box-content">
+          <h4>프로젝트 vs 일반 대화</h4>
+          <p>일회성 질문에는 일반 대화로, 지속적인 작업 스트림에는 프로젝트로. 같은 파일을 3번 이상 업로드했다면 프로젝트를 만들 시간입니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>지속적인 맥락이 있는 프로젝트로 만들어볼 만한 진행 중인 업무는 무엇인가요?</li>
+          <li>정기적으로 재업로드하거나 재설명해야 했던 파일이나 맥락은 무엇인가요?</li>
+          <li>팀이 공유된 지식과 지시사항으로 더 일관성 있게 작업할 수 있는 프로젝트는?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 5: 아티팩트 & 스킬 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 6-7 · Artifacts & Skills</div>
+        <h1>아티팩트와 스킬: 독립 결과물과 전문화 역량</h1>
+        <p class="subtitle">Claude가 생성하는 독립 실행 가능한 아티팩트의 유형과 활용법, 그리고 스킬로 반복 워크플로우를 자동화하는 방법을 학습합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>아티팩트가 무엇인지, 언제 Claude가 아티팩트를 생성하는지 설명할 수 있다</li>
+          <li>동료와 아티팩트를 공유하고 공개적으로 게시하는 방법을 파악한다</li>
+          <li>스킬과 프로젝트의 차이를 이해하고, 맞춤 스킬을 만드는 방법을 안다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>아티팩트 = 대화 옆 전용 창에 렌더링되는 독립 실행 가능 결과물 (코드, HTML, 문서, 다이어그램 등)</li>
+          <li>15줄 이상, 자체 완결적, 반복 사용 가능성이 있을 때 자동으로 아티팩트 생성</li>
+          <li>공개 게시 시: 해당 버전만 공개, 대화는 비공개 유지. 다른 사람이 "리믹스" 가능</li>
+          <li><strong>스킬</strong>: 특정 작업을 반복 가능한 방식으로 실행하는 지시사항·스크립트·리소스 패키지</li>
+          <li><strong>프로젝트 vs 스킬</strong>: 프로젝트는 지식 저장, 스킬은 프로세스 실행</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>아티팩트 유형</h2>
+        <div class="badge-row">
+          <div class="badge badge-blue">📄 문서 (Markdown, 일반 텍스트)</div>
+          <div class="badge badge-purple">💻 코드 스니펫</div>
+          <div class="badge badge-green">🌐 HTML 페이지</div>
+          <div class="badge badge-orange">🎨 SVG 이미지</div>
+          <div class="badge badge-blue">📊 Mermaid 다이어그램</div>
+          <div class="badge badge-purple">⚛️ React 컴포넌트</div>
+        </div>
+
+        <h3>아티팩트 생성 예시 프롬프트</h3>
+        <ul style="color:var(--text2);padding-left:20px;margin:10px 0;font-size:14px">
+          <li>"고객 온보딩 프로세스를 보여주는 순서도를 만들어줘"</li>
+          <li>"월별 지출을 입력하고 파이 차트로 분석하는 인터랙티브 대시보드를 만들어줘"</li>
+          <li>"히어로 섹션과 기능 목록이 있는 생산성 앱의 랜딩 페이지를 디자인해줘"</li>
+          <li>"새로운 이니셔티브에 재사용할 수 있는 프로젝트 브리프 템플릿을 작성해줘"</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>스킬: 전문화 역량 패키지</h2>
+        <h3>스킬과 프로젝트의 차이</h3>
+        <table class="compare-table">
+          <thead>
+            <tr><th>항목</th><th>프로젝트</th><th>스킬</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>목적</strong></td><td>Claude가 참조하는 지식 저장</td><td>Claude가 실행하는 프로세스 정의</td></tr>
+            <tr><td><strong>최적 용도</strong></td><td>장기 맥락, 참조 자료, 팀 협업</td><td>반복 워크플로우, 다단계 작업, 일관된 방법론</td></tr>
+            <tr><td><strong>예시</strong></td><td>고객 허브, 리서치 도우미</td><td>브랜드 가이드라인 적용, 블로그 초안, PDF 생성</td></tr>
+          </tbody>
+        </table>
+
+        <h3>맞춤 스킬 만드는 방법</h3>
+        <ul class="step-list">
+          <li><div class="step-num">1</div><div class="step-content"><h4>Claude와 대화 시작</h4><p>"분기별 비즈니스 리뷰를 작성하는 스킬을 만들고 싶어요"</p></div></li>
+          <li><div class="step-num">2</div><div class="step-content"><h4>Claude의 질문에 답하기</h4><p>이 스킬이 무엇을 해야 하는지, 좋은 결과물은 어떤 모습인지, 언제 사용할지 등</p></div></li>
+          <li><div class="step-num">3</div><div class="step-content"><h4>참고 자료 업로드</h4><p>템플릿, 스타일 가이드, 예시 작업물 — Claude가 정확히 원하는 것을 이해하도록 도움</p></div></li>
+          <li><div class="step-num">4</div><div class="step-content"><h4>스킬 다운로드 및 업로드</h4><p>Claude가 ZIP 파일을 생성. Settings > Capabilities > Skills에서 업로드</p></div></li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>인터랙티브 아티팩트로 만들면 좋을 반복 작업이나 프로세스가 있나요?</li>
+          <li>항상 같은 방법으로 실행하고 싶은 워크플로우 중 스킬로 만들기 좋은 것은?</li>
+          <li>스킬과 프로젝트를 함께 사용하면 어떤 시너지를 만들 수 있을까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 6: 커넥터 & 엔터프라이즈 검색 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 8-9 · Connectors & Enterprise Search</div>
+        <h1>커넥터와 엔터프라이즈 검색: Claude와 업무 도구 연결</h1>
+        <p class="subtitle">Claude를 일상적으로 사용하는 도구와 연결하여 실제 데이터로 작업하는 방법과, 조직 전체의 지식을 검색하는 엔터프라이즈 기능을 학습합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>커넥터가 무엇인지, 웹 커넥터와 데스크탑 확장 기능의 차이를 설명할 수 있다</li>
+          <li>커넥터 디렉토리에서 도구를 찾고 첫 번째 연결을 설정한다</li>
+          <li>엔터프라이즈 검색이 어떤 유형의 질문에 가치를 더하는지 이해한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>커넥터 = MCP(Model Context Protocol) 기반의 Claude-도구 연결. USB-C처럼 범용 표준</li>
+          <li>두 가지 유형: <strong>웹 커넥터</strong>(클라우드 서비스: Google Drive, Slack 등) + <strong>데스크탑 확장</strong>(로컬 앱)</li>
+          <li>Claude는 내가 접근 권한을 가진 데이터만 볼 수 있음 — 내 이메일만, CEO 이메일 불가</li>
+          <li><strong>엔터프라이즈 검색</strong>: 팀/엔터프라이즈 플랜 전용. 여러 조직 도구에 걸친 지식 검색에 특화</li>
+          <li>커넥터는 설정에서 언제든 취소 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>커넥터로 할 수 있는 것들</h2>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">📋</div>
+            <h4>프로젝트 관리</h4>
+            <p>"이번 주 최우선 마감 작업은?" / "제품 출시 프로젝트 상태 요약해줘" (Asana, Linear, Jira)</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📧</div>
+            <h4>커뮤니케이션</h4>
+            <p>"공급업체 계약 논의 이메일 찾아줘" / "#마케팅 채널의 최신 메시지에 답장 초안 작성해줘"</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📁</div>
+            <h4>문서</h4>
+            <p>"브랜드 가이드라인 검색해줘" / "지난 주 제품 리뷰 회의 노트 요약해줘" (Notion, Drive)</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">💼</div>
+            <h4>비즈니스 도구</h4>
+            <p>"지난 분기 매출 트렌드 보여줘" / "Acme Corp 기회 현황은?" (Stripe, Salesforce)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>엔터프라이즈 검색 활용 사례</h2>
+        <p>엔터프라이즈 검색은 여러 출처에 걸친 질문이나 정보 종합이 필요할 때 특히 유용합니다:</p>
+        <table class="compare-table">
+          <thead>
+            <tr><th>사용 상황</th><th>예시 질문</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>빠르게 파악하기</td><td>"내가 없었던 어제 무슨 일이 있었나요?" / "플랫폼 프로젝트의 현재 차단 요소는?"</td></tr>
+            <tr><td>정책 & 프로세스</td><td>"우리 회사 원격 근무 정책은?" / "경비 보고서는 어떻게 제출하나요?"</td></tr>
+            <tr><td>신입 온보딩</td><td>"인증 시스템은 어떻게 작동하나요?" / "배포 담당자는 누구인가요?"</td></tr>
+            <tr><td>프로젝트 추적</td><td>"마케팅 캠페인 관련 논의 및 문서 찾아줘" / "지난 주 리더십 회의 핵심 결정은?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>보안 및 권한</h4>
+          <p>엔터프라이즈 검색은 내가 원래 연결된 도구에서 이미 접근 권한이 있는 내용만 표시합니다. 대화는 비공개이며 연결된 데이터는 별도로 인덱싱되거나 저장되지 않습니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>현재 Claude에게 수동으로 복사-붙여넣기 해야 하는 정보 중 커넥터로 해결할 수 있는 것은?</li>
+          <li>여러 데이터 소스를 조합하면 큰 시간을 절약할 수 있는 업무는 무엇인가요?</li>
+          <li>엔터프라이즈 검색이 신입 팀원 온보딩에 어떻게 도움을 줄 수 있을까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 7: 리서치 모드 & 역할별 활용 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 10-11 · Research Mode</div>
+        <h1>리서치 모드: 심층 조사의 새로운 기준</h1>
+        <p class="subtitle">단순 검색을 넘어 체계적인 다단계 조사를 자동으로 수행하는 리서치 모드의 활용법과, 직무별 실전 사례를 알아봅니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>리서치 모드가 일반 웹 검색 및 확장 사고와 어떻게 다른지 설명할 수 있다</li>
+          <li>종합적인 정보 수집이 필요한 상황에서 리서치 모드를 효과적으로 활용한다</li>
+          <li>자신의 직무에 맞는 Claude 활용 사례 2~3가지를 파악한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>리서치 모드 = Claude가 에이전트처럼 작동 — 여러 검색을 연쇄적으로 수행하며 스스로 무엇을 다음에 조사할지 결정</li>
+          <li>대부분 5~15분 내 완료, 복잡한 조사는 최대 45분 — 수동 리서치라면 몇 시간이 걸릴 작업</li>
+          <li>확장 사고가 자동으로 활성화 — Claude가 방법을 먼저 계획하고 정보를 수집</li>
+          <li>모든 주장에 인용 출처 포함 — 검증 용이</li>
+          <li>구글 워크스페이스 같은 통합 연결 시 내부 자료 + 웹 리서치 결합 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>언제 무엇을 쓸까?</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>상황</th><th>권장 도구</th><th>이유</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>여러 출처의 종합 보고서</td>
+              <td><strong>리서치 모드</strong></td>
+              <td>자동으로 여러 검색 연쇄 실행, 인용 포함</td>
+            </tr>
+            <tr>
+              <td>오늘 주가 같은 빠른 사실</td>
+              <td>웹 검색</td>
+              <td>한두 개 출처로 충분, 속도가 중요</td>
+            </tr>
+            <tr>
+              <td>수학 문제, 코드 디버깅, 논리 분석</td>
+              <td>확장 사고</td>
+              <td>외부 정보보다 추론이 필요한 경우</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>효과적인 리서치 프롬프트 팁</h2>
+        <p>리서치에 5~45분이 걸리므로 프롬프트에 시간을 투자하는 것이 가치 있습니다:</p>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">🎯</div>
+            <h4>목표를 구체적으로</h4>
+            <p>"EV 시장에 대해 알려줘" → "전기차 배터리 시장 주요 플레이어, 기술 트렌드, 투자 결정에 영향을 줄 공급망 과제 분석"</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">📋</div>
+            <h4>원하는 구조 명시</h4>
+            <p>"위치 및 접근성, 회의 공간, 케이터링, 가격을 포함해 팀 오프사이트 장소 옵션 비교"</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⚙️</div>
+            <h4>관련 제약 조건 포함</h4>
+            <p>예산 범위, 타임라인, 지역 요건 등이 Claude의 리서치를 관련 옵션에 집중시킴</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>직무별 Claude 활용 사례</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>직무</th><th>Claude 활용 사례</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>영업</strong></td><td>경쟁 정보 배틀 카드 구축 / 영업 미팅 준비: 잠재고객 리서치 / 영업 보고서 생성</td></tr>
+            <tr><td><strong>마케팅</strong></td><td>캠페인 성과 분석 / 플랫폼별 콘텐츠 리포맷</td></tr>
+            <tr><td><strong>재무</strong></td><td>재무 모델 구축 / 투자 메모 작성 / 상속받은 스프레드시트 이해 및 확장</td></tr>
+            <tr><td><strong>HR</strong></td><td>신규 입사자 온보딩 가이드 생성</td></tr>
+            <tr><td><strong>법무</strong></td><td>디스커버리 타임라인 추적 및 패턴 분석</td></tr>
+            <tr><td><strong>리서치</strong></td><td>문헌 리뷰 계획 / 원시 데이터에서 통계 검증</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>현재 업무에서 여러 출처의 정보를 수동으로 수집해야 하는 작업은 무엇인가요?</li>
+          <li>Google 워크스페이스와 리서치 모드를 결합하면 어떻게 워크플로우가 달라질까요?</li>
+          <li>너무 많은 리서치 시간이 필요해서 미뤄왔던 복잡한 질문은 무엇인가요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 8: 다양한 Claude 활용 방법 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 12-13 · Other Ways & Next Steps</div>
+        <h1>Claude의 다양한 활용 방법과 다음 단계</h1>
+        <p class="subtitle">Claude.ai를 넘어 코드, 슬랙, 엑셀, 크롬에서 Claude를 활용하는 방법과, 지금 당장 시작할 수 있는 실천 계획을 정리합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>Claude Code, Slack, Excel, Chrome 각각의 최적 사용 시나리오를 설명할 수 있다</li>
+          <li>자신의 일상 업무에 맞는 Claude 도구를 선택할 수 있다</li>
+          <li>이번 주에 실제 업무에 적용할 구체적인 첫 단계를 정의한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>Claude는 하나의 지능이 다양한 환경에서 작동: 웹, 데스크탑, Slack, Excel, Chrome</li>
+          <li><strong>Claude Code</strong>: 터미널/IDE/브라우저에서 코드베이스 이해, 기능 작성, 디버깅</li>
+          <li><strong>Claude in Slack</strong>: 채널에서 직접 도움, 회의 준비, 코딩 작업 위임</li>
+          <li><strong>Claude for Excel</strong>: 복잡한 스프레드시트 분석, 오류 디버깅, 새 템플릿 생성</li>
+          <li><strong>Claude for Chrome</strong>: 웹 브라우징 중 도움, 이메일 관리, 반복 양식 자동화. Max 구독 필요, 연구 미리보기</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>Claude 도구 비교</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>도구</th><th>최적 용도</th><th>실행 환경</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Claude.ai</strong></td>
+              <td>일반 작업, 리서치, 글쓰기, 분석, 파일 생성</td>
+              <td>웹, 데스크탑, 모바일 앱</td>
+            </tr>
+            <tr>
+              <td><strong>Claude Code</strong></td>
+              <td>소프트웨어 개발, 코드베이스 탐색, git 워크플로우</td>
+              <td>터미널/명령줄, IDE, 브라우저</td>
+            </tr>
+            <tr>
+              <td><strong>Claude in Slack</strong></td>
+              <td>팀 협업, 회의 준비, 빠른 답변</td>
+              <td>Slack 워크스페이스</td>
+            </tr>
+            <tr>
+              <td><strong>Claude for Excel</strong></td>
+              <td>스프레드시트 분석, 재무 모델링, 수식 디버깅</td>
+              <td>Microsoft Excel 사이드바</td>
+            </tr>
+            <tr>
+              <td><strong>Claude for Chrome</strong></td>
+              <td>웹 리서치, 이메일 관리, 브라우저 자동화</td>
+              <td>Chrome 브라우저 사이드바</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>각 도구의 최적 사용 시나리오</h2>
+        <div class="priority-grid">
+          <div class="priority-card" style="border-color:rgba(97,175,239,.3)">
+            <div class="card-icon">🖥️</div>
+            <h4>Claude Code 사용 시</h4>
+            <p>자연어로 기능 설명 → Claude가 코드 작성·테스트·커밋 / 에러 메시지로 디버깅 / 낯선 코드베이스 이해</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(78,201,176,.3)">
+            <div class="card-icon">💬</div>
+            <h4>Claude in Slack 사용 시</h4>
+            <p>메시지 초안, 긴 스레드 요약 / 회의 준비: 관련 대화·문서 수집 / 버그 보고서에서 바로 Claude Code 세션 시작</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(217,127,58,.3)">
+            <div class="card-icon">📊</div>
+            <h4>Claude for Excel 사용 시</h4>
+            <p>복잡한 멀티 탭 워크북 이해 / #REF!, #VALUE! 등 오류 추적·수정 / 새 스프레드시트 생성 또는 기존 템플릿에 데이터 채우기</p>
+          </div>
+          <div class="priority-card" style="border-color:rgba(123,110,246,.3)">
+            <div class="card-icon">🌐</div>
+            <h4>Claude for Chrome 사용 시</h4>
+            <p>브라우징 중 기사·리서치 요약 / 이메일 답장 초안 / 반복적인 양식 자동화. (저위험·신뢰 사이트에서만 권장)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>코스 마무리 & 다음 단계</h2>
+
+        <div class="key-takeaways" style="margin:0">
+          <h3>📚 코스 전체 요약</h3>
+          <ul>
+            <li><strong>Claude 이해</strong>: Constitutional AI, 핵심 역량, 3요소 프롬프트(무대+작업+규칙)</li>
+            <li><strong>결과 개선</strong>: 반복 마인드셋, 흔한 문제 해결, AI Fluency 4D, Eval 접근법</li>
+            <li><strong>데스크탑 앱</strong>: Chat(빠른 입력), Cowork(복잡한 작업), Code(개발)</li>
+            <li><strong>프로젝트</strong>: 지속적 작업을 위한 전용 공간, 지식 베이스, 팀 공유</li>
+            <li><strong>아티팩트 & 스킬</strong>: 독립 결과물 생성, 반복 워크플로우 자동화</li>
+            <li><strong>커넥터</strong>: MCP 기반으로 일상 도구 연결. 엔터프라이즈 검색으로 조직 지식 통합</li>
+            <li><strong>리서치 모드</strong>: 체계적 다단계 조사, 인용 포함, 5~45분 완료</li>
+            <li><strong>확장 도구</strong>: Claude Code, Slack, Excel, Chrome에서 전문화된 활용</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tip-box" style="margin-top:24px">
+        <div class="tip-icon">🚀</div>
+        <div class="tip-box-content">
+          <h4>지금 바로 시작하세요</h4>
+          <p>이번 주 Claude 지원으로 처리해볼 업무를 하나 고르세요. 단순하게 시작해도 좋습니다 — 이메일 초안, 회의 메모 요약, 스프레드시트 분석. 시작하고, 반복하고, 무엇이 효과적인지 배우세요. Claude는 협력자이지 대체자가 아닙니다. 최상의 결과는 여러분의 전문성과 맥락이 대화에 더해질 때 나옵니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 최종 성찰 질문</h3>
+        <ul>
+          <li>이번 주에 Claude 지원으로 처리하겠다고 다짐하는 구체적인 업무는 무엇인가요?</li>
+          <li>코스를 시작할 때와 비교해 Claude를 어떻게 다르게 볼 것인가요?</li>
+          <li>Claude를 통해 해방된 시간에 더 집중하고 싶은 고임팩트 업무는 무엇인가요?</li>
+          <li>팀에서 Claude로 가장 큰 혜택을 받을 수 있는 사람은 누구인가요?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function showLesson(idx) {
+    document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+    const total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+    document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

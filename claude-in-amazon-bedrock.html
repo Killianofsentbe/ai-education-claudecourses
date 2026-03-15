@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amazon Bedrock으로 Claude 활용 — Anthropic Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10; --surface: #16161c; --surface2: #1e1e27;
+      --border: #2a2a38; --accent: #d97f3a; --accent2: #7b6ef6;
+      --text: #e8e6f0; --text-muted: #8884a8; --text-dim: #5a5870;
+      --code-bg: #111118; --tag-bg: #1e1e2e;
+      --success: #4caf80; --warning: #e8a838;
+      --ca: #e5c07b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.8; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #1a130d 100%); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 56px; }
+    .logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
+    .sep { color: var(--text-dim); }
+    .course-title-small { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 240px 1fr; gap: 0; padding: 0 2rem; }
+    aside { position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1.5rem 2rem 0; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .sidebar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
+    .lesson-nav { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-muted); font-size: 13px; line-height: 1.4; transition: all 0.15s; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--ca); }
+    .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ca); min-width: 18px; margin-top: 1px; }
+    .sidebar-progress { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .progress-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
+    .progress-bar-bg { height: 4px; background: var(--surface2); border-radius: 2px; }
+    .progress-bar-fill { height: 100%; background: var(--ca); border-radius: 2px; transition: width 0.3s; }
+    main { padding: 2rem 0 4rem 2.5rem; }
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+    .lesson-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .lesson-number-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ca); letter-spacing: 0.15em; background: rgba(229,192,123,0.1); border: 1px solid rgba(229,192,123,0.2); padding: 0.25rem 0.75rem; border-radius: 4px; display: inline-block; margin-bottom: 0.75rem; }
+    .lesson-header h2 { font-family: 'Noto Serif KR', serif; font-size: 1.8rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; }
+    .lesson-subtitle { font-size: 14px; color: var(--text-muted); }
+    .content-section { margin-bottom: 2rem; }
+    .content-section h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    .content-section h3::before { content: ''; display: inline-block; width: 3px; height: 1em; background: var(--ca); border-radius: 2px; }
+    .learn-box { background: linear-gradient(135deg, rgba(229,192,123,0.08) 0%, rgba(229,192,123,0.04) 100%); border: 1px solid rgba(229,192,123,0.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .learn-box h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
+    .learn-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .learn-box ul li { padding-left: 1.5rem; position: relative; color: var(--text-muted); font-size: 14px; }
+    .learn-box ul li::before { content: '◆'; position: absolute; left: 0; color: var(--ca); font-size: 8px; top: 6px; }
+    .key-takeaways { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ca); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+    .key-takeaways h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
+    .key-takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .key-takeaways ul li { padding-left: 1.5rem; position: relative; font-size: 14px; color: var(--text-muted); }
+    .key-takeaways ul li::before { content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: bold; }
+    p { margin-bottom: 1rem; color: var(--text-muted); }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; color: var(--text-muted); }
+    strong { color: var(--text); font-weight: 600; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--ca); border: 1px solid var(--border); }
+    pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0 1.5rem; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: #abb2bf; font-size: 13px; line-height: 1.6; }
+    .tip-box { background: rgba(76,175,128,0.08); border: 1px solid rgba(76,175,128,0.25); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+    .tip-box strong { color: var(--success); }
+    .warn-box { background: rgba(232,168,56,0.08); border: 1px solid rgba(232,168,56,0.25); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+    .warn-box strong { color: var(--warning); }
+    .reflection-box { background: rgba(123,110,246,0.08); border: 1px solid rgba(123,110,246,0.2); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+    .reflection-box h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem; }
+    .reflection-box ul { list-style: none; }
+    .reflection-box ul li { padding: 0.6rem 0 0.6rem 1.5rem; position: relative; border-bottom: 1px solid rgba(123,110,246,0.1); font-size: 14px; color: var(--text-muted); }
+    .reflection-box ul li:last-child { border-bottom: none; }
+    .reflection-box ul li::before { content: '?'; position: absolute; left: 0; color: var(--accent2); font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 14px; }
+    .compare-table th { background: var(--surface2); padding: 0.75rem 1rem; text-align: left; font-size: 12px; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 2px solid var(--border); }
+    .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+    .compare-table tr:hover td { background: var(--surface); }
+    .priority-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1rem 0 1.5rem; }
+    .priority-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; transition: border-color 0.15s; }
+    .priority-card:hover { border-color: var(--ca); }
+    .priority-card h5 { font-size: 13px; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+    .priority-card p { font-size: 13px; margin: 0; color: var(--text-muted); }
+    .flow-steps { display: flex; flex-direction: column; gap: 0; margin: 1rem 0 1.5rem; }
+    .flow-step { display: flex; gap: 1rem; align-items: flex-start; }
+    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(229,192,123,0.15); border: 1px solid rgba(229,192,123,0.4); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ca); flex-shrink: 0; margin-top: 3px; }
+    .flow-step-content { flex: 1; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+    .flow-step:last-child .flow-step-content { border-bottom: none; }
+    .flow-step-content strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 0.25rem; }
+    .flow-step-content p { font-size: 13px; margin: 0; }
+    .aws-badge { display: inline-block; background: rgba(229,192,123,0.15); border: 1px solid rgba(229,192,123,0.3); color: var(--ca); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 0.2rem 0.6rem; border-radius: 4px; margin-right: 0.4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <span class="logo">Anthropic Academy</span>
+      <span class="sep">/</span>
+      <span class="course-title-small">Amazon Bedrock으로 Claude 활용</span>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="sidebar-label">목차</div>
+      <nav class="lesson-nav">
+        <a class="nav-item active" onclick="showLesson(0)"><span class="nav-num">01</span>Amazon Bedrock & Claude 모델</a>
+        <a class="nav-item" onclick="showLesson(1)"><span class="nav-num">02</span>Bedrock API & 대화 관리</a>
+        <a class="nav-item" onclick="showLesson(2)"><span class="nav-num">03</span>시스템 프롬프트 & 출력 제어</a>
+        <a class="nav-item" onclick="showLesson(3)"><span class="nav-num">04</span>프롬프트 평가 (Evals)</a>
+        <a class="nav-item" onclick="showLesson(4)"><span class="nav-num">05</span>프롬프트 엔지니어링</a>
+        <a class="nav-item" onclick="showLesson(5)"><span class="nav-num">06</span>Tool Use (도구 사용)</a>
+        <a class="nav-item" onclick="showLesson(6)"><span class="nav-num">07</span>RAG (검색 증강 생성)</a>
+        <a class="nav-item" onclick="showLesson(7)"><span class="nav-num">08</span>Claude 고급 기능</a>
+        <a class="nav-item" onclick="showLesson(8)"><span class="nav-num">09</span>MCP (모델 컨텍스트 프로토콜)</a>
+        <a class="nav-item" onclick="showLesson(9)"><span class="nav-num">10</span>에이전트 & Claude Code</a>
+      </nav>
+      <div class="sidebar-progress">
+        <div class="progress-label"><span>진행률</span><span id="progressLabel">1 / 10</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width: 10%"></div></div>
+      </div>
+    </aside>
+    <main>
+
+      <!-- LESSON 1 -->
+      <div class="lesson-panel active" id="lesson-0">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 01</span>
+          <h2>Amazon Bedrock & Claude 모델 이해</h2>
+          <p class="lesson-subtitle">AWS 에코시스템에서 Claude를 활용하는 방법과 Bedrock의 고유한 특성을 이해합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Amazon Bedrock이 무엇이며 일반 Anthropic API와 어떻게 다른지</li>
+            <li>Bedrock에서의 Claude 모델 ID 형식 및 추론 프로파일</li>
+            <li>boto3를 사용한 Bedrock 클라이언트 설정 및 인증</li>
+            <li>AWS 리전별 모델 가용성 문제와 해결 방법</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>Amazon Bedrock이란?</h3>
+          <p>Amazon Bedrock은 AWS에서 제공하는 완전 관리형 AI 서비스로, Claude를 포함한 여러 AI 모델에 단일 API를 통해 접근할 수 있습니다. 기존 AWS 인프라와 통합이 매끄럽고, AWS의 보안·규정 준수 체계를 그대로 활용할 수 있습니다.</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>일반 Anthropic API</h5>
+              <p>Anthropic SDK 사용, <code>ANTHROPIC_API_KEY</code>로 인증, 직접 모델에 접근. AWS 인프라와 별도로 운영됩니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>Amazon Bedrock</h5>
+              <p>boto3 SDK 사용, AWS IAM으로 인증, AWS 생태계 내 통합. 기존 AWS 워크로드와 자연스럽게 결합됩니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Bedrock 클라이언트 설정</h3>
+          <pre><code>import boto3
+
+# Bedrock Runtime 클라이언트 생성
+# AWS 인증 정보은 환경 변수 또는 IAM 역할로 자동 처리
+client = boto3.client(
+    "bedrock-runtime",
+    region_name="us-west-2"  # 리전 지정 필수
+)</code></pre>
+          <div class="warn-box">
+            <strong>⚠️ AWS 인증 정보 필요</strong>
+            <p>boto3는 AWS 인증 정보이 있어야 합니다. 로컬 개발 시 <code>~/.aws/credentials</code>를 설정하거나, EC2/Lambda에서는 IAM 역할을 사용하세요. <code>AWS_ACCESS_KEY_ID</code>와 <code>AWS_SECRET_ACCESS_KEY</code> 환경 변수도 사용 가능합니다.</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>모델 ID와 추론 프로파일</h3>
+          <p>Bedrock에서 Claude를 사용할 때 모델 가용성 문제가 생길 수 있습니다. 특정 모델이 특정 리전에 없을 수 있습니다. <strong>추론 프로파일(Inference Profile)</strong>로 이 문제를 해결할 수 있습니다.</p>
+          <pre><code># ❌ 일반 모델 ID (리전 문제 발생 가능)
+model_id = "anthropic.claude-sonnet-4-0-20250514-v1:0"
+
+# ✅ 추론 프로파일 (크로스 리전 자동 라우팅)
+model_id = "us.anthropic.claude-sonnet-4-0-20250514-v1:0"
+# 접두사 'us.' 또는 'eu.' 등으로 리전 그룹 지정
+
+# AWS Bedrock 콘솔 > Cross-region inference 에서 확인</code></pre>
+          <table class="compare-table">
+            <thead><tr><th>모델</th><th>Bedrock 추론 프로파일 ID 예시</th><th>특성</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Claude Opus</strong></td><td><code>us.anthropic.claude-opus-4-5-...</code></td><td>최고 지능, 복잡한 추론</td></tr>
+              <tr><td><strong>Claude Sonnet</strong></td><td><code>us.anthropic.claude-sonnet-4-5-...</code></td><td>균형 (대부분의 프로덕션)</td></tr>
+              <tr><td><strong>Claude Haiku</strong></td><td><code>us.anthropic.claude-haiku-4-5-...</code></td><td>최고 속도·비용 효율</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>다중 모델 전략</h3>
+          <p>실제 프로덕션 시스템에서는 하나의 모델만 사용하지 않습니다. 각 단계에 최적의 모델을 선택하세요:</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>Haiku 적합 사례</h5>
+              <p>실시간 사용자 채팅, 간단한 분류, 대용량 데이터 처리, 테스트 데이터셋 생성</p>
+            </div>
+            <div class="priority-card">
+              <h5>Sonnet 적합 사례</h5>
+              <p>핵심 비즈니스 로직, 코드 생성/수정, RAG 응답 생성, 대부분의 프로덕션 작업</p>
+            </div>
+            <div class="priority-card">
+              <h5>Opus 적합 사례</h5>
+              <p>복잡한 분석, 전략적 의사결정, 고급 추론이 필요한 연구 작업</p>
+            </div>
+            <div class="priority-card">
+              <h5>비용 최적화 팁</h5>
+              <p>Haiku(저렴) → 결과 검토 → Sonnet(보통) → 복잡한 케이스만 Opus(고가)로 에스컬레이션</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Amazon Bedrock은 AWS 생태계에서 Claude를 완전 관리형으로 활용하는 서비스입니다</li>
+            <li>boto3 <code>bedrock-runtime</code> 클라이언트를 생성하고 AWS IAM으로 인증합니다</li>
+            <li>추론 프로파일 ID(예: <code>us.anthropic...</code>)를 사용하면 리전 문제를 자동으로 해결합니다</li>
+            <li>Haiku/Sonnet/Opus를 용도에 맞게 조합하면 품질과 비용을 최적화할 수 있습니다</li>
+            <li>AWS 콘솔 > Bedrock > Cross-region inference에서 추론 프로파일 ID를 확인하세요</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>기존 AWS 인프라를 사용하는 조직에서 Bedrock을 선택하는 주된 이유는 무엇인가?</li>
+            <li>추론 프로파일의 크로스 리전 라우팅이 지연 시간에 미치는 영향은?</li>
+            <li>IAM 역할 기반 인증이 API 키 방식보다 어떤 보안적 장점을 제공하는가?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 2 -->
+      <div class="lesson-panel" id="lesson-1">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 02</span>
+          <h2>Bedrock API & 대화 관리</h2>
+          <p class="lesson-subtitle">client.converse()로 첫 요청을 만들고, 멀티턴 대화를 Bedrock API로 구현합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Bedrock의 <code>converse()</code> 메서드와 메시지 구조</li>
+            <li>Anthropic API와 다른 응답 구조에서 텍스트 추출</li>
+            <li>멀티턴 대화를 위한 히스토리 관리</li>
+            <li>스트리밍 응답 (<code>converse_stream()</code>) 구현</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>첫 번째 Bedrock 요청</h3>
+          <pre><code">import boto3
+
+client = boto3.client("bedrock-runtime", region_name="us-west-2")
+model_id = "us.anthropic.claude-sonnet-4-5-20251001-v1:0"
+
+# 메시지 구조 (Bedrock 특유의 형식)
+user_message = {
+    "role": "user",
+    "content": [
+        {"text": "What is quantum computing? Answer in one sentence."}
+    ]
+}
+
+# converse() 메서드로 요청
+response = client.converse(
+    modelId=model_id,
+    messages=[user_message]
+)
+
+# 응답 텍스트 추출 (Bedrock 응답 구조)
+text = response["output"]["message"]["content"][0]["text"]
+print(text)</code></pre>
+          <div class="warn-box">
+            <strong>⚠️ Anthropic API와 다른 응답 구조</strong>
+            <p>Anthropic API: <code>message.content[0].text</code><br>
+            Amazon Bedrock: <code>response["output"]["message"]["content"][0]["text"]</code></p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>멀티턴 대화 관리</h3>
+          <p>Claude는 Bedrock에서도 무상태(stateless)입니다. 모든 대화 히스토리를 매 요청에 포함해야 합니다.</p>
+          <pre><code>def add_user_message(messages, text):
+    messages.append({"role": "user", "content": [{"text": text}]})
+
+def add_assistant_message(messages, text):
+    messages.append({"role": "assistant", "content": [{"text": text}]})
+
+def chat(messages, system=None):
+    params = {
+        "modelId": model_id,
+        "messages": messages,
+        "inferenceConfig": {"maxTokens": 1000}
+    }
+    if system:
+        params["system"] = [{"text": system}]
+
+    response = client.converse(**params)
+    return response["output"]["message"]["content"][0]["text"]
+
+# 멀티턴 대화 예시
+messages = []
+add_user_message(messages, "Define quantum computing in one sentence")
+answer = chat(messages)
+
+add_assistant_message(messages, answer)  # 히스토리에 추가!
+add_user_message(messages, "Give me a real-world application")
+final = chat(messages)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>스트리밍 응답</h3>
+          <pre><code>def chat_stream(messages, system=None):
+    params = {
+        "modelId": model_id,
+        "messages": messages,
+        "inferenceConfig": {"maxTokens": 1000}
+    }
+    if system:
+        params["system"] = [{"text": system}]
+
+    response = client.converse_stream(**params)
+
+    full_text = ""
+    for event in response["stream"]:
+        if "contentBlockDelta" in event:
+            delta = event["contentBlockDelta"]["delta"]
+            if "text" in delta:
+                chunk = delta["text"]
+                print(chunk, end="", flush=True)
+                full_text += chunk
+
+    return full_text</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>Anthropic API vs Amazon Bedrock 비교</h3>
+          <table class="compare-table">
+            <thead><tr><th>항목</th><th>Anthropic API</th><th>Amazon Bedrock</th></tr></thead>
+            <tbody>
+              <tr><td><strong>SDK</strong></td><td><code>anthropic</code> 패키지</td><td><code>boto3</code> 패키지</td></tr>
+              <tr><td><strong>인증</strong></td><td>ANTHROPIC_API_KEY</td><td>AWS IAM / 인증 정보</td></tr>
+              <tr><td><strong>클라이언트</strong></td><td><code>Anthropic()</code></td><td><code>boto3.client("bedrock-runtime")</code></td></tr>
+              <tr><td><strong>메시지 호출</strong></td><td><code>client.messages.create()</code></td><td><code>client.converse()</code></td></tr>
+              <tr><td><strong>스트리밍</strong></td><td><code>client.messages.stream()</code></td><td><code>client.converse_stream()</code></td></tr>
+              <tr><td><strong>응답 추출</strong></td><td><code>message.content[0].text</code></td><td><code>response["output"]["message"]["content"][0]["text"]</code></td></tr>
+              <tr><td><strong>max_tokens</strong></td><td>최상위 파라미터</td><td><code>inferenceConfig={"maxTokens": N}</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Bedrock의 <code>converse()</code>는 Anthropic의 <code>messages.create()</code>와 동일한 역할을 합니다</li>
+            <li>메시지 content는 <code>[{"text": "..."}]</code> 리스트 형식이어야 합니다 (멀티모달 지원을 위해)</li>
+            <li>Claude는 Bedrock에서도 무상태 — 매 요청에 전체 대화 히스토리를 포함해야 합니다</li>
+            <li>스트리밍은 <code>converse_stream()</code>과 이벤트 스트림으로 구현합니다</li>
+            <li>응답 구조가 Anthropic API와 다르니 주의 (<code>response["output"]["message"]["content"][0]["text"]</code>)</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>Bedrock의 응답 구조가 Anthropic API보다 복잡한 이유는 무엇일까? (멀티 모달, 통합 API)</li>
+            <li>두 SDK를 추상화해서 코드 변경 없이 교체 가능한 클래스를 어떻게 설계할 수 있을까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 3 -->
+      <div class="lesson-panel" id="lesson-2">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 03</span>
+          <h2>시스템 프롬프트 & 출력 제어</h2>
+          <p class="lesson-subtitle">Bedrock API에서 시스템 프롬프트, Temperature, 구조화 출력을 구현합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Bedrock에서 시스템 프롬프트를 전달하는 방법 (별도 파라미터)</li>
+            <li><code>inferenceConfig</code>로 Temperature, maxTokens 등 조절</li>
+            <li>어시스턴트 프리필 + 중단 시퀀스로 구조화 출력 생성</li>
+            <li>스트리밍과 시스템 프롬프트 조합</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>시스템 프롬프트 (Bedrock 방식)</h3>
+          <p>Bedrock에서 시스템 프롬프트는 <code>system</code> 파라미터로 별도 전달합니다. 구조가 메시지와 동일합니다.</p>
+          <pre><code">system_prompt = """
+You are a patient math tutor.
+Do not directly answer a student's questions.
+Guide them to a solution step by step.
+"""
+
+response = client.converse(
+    modelId=model_id,
+    messages=messages,
+    system=[{"text": system_prompt}],  # 리스트로 감싸야 함!
+    inferenceConfig={"maxTokens": 1000}
+)</code></pre>
+          <div class="tip-box">
+            <strong>💡 Bedrock 시스템 프롬프트 특이사항</strong>
+            <p>Anthropic API: <code>system="..."</code> (문자열)<br>
+            Amazon Bedrock: <code>system=[{"text": "..."}]</code> (리스트 of 딕셔너리)</p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>inferenceConfig로 출력 제어</h3>
+          <pre><code>response = client.converse(
+    modelId=model_id,
+    messages=messages,
+    inferenceConfig={
+        "maxTokens": 1000,          # 최대 생성 토큰
+        "temperature": 0.7,         # 창의성 조절 (0~1)
+        "topP": 0.9,                # 핵 샘플링
+        "stopSequences": ["END"]    # 중단 시퀀스
+    }
+)</code></pre>
+          <table class="compare-table">
+            <thead><tr><th>Temperature</th><th>특성</th><th>적합한 사례</th></tr></thead>
+            <tbody>
+              <tr><td><code>0.0 – 0.3</code></td><td>결정적, 일관된 출력</td><td>코딩, 데이터 추출, 분류</td></tr>
+              <tr><td><code>0.4 – 0.7</code></td><td>균형, 적당한 다양성</td><td>요약, 교육 콘텐츠, Q&A</td></tr>
+              <tr><td><code>0.8 – 1.0</code></td><td>창의적, 다양한 출력</td><td>브레인스토밍, 창작, 아이디어</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>구조화 출력: 프리필 + 중단 시퀀스</h3>
+          <pre><code">messages = []
+add_user_message(messages, "Generate an AWS IAM policy as JSON")
+
+# 어시스턴트 메시지 프리필로 JSON 시작 강제
+add_assistant_message(messages, "```json")
+
+response = client.converse(
+    modelId=model_id,
+    messages=messages,
+    inferenceConfig={
+        "maxTokens": 1000,
+        "stopSequences": ["```"]  # 닫는 코드 블록에서 중단
+    }
+)
+
+raw_json = response["output"]["message"]["content"][0]["text"]
+import json
+data = json.loads(raw_json)  # 순수 JSON만 파싱</code></pre>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Bedrock 시스템 프롬프트는 <code>system=[{"text": "..."}]</code> 형식입니다</li>
+            <li><code>inferenceConfig</code> 딕셔너리로 maxTokens, temperature, stopSequences를 한번에 설정합니다</li>
+            <li>프리필 + 중단 시퀀스 기법은 Bedrock에서도 동일하게 작동합니다</li>
+            <li>Temperature 선택: 정확성 중심(낮음) vs 창의성 중심(높음)</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>AWS Bedrock 환경에서 시스템 프롬프트를 안전하게 관리하는 방법은? (AWS Secrets Manager?)</li>
+            <li>inferenceConfig의 topP와 temperature를 동시에 사용할 때 어떤 효과가 있을까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 4 -->
+      <div class="lesson-panel" id="lesson-3">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 04</span>
+          <h2>프롬프트 평가 (Evals)</h2>
+          <p class="lesson-subtitle">Bedrock API로 체계적인 Eval 파이프라인을 구축해 프롬프트를 데이터 기반으로 개선합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>5단계 Eval 워크플로우의 전체 구조</li>
+            <li>Claude Haiku로 테스트 데이터셋 자동 생성</li>
+            <li>모델 기반 채점과 코드 기반 채점 구현</li>
+            <li>점수 기반 프롬프트 반복 개선</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>5단계 Eval 워크플로우</h3>
+          <div class="flow-steps">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-content"><strong>프롬프트 초안</strong><p>기준 프롬프트를 작성합니다. 처음에는 단순하게 시작해도 됩니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-content"><strong>Eval 데이터셋 생성</strong><p>실제 사용 사례를 대표하는 입력 샘플을 Claude Haiku로 자동 생성합니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-content"><strong>Claude에 통과</strong><p>각 입력을 프롬프트와 결합해 Claude에게 보내고 출력을 수집합니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-content"><strong>채점</strong><p>모델 기반 또는 코드 기반 채점으로 각 출력에 점수를 매깁니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-content"><strong>반복 개선</strong><p>점수를 기준으로 프롬프트를 수정하고 전 과정을 반복합니다.</p></div></div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Bedrock으로 Eval 구현</h3>
+          <pre><code">import json
+
+haiku_model = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+sonnet_model = "us.anthropic.claude-sonnet-4-5-20251001-v1:0"
+
+def generate_dataset():
+    """Haiku로 저비용 테스트 데이터셋 생성"""
+    prompt = """Generate 5 test cases for an AWS code generation prompt.
+Each should be a task requiring Python, JSON, or Regex.
+
+Output as JSON array:
+[{"task": "..."}, ...]"""
+
+    messages = [{"role": "user", "content": [{"text": prompt}]},
+                {"role": "assistant", "content": [{"text": "```json"}]}]
+
+    response = client.converse(
+        modelId=haiku_model,
+        messages=messages,
+        inferenceConfig={"maxTokens": 1000, "stopSequences": ["```"]}
+    )
+    return json.loads(response["output"]["message"]["content"][0]["text"])
+
+def run_prompt(test_case, prompt_template):
+    """Sonnet으로 실제 프롬프트 실행"""
+    prompt = prompt_template.format(task=test_case["task"])
+    messages = [{"role": "user", "content": [{"text": prompt}]}]
+    response = client.converse(modelId=sonnet_model, messages=messages,
+                               inferenceConfig={"maxTokens": 500})
+    return response["output"]["message"]["content"][0]["text"]
+
+def score_output(task, output):
+    """Claude가 출력을 채점"""
+    scoring_prompt = f"""Rate this AI output on a scale of 1-10.
+Task: {task}
+Output: {output}
+Return only a JSON: {{"score": N, "reason": "..."}}"""
+
+    messages = [{"role": "user", "content": [{"text": scoring_prompt}]},
+                {"role": "assistant", "content": [{"text": "{"}]}]
+
+    response = client.converse(
+        modelId=haiku_model,
+        messages=messages,
+        inferenceConfig={"maxTokens": 200, "stopSequences": ["}"]}
+    )
+    result = "{" + response["output"]["message"]["content"][0]["text"] + "}"
+    return json.loads(result)</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>채점 방법 비교</h3>
+          <table class="compare-table">
+            <thead><tr><th>방법</th><th>구현</th><th>장점</th><th>적합 케이스</th></tr></thead>
+            <tbody>
+              <tr><td><strong>모델 채점</strong></td><td>Claude Haiku로 자동 평가</td><td>유연, 복잡한 기준 적용 가능</td><td>오픈 엔드 응답, 품질 평가</td></tr>
+              <tr><td><strong>코드 채점</strong></td><td>정규식, JSON 파싱, 단위 테스트</td><td>빠르고 무료, 완전 객관적</td><td>포맷 검사, 코드 실행 결과</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Eval은 Bedrock API로도 동일하게 구현할 수 있으며, 데이터 생성에는 Haiku를 사용하세요</li>
+            <li>프리필 + 중단 시퀀스로 JSON 출력을 안정적으로 파싱합니다</li>
+            <li>Eval 점수는 프롬프트 변경의 효과를 객관적으로 측정하는 유일한 방법입니다</li>
+            <li>Bedrock의 Pay-per-use 모델로 Eval 비용도 최적화할 수 있습니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>AWS 환경에서 Eval 결과를 S3에 저장하고 CloudWatch로 모니터링하는 시스템을 설계한다면?</li>
+            <li>프롬프트 버전 관리를 AWS Parameter Store나 DynamoDB로 관리하는 방법은?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 5 -->
+      <div class="lesson-panel" id="lesson-4">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 05</span>
+          <h2>프롬프트 엔지니어링</h2>
+          <p class="lesson-subtitle">Bedrock 환경에서도 동일하게 적용되는 4가지 핵심 프롬프트 엔지니어링 기법</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>명확하고 직접적인 지시로 Eval 점수 향상</li>
+            <li>구체적인 가이드라인으로 출력 품질 일관성 확보</li>
+            <li>XML 태그로 복잡한 프롬프트 구조화</li>
+            <li>One-shot/Multi-shot 예시로 엣지 케이스 처리</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 1: 명확하고 직접적으로</h3>
+          <table class="compare-table">
+            <thead><tr><th>나쁜 예 ❌</th><th>좋은 예 ✓</th><th>점수 변화</th></tr></thead>
+            <tbody>
+              <tr><td>"What should this person eat?"</td><td>"Generate a one-day meal plan for an athlete that meets their dietary restrictions."</td><td>2.32 → 3.92</td></tr>
+              <tr><td>"Help me with AWS stuff"</td><td>"Write a Python Lambda function that processes S3 put events and logs metadata to CloudWatch."</td><td>큰 폭 향상</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 2: 구체적인 가이드라인</h3>
+          <pre><code">prompt = f"""
+Generate an AWS CloudFormation template for the following requirement:
+{requirement}
+
+Guidelines:
+1. Use YAML format
+2. Include all required resource properties
+3. Add appropriate IAM roles with least privilege
+4. Include tags: Environment, Project, Owner
+5. Add comments explaining non-obvious configurations
+6. Ensure the template is valid and deployable
+"""</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 3: XML 태그로 구조화</h3>
+          <pre><code">prompt = f"""
+Review the following AWS architecture and identify security issues.
+
+<architecture_diagram>
+{architecture_description}
+</architecture_diagram>
+
+<security_requirements>
+{compliance_requirements}
+</security_requirements>
+
+<existing_policies>
+{current_iam_policies}
+</existing_policies>
+
+Identify all security vulnerabilities and provide specific remediation steps.
+"""</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>기법 4: Few-shot 예시</h3>
+          <pre><code">prompt = f"""
+Convert the following natural language description to an AWS CLI command.
+
+<examples>
+<example>
+<input>List all S3 buckets in us-east-1 region</input>
+<output>aws s3 ls --region us-east-1</output>
+</example>
+<example>
+<input>Create an EC2 instance with t3.micro type in default VPC</input>
+<output>aws ec2 run-instances --instance-type t3.micro --image-id ami-0c55b159cbfafe1f0</output>
+</example>
+</examples>
+
+<input>{user_request}</input>
+"""</code></pre>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>4가지 기법(명확성, 구체성, XML 태그, 예시)은 플랫폼과 무관하게 동일하게 작동합니다</li>
+            <li>AWS 특화 프롬프팅: 서비스명, 리전, IAM 권한, 태그 요구사항을 명확히 포함하세요</li>
+            <li>XML 태그는 특히 긴 코드나 문서가 포함된 AWS 작업 프롬프트에서 효과적입니다</li>
+            <li>각 기법 적용 전후를 Eval 점수로 측정해 효과를 검증하세요</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>AWS 서비스에 특화된 프롬프트를 작성할 때 일반 프롬프팅과 다르게 고려해야 할 사항은?</li>
+            <li>보안이 중요한 AWS 작업(IAM, 네트워크 설정)에서 프롬프트를 어떻게 안전하게 설계할까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 6 -->
+      <div class="lesson-panel" id="lesson-5">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 06</span>
+          <h2>Tool Use (도구 사용)</h2>
+          <p class="lesson-subtitle">Bedrock의 converse() API로 도구를 정의하고, 멀티턴 도구 대화와 구조화 데이터 추출을 구현합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Bedrock toolConfig 파라미터로 도구 스키마 정의</li>
+            <li>도구 호출 응답 처리 (<code>toolUse</code> 블록)</li>
+            <li>도구 결과를 <code>toolResult</code>로 전송하는 방법</li>
+            <li><code>toolChoice</code>로 특정 도구 강제 사용</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>Bedrock 도구 정의</h3>
+          <pre><code">tools_config = {
+    "tools": [
+        {
+            "toolSpec": {
+                "name": "get_current_datetime",
+                "description": "Returns the current date and time. Use when the user needs the current time.",
+                "inputSchema": {
+                    "json": {
+                        "type": "object",
+                        "properties": {
+                            "date_format": {
+                                "type": "string",
+                                "description": "Format string using Python strftime codes",
+                                "default": "%Y-%m-%d %H:%M:%S"
+                            }
+                        },
+                        "required": []
+                    }
+                }
+            }
+        }
+    ]
+}</code></pre>
+          <div class="warn-box">
+            <strong>⚠️ Anthropic API vs Bedrock 도구 구조 차이</strong>
+            <p>Anthropic: <code>tools=[{"name": "...", "input_schema": {...}}]</code><br>
+            Bedrock: <code>toolConfig={"tools": [{"toolSpec": {"name": "...", "inputSchema": {"json": {...}}}}]}</code></p>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>도구 응답 처리</h3>
+          <pre><code">from datetime import datetime
+
+def get_current_datetime(date_format="%Y-%m-%d %H:%M:%S"):
+    return datetime.now().strftime(date_format)
+
+# 도구 포함 요청
+response = client.converse(
+    modelId=model_id,
+    messages=messages,
+    toolConfig=tools_config,
+    inferenceConfig={"maxTokens": 1000}
+)
+
+# 도구 사용 감지
+output_message = response["output"]["message"]
+stop_reason = response["stopReason"]
+
+if stop_reason == "tool_use":
+    # 도구 호출 정보 추출
+    for block in output_message["content"]:
+        if block.get("toolUse"):
+            tool_use = block["toolUse"]
+            tool_name = tool_use["name"]
+            tool_input = tool_use["input"]
+            tool_use_id = tool_use["toolUseId"]
+
+            # 도구 실행
+            result = get_current_datetime(**tool_input)
+
+            # 도구 결과를 히스토리에 추가
+            messages.append(output_message)  # 어시스턴트 응답 추가
+            messages.append({
+                "role": "user",
+                "content": [{
+                    "toolResult": {
+                        "toolUseId": tool_use_id,
+                        "content": [{"text": str(result)}]
+                    }
+                }]
+            })</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>구조화 데이터 추출 (toolChoice)</h3>
+          <pre><code">extract_config = {
+    "tools": [{
+        "toolSpec": {
+            "name": "extract_article_info",
+            "description": "Extract structured information from an article",
+            "inputSchema": {"json": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string"},
+                    "author": {"type": "string"},
+                    "key_points": {"type": "array", "items": {"type": "string"}}
+                }
+            }}
+        }
+    }],
+    "toolChoice": {"tool": {"name": "extract_article_info"}}  # 강제 사용
+}
+
+response = client.converse(
+    modelId=model_id,
+    messages=messages,
+    toolConfig=extract_config,
+    inferenceConfig={"maxTokens": 1000}
+)
+
+# 구조화 데이터 추출
+for block in response["output"]["message"]["content"]:
+    if "toolUse" in block:
+        structured_data = block["toolUse"]["input"]</code></pre>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Bedrock 도구는 <code>toolConfig</code>의 <code>toolSpec</code> 형식으로 정의합니다</li>
+            <li><code>stopReason == "tool_use"</code>로 Claude가 도구를 요청했는지 감지합니다</li>
+            <li>도구 결과는 <code>toolResult</code> 블록으로 user 메시지에 포함해 전송합니다</li>
+            <li><code>toolChoice: {"tool": {"name": "..."}}</code>로 특정 도구를 강제해 구조화 데이터를 추출합니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>Bedrock Lambda 함수를 도구로 연결하면 어떤 아키텍처가 가능해질까?</li>
+            <li>도구 오류 시 <code>isError: true</code>를 사용하면 Claude가 어떻게 반응하는가?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 7 -->
+      <div class="lesson-panel" id="lesson-6">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 07</span>
+          <h2>RAG (검색 증강 생성)</h2>
+          <p class="lesson-subtitle">AWS 생태계(S3, OpenSearch, Kendra)와 통합하는 RAG 파이프라인을 Bedrock에서 구축합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>RAG 파이프라인의 전체 구조 (청킹 → 임베딩 → 검색 → 생성)</li>
+            <li>AWS 서비스를 활용한 벡터 저장 및 검색</li>
+            <li>하이브리드 검색 전략 (시맨틱 + 어휘)</li>
+            <li>Bedrock Knowledge Bases 서비스 소개</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>RAG 전체 흐름</h3>
+          <div class="flow-steps">
+            <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-content"><strong>문서 수집 & 청킹</strong><p>S3에 저장된 문서를 읽어 1000자 단위 청크로 분할합니다. 200자 오버랩으로 경계 문맥을 보존합니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-content"><strong>임베딩 생성</strong><p>VoyageAI API로 각 청크를 벡터로 변환합니다. Anthropic은 자체 임베딩 서비스를 제공하지 않습니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-content"><strong>벡터 DB 저장</strong><p>OpenSearch Service나 pgvector(RDS)에 벡터를 저장합니다. Amazon Kendra도 관리형 옵션입니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-content"><strong>쿼리 처리</strong><p>사용자 질문을 임베딩으로 변환하고 유사한 청크를 검색합니다.</p></div></div>
+            <div class="flow-step"><div class="flow-step-num">5</div><div class="flow-step-content"><strong>Claude로 응답 생성</strong><p>관련 청크 + 질문을 Bedrock converse()로 전달해 최종 응답을 생성합니다.</p></div></div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>AWS 기반 RAG 구현</h3>
+          <pre><code">import voyageai
+import boto3
+import json
+
+# 임베딩 클라이언트
+voyage_client = voyageai.Client()
+
+def generate_embedding(text):
+    result = voyage_client.embed([text], model="voyage-3-large", input_type="document")
+    return result.embeddings[0]
+
+def semantic_search(query, chunks_with_embeddings, top_k=3):
+    import numpy as np
+    query_emb = voyage_client.embed([query], model="voyage-3-large", input_type="query").embeddings[0]
+
+    scores = []
+    for chunk, emb in chunks_with_embeddings:
+        score = np.dot(query_emb, emb)
+        scores.append((score, chunk))
+
+    return [chunk for _, chunk in sorted(scores, reverse=True)[:top_k]]
+
+def rag_query(user_question, chunks_with_embeddings):
+    relevant_chunks = semantic_search(user_question, chunks_with_embeddings)
+    context = "\n\n".join(relevant_chunks)
+
+    prompt = f"""Answer the question based on the provided context.
+
+<context>
+{context}
+</context>
+
+<question>{user_question}</question>
+
+If the answer is not in the context, say so clearly."""
+
+    messages = [{"role": "user", "content": [{"text": prompt}]}]
+    response = bedrock_client.converse(
+        modelId=model_id,
+        messages=messages,
+        inferenceConfig={"maxTokens": 1000}
+    )
+    return response["output"]["message"]["content"][0]["text"]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>AWS 관리형 옵션: Bedrock Knowledge Bases</h3>
+          <p>직접 구현 대신 AWS Bedrock Knowledge Bases를 사용하면 RAG 파이프라인을 완전 관리형으로 실행할 수 있습니다.</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>직접 구현 RAG</h5>
+              <p>완전한 제어, 커스터마이징 가능, 더 복잡한 구현 필요. 특수한 청킹/검색 전략이 필요할 때 적합합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>Bedrock Knowledge Bases</h5>
+              <p>완전 관리형, S3와 자동 통합, 간단한 API. 빠른 구축이 필요하거나 표준 RAG로 충분한 경우 적합합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>RAG = 문서 청킹 → 임베딩(VoyageAI) → 벡터 DB → 쿼리 검색 → Bedrock 응답 생성</li>
+            <li>AWS 환경에서는 S3(저장), OpenSearch(벡터 DB), Bedrock(생성)을 자연스럽게 연결합니다</li>
+            <li>Bedrock Knowledge Bases로 RAG를 완전 관리형으로 운영할 수 있습니다</li>
+            <li>하이브리드 검색(시맨틱 + BM25)이 단독 시맨틱 검색보다 더 나은 결과를 줍니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>Bedrock Knowledge Bases vs 직접 구현 중 어떤 상황에서 어느 것을 선택해야 할까?</li>
+            <li>S3에 저장된 PDF 문서를 자동으로 처리하는 RAG 파이프라인을 Lambda로 어떻게 자동화할까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 8 -->
+      <div class="lesson-panel" id="lesson-7">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 08</span>
+          <h2>Claude 고급 기능</h2>
+          <p class="lesson-subtitle">Bedrock에서 확장 사고, 이미지·PDF 처리, Citations, 프롬프트 캐싱을 구현합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>Bedrock에서 Extended Thinking 활성화</li>
+            <li>이미지와 PDF를 Bedrock converse()에 포함하는 방법</li>
+            <li>Citations로 문서 출처 추적</li>
+            <li>Bedrock에서 프롬프트 캐싱으로 비용 절감</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>Extended Thinking (Bedrock)</h3>
+          <pre><code">response = client.converse(
+    modelId="us.anthropic.claude-opus-4-5-20251001-v1:0",
+    messages=messages,
+    inferenceConfig={"maxTokens": 16000},
+    additionalModelRequestFields={
+        "thinking": {
+            "type": "enabled",
+            "budget_tokens": 10000  # 사고에 할당할 토큰
+        }
+    }
+)
+
+# 사고 과정과 최종 응답 분리
+for block in response["output"]["message"]["content"]:
+    if block.get("reasoningContent"):
+        thinking = block["reasoningContent"]["reasoningText"]["text"]
+    elif "text" in block:
+        answer = block["text"]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>이미지 & PDF 처리 (Bedrock)</h3>
+          <pre><code">import base64
+
+# 이미지 처리
+with open("diagram.png", "rb") as f:
+    image_data = base64.b64encode(f.read()).decode("utf-8")
+
+messages = [{
+    "role": "user",
+    "content": [
+        {
+            "image": {
+                "format": "png",
+                "source": {"bytes": base64.b64decode(image_data)}
+            }
+        },
+        {"text": "Analyze this AWS architecture diagram and identify potential bottlenecks"}
+    ]
+}]
+
+# PDF 처리
+with open("report.pdf", "rb") as f:
+    pdf_data = base64.b64encode(f.read()).decode("utf-8")
+
+messages = [{
+    "role": "user",
+    "content": [
+        {
+            "document": {
+                "format": "pdf",
+                "name": "quarterly_report",
+                "source": {"bytes": base64.b64decode(pdf_data)}
+            }
+        },
+        {"text": "Summarize the key financial metrics"}
+    ]
+}]</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>프롬프트 캐싱 (Bedrock)</h3>
+          <pre><code">response = client.converse(
+    modelId=model_id,
+    system=[{
+        "text": large_system_prompt,
+        "cachePoint": {"type": "default"}  # 캐싱 활성화
+    }],
+    messages=messages,
+    inferenceConfig={"maxTokens": 1000}
+)
+
+# 캐싱 사용량 확인
+usage = response["usage"]
+print(f"캐시 읽기 토큰: {usage.get('cacheReadInputTokens', 0)}")
+print(f"캐시 생성 토큰: {usage.get('cacheWriteInputTokens', 0)}")</code></pre>
+          <div class="tip-box">
+            <strong>💡 Bedrock 캐싱 효과</strong>
+            <p>캐시 히트 시 입력 토큰 비용의 약 10%만 청구됩니다. 수천 토큰의 시스템 프롬프트를 반복 사용하는 경우 비용을 최대 90% 절감할 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>Bedrock Extended Thinking: <code>additionalModelRequestFields</code>로 활성화합니다</li>
+            <li>이미지는 <code>image.source.bytes</code>, PDF는 <code>document.source.bytes</code>로 전송합니다</li>
+            <li>Bedrock 캐싱: <code>cachePoint: {"type": "default"}</code>를 시스템 프롬프트에 추가합니다</li>
+            <li>이미지 처리 시 단계별 분석 프롬프트가 정확도를 크게 향상시킵니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>AWS 인프라 다이어그램을 Claude의 이미지 분석으로 자동 검토하는 시스템을 어떻게 설계할까?</li>
+            <li>프롬프트 캐싱을 Lambda 함수에서 활용하면 어떤 비용 절감 효과가 있을까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 9 -->
+      <div class="lesson-panel" id="lesson-8">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 09</span>
+          <h2>MCP (모델 컨텍스트 프로토콜)</h2>
+          <p class="lesson-subtitle">Bedrock 환경에서 MCP를 활용해 AWS 서비스와 외부 도구를 Claude와 통합합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>MCP의 핵심 아키텍처 (클라이언트-서버, 도구·리소스·프롬프트)</li>
+            <li>Bedrock 기반 MCP 클라이언트 구현</li>
+            <li>AWS 서비스(S3, DynamoDB, CloudWatch)를 MCP 서버로 노출</li>
+            <li>Claude Code와 Bedrock의 연동</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP vs 일반 Tool Use</h3>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>일반 Tool Use</h5>
+              <p>개발자가 각 도구의 함수와 JSON Schema를 직접 작성합니다. AWS 서비스별로 수십 개의 도구를 구현해야 합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>MCP 서버</h5>
+              <p>AWS 공식 MCP 서버나 서드파티 서버를 연결하면 즉시 수십~수백 개의 도구를 사용할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>Bedrock 기반 MCP 클라이언트</h3>
+          <pre><code">from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+class BedrockMCPClient:
+    def __init__(self, model_id, region="us-west-2"):
+        self.bedrock = boto3.client("bedrock-runtime", region_name=region)
+        self.model_id = model_id
+        self._session = None
+
+    async def connect(self, server_command):
+        params = StdioServerParameters(command=server_command[0], args=server_command[1:])
+        stdio, write = await stdio_client(params).__aenter__()
+        self._session = ClientSession(stdio, write)
+        await self._session.initialize()
+
+    async def list_tools(self):
+        result = await self._session.list_tools()
+        # MCP 도구를 Bedrock toolSpec 형식으로 변환
+        return [{
+            "toolSpec": {
+                "name": tool.name,
+                "description": tool.description,
+                "inputSchema": {"json": tool.inputSchema}
+            }
+        } for tool in result.tools]
+
+    async def call_tool(self, name, arguments):
+        result = await self._session.call_tool(name, arguments)
+        return result.content[0].text if result.content else ""</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>MCP 서버의 3가지 제공 요소</h3>
+          <table class="compare-table">
+            <thead><tr><th>요소</th><th>역할</th><th>AWS 예시</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Tools</strong></td><td>Claude가 호출할 수 있는 함수</td><td><code>list_s3_buckets()</code>, <code>query_dynamodb(table, key)</code></td></tr>
+              <tr><td><strong>Resources</strong></td><td>Claude가 읽을 수 있는 데이터</td><td><code>resource://cloudwatch/metrics</code>, <code>resource://s3/{bucket}/{key}</code></td></tr>
+              <tr><td><strong>Prompts</strong></td><td>재사용 가능한 프롬프트 템플릿</td><td><code>analyze_cost_report(period)</code>, <code>security_audit(service)</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>MCP는 AWS 서비스 통합의 반복적인 도구 작성 작업을 대폭 줄여줍니다</li>
+            <li>Bedrock MCP 클라이언트: MCP 도구 목록을 Bedrock toolSpec 형식으로 변환해야 합니다</li>
+            <li>AWS 공식 MCP 서버(S3, DynamoDB, CloudWatch 등)를 활용하면 빠르게 통합 가능합니다</li>
+            <li>Claude Code도 Bedrock과 연동해 AWS 코드베이스 작업에 활용할 수 있습니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>우리 팀의 AWS 인프라를 MCP 서버로 노출한다면 어떤 도구와 리소스가 가장 유용할까?</li>
+            <li>MCP를 통해 Claude가 AWS 비용 최적화 작업을 자율적으로 수행하게 한다면 어떤 위험이 있을까?</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- LESSON 10 -->
+      <div class="lesson-panel" id="lesson-9">
+        <div class="lesson-header">
+          <span class="lesson-number-badge">LESSON 10</span>
+          <h2>에이전트 & Claude Code</h2>
+          <p class="lesson-subtitle">AWS 환경에서 AI 에이전트를 구축하고, Claude Code와 Computer Use를 활용한 자동화를 구현합니다</p>
+        </div>
+
+        <div class="learn-box">
+          <h4>이 레슨에서 배우는 것</h4>
+          <ul>
+            <li>AWS 환경에서 에이전트를 안전하게 설계하는 원칙</li>
+            <li>Claude Code를 Bedrock과 연동하는 방법</li>
+            <li>Computer Use로 AWS 콘솔 작업 자동화</li>
+            <li>에이전트 신뢰성 확보: 오류 처리, 관찰 가능성, 권한 관리</li>
+          </ul>
+        </div>
+
+        <div class="content-section">
+          <h3>에이전트의 4가지 핵심 특성</h3>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>도구 통합</h5>
+              <p>Bedrock converse() + toolConfig로 AWS SDK 함수들을 도구로 연결합니다. Lambda, S3, EC2 등을 직접 제어할 수 있습니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>다단계 실행</h5>
+              <p>단일 요청을 넘어 "S3 버킷 목록 조회 → 가장 큰 버킷 분석 → 비용 최적화 권고"와 같은 다단계 워크플로우를 실행합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>환경 상호작용</h5>
+              <p>AWS 콘솔, CLI, SDK를 통해 실제 클라우드 환경과 직접 상호작용합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>자율적 문제 해결</h5>
+              <p>에러를 만났을 때 스스로 다른 방법을 시도하거나, 더 많은 정보를 수집해 문제를 해결합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <h3>AWS 환경 에이전트 설계 원칙</h3>
+          <table class="compare-table">
+            <thead><tr><th>원칙</th><th>AWS 구현 방법</th></tr></thead>
+            <tbody>
+              <tr><td><strong>최소 권한</strong></td><td>IAM 역할에 필요한 서비스/액션만 허용. <code>Resource: "arn:aws:s3:::specific-bucket/*"</code>처럼 구체적으로 지정</td></tr>
+              <tr><td><strong>인간 감독</strong></td><td>SNS 알림으로 중요 작업 전 승인 요청. Step Functions로 인간 승인 단계 삽입</td></tr>
+              <tr><td><strong>오류 처리</strong></td><td>CloudWatch 알람으로 에러 감지. DynamoDB에 실행 로그 저장. 재시도 로직 구현</td></tr>
+              <tr><td><strong>관찰 가능성</strong></td><td>CloudWatch Logs로 모든 도구 호출 로깅. X-Ray로 분산 추적</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="content-section">
+          <h3>Bedrock 기반 에이전트 루프</h3>
+          <pre><code">async def agent_loop(user_request, max_iterations=10):
+    messages = []
+    add_user_message(messages, user_request)
+    tools = await mcp_client.list_tools()
+
+    for iteration in range(max_iterations):
+        response = bedrock_client.converse(
+            modelId=model_id,
+            messages=messages,
+            toolConfig={"tools": tools},
+            inferenceConfig={"maxTokens": 2000}
+        )
+
+        output_message = response["output"]["message"]
+        stop_reason = response["stopReason"]
+
+        # 작업 완료
+        if stop_reason == "end_turn":
+            return output_message["content"][0]["text"]
+
+        # 도구 실행
+        if stop_reason == "tool_use":
+            messages.append(output_message)
+            tool_results = []
+
+            for block in output_message["content"]:
+                if "toolUse" in block:
+                    tool_name = block["toolUse"]["name"]
+                    tool_input = block["toolUse"]["input"]
+
+                    # CloudWatch에 로깅
+                    log_tool_call(tool_name, tool_input)
+
+                    result = await mcp_client.call_tool(tool_name, tool_input)
+                    tool_results.append({
+                        "toolResult": {
+                            "toolUseId": block["toolUse"]["toolUseId"],
+                            "content": [{"text": str(result)}]
+                        }
+                    })
+
+            messages.append({"role": "user", "content": tool_results})
+
+    return "최대 반복 횟수 초과"</code></pre>
+        </div>
+
+        <div class="content-section">
+          <h3>Bedrock Agents 관리형 서비스</h3>
+          <p>직접 에이전트 루프를 구현하는 것 외에, AWS는 Bedrock Agents라는 완전 관리형 에이전트 서비스를 제공합니다.</p>
+          <div class="priority-grid">
+            <div class="priority-card">
+              <h5>직접 구현 에이전트</h5>
+              <p>converse() + toolConfig로 구현. 완전한 제어권, 커스터마이징 가능. 복잡한 워크플로우에 적합합니다.</p>
+            </div>
+            <div class="priority-card">
+              <h5>Bedrock Agents</h5>
+              <p>AWS 완전 관리형. Lambda Action Groups으로 도구 연결. 빠른 프로토타이핑과 표준 에이전트 패턴에 적합합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="key-takeaways">
+          <h4>핵심 요약</h4>
+          <ul>
+            <li>AWS 에이전트는 IAM 최소 권한 + CloudWatch 로깅 + SNS 알림의 3요소로 안전하게 설계하세요</li>
+            <li>에이전트 루프: converse() → tool_use 감지 → 도구 실행 → 결과 전송 → 반복</li>
+            <li>최대 반복 횟수를 설정해 무한 루프를 방지하세요</li>
+            <li>Bedrock Agents는 완전 관리형으로 빠른 구축이 필요할 때 활용합니다</li>
+            <li>이 코스에서 배운 boto3, Tool Use, RAG, MCP 모두가 AWS 에이전트의 핵심 구성 요소입니다</li>
+          </ul>
+        </div>
+
+        <div class="reflection-box">
+          <h4>성찰 질문</h4>
+          <ul>
+            <li>Claude 에이전트가 AWS 인프라를 잘못 변경했을 때 자동으로 롤백하는 메커니즘을 어떻게 구현할까?</li>
+            <li>다중 에이전트 시스템(오케스트레이터 + 전문 에이전트)을 AWS에서 어떻게 설계할까?</li>
+            <li>이 코스에서 배운 Bedrock 기술들을 활용해 어떤 AWS 업무를 자동화하고 싶은가?</li>
+          </ul>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  <script>
+    function showLesson(idx) {
+      document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+      document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+      const total = document.querySelectorAll('.lesson-panel').length;
+      document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+      document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

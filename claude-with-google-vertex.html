@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude with Google Cloud Vertex AI — 한국어 학습 자료</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --bg2: #13131a;
+      --bg3: #1a1a24;
+      --border: #2a2a3a;
+      --text: #e0e0ee;
+      --muted: #7070a0;
+      --accent: #d97f3a;
+      --accent2: #7b6ef6;
+      --ca: #98c379;
+      --ca2: #56b6c2;
+      --warn: #e06c75;
+      --info: #61afef;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; display: flex; height: 100vh; overflow: hidden; font-size: 15px; }
+
+    /* ── 사이드바 ── */
+    #sidebar {
+      width: 270px; min-width: 270px; background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    #sidebar-header { padding: 20px 18px 14px; border-bottom: 1px solid var(--border); }
+    #sidebar-header .course-badge {
+      display: inline-block; background: var(--ca); color: #000; font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px; letter-spacing: .5px; margin-bottom: 8px;
+    }
+    #sidebar-header h1 { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    #sidebar-header p { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    #progress-bar-wrap { padding: 10px 18px; border-bottom: 1px solid var(--border); }
+    #progressTrack { background: var(--bg3); border-radius: 4px; height: 5px; overflow: hidden; }
+    #progressBar { background: var(--ca); height: 100%; width: 10%; transition: width .3s; }
+    #progressLabel { font-size: 10px; color: var(--muted); margin-top: 5px; text-align: right; }
+
+    #nav-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+    #nav-list::-webkit-scrollbar { width: 4px; }
+    #nav-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .nav-item {
+      padding: 9px 18px; cursor: pointer; border-left: 3px solid transparent;
+      transition: background .15s, border-color .15s; font-size: 12px; line-height: 1.4; color: var(--muted);
+    }
+    .nav-item:hover { background: var(--bg3); color: var(--text); }
+    .nav-item.active { background: var(--bg3); border-color: var(--ca); color: var(--ca); font-weight: 700; }
+    .nav-num { font-size: 10px; opacity: .6; display: block; margin-bottom: 2px; font-family: 'JetBrains Mono', monospace; }
+
+    /* ── 메인 ── */
+    #main { flex: 1; overflow-y: auto; padding: 40px 48px; }
+    #main::-webkit-scrollbar { width: 6px; }
+    #main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .lesson-panel { display: none; max-width: 860px; }
+    .lesson-panel.active { display: block; }
+
+    .panel-header { margin-bottom: 32px; }
+    .panel-header .tag {
+      display: inline-block; background: rgba(152,195,121,.15); color: var(--ca);
+      border: 1px solid rgba(152,195,121,.3); font-size: 11px; font-weight: 700;
+      padding: 4px 12px; border-radius: 20px; letter-spacing: .5px; margin-bottom: 12px;
+    }
+    .panel-header h2 { font-family: 'Noto Serif KR', serif; font-size: 28px; font-weight: 700; line-height: 1.3; }
+    .panel-header p { color: var(--muted); font-size: 14px; margin-top: 8px; line-height: 1.7; }
+
+    /* ── 컴포넌트 ── */
+    .learn-box {
+      background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--ca);
+      border-radius: 8px; padding: 20px 24px; margin-bottom: 28px;
+    }
+    .learn-box h3 { font-size: 13px; font-weight: 700; color: var(--ca); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; }
+    .learn-box ul { list-style: none; padding: 0; }
+    .learn-box ul li { padding: 5px 0 5px 20px; position: relative; color: var(--text); font-size: 14px; line-height: 1.7; }
+    .learn-box ul li::before { content: "▸"; position: absolute; left: 0; color: var(--ca); }
+
+    .key-takeaways {
+      background: linear-gradient(135deg, rgba(152,195,121,.08), rgba(86,182,194,.06));
+      border: 1px solid rgba(152,195,121,.2); border-radius: 12px; padding: 24px 28px; margin-bottom: 32px;
+    }
+    .key-takeaways h3 { font-size: 14px; font-weight: 700; color: var(--ca); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .key-takeaways h3::before { content: "★"; font-size: 16px; }
+    .key-takeaways .krow { display: flex; gap: 16px; flex-wrap: wrap; }
+    .key-takeaways .kcard {
+      flex: 1; min-width: 180px; background: rgba(0,0,0,.25); border-radius: 8px; padding: 14px 16px;
+      border: 1px solid rgba(152,195,121,.15);
+    }
+    .key-takeaways .kcard .klabel { font-size: 10px; color: var(--ca); font-weight: 700; letter-spacing: .6px; margin-bottom: 6px; text-transform: uppercase; }
+    .key-takeaways .kcard .kval { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+    .content-section { margin-bottom: 32px; }
+    .content-section h3 { font-size: 17px; font-weight: 700; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .content-section h4 { font-size: 14px; font-weight: 700; color: var(--ca); margin: 18px 0 8px; }
+    .content-section p { color: #c0c0d8; font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
+    .content-section ul, .content-section ol { padding-left: 22px; margin-bottom: 14px; }
+    .content-section li { color: #c0c0d8; font-size: 14px; line-height: 1.8; margin-bottom: 4px; }
+
+    pre { background: #0a0a10; border: 1px solid var(--border); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 16px 0; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #abb2bf; }
+    .kw { color: #c678dd; } .fn { color: #61afef; } .str { color: #98c379; } .cm { color: #5c6370; font-style: italic; }
+    .num { color: #d19a66; } .cls { color: #e5c07b; } .op { color: #56b6c2; }
+
+    .tip-box {
+      background: rgba(97,175,239,.08); border: 1px solid rgba(97,175,239,.25); border-radius: 8px;
+      padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .tip-box .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .tip-box p { color: #c0c0d8; font-size: 13.5px; line-height: 1.7; margin: 0; }
+
+    .warn-box {
+      background: rgba(224,108,117,.08); border: 1px solid rgba(224,108,117,.25); border-radius: 8px;
+      padding: 16px 20px; margin: 16px 0; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .warn-box .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .warn-box p { color: #c0c0d8; font-size: 13.5px; line-height: 1.7; margin: 0; }
+
+    .reflection-box {
+      background: var(--bg3); border: 1px dashed rgba(152,195,121,.35); border-radius: 8px;
+      padding: 20px 24px; margin: 24px 0;
+    }
+    .reflection-box h4 { font-size: 13px; font-weight: 700; color: var(--ca); margin-bottom: 10px; }
+    .reflection-box p { color: var(--muted); font-size: 13.5px; line-height: 1.7; margin: 0; }
+
+    .priority-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 16px 0 24px; }
+    .priority-card {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 18px;
+      border-top: 3px solid var(--ca);
+    }
+    .priority-card .p-label { font-size: 11px; color: var(--ca); font-weight: 700; letter-spacing: .6px; margin-bottom: 8px; text-transform: uppercase; }
+    .priority-card .p-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .priority-card .p-desc { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+    .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
+    .compare-table th { background: var(--bg3); padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 700; color: var(--ca); border: 1px solid var(--border); }
+    .compare-table td { padding: 10px 14px; font-size: 13px; color: #c0c0d8; border: 1px solid var(--border); line-height: 1.6; }
+    .compare-table tr:nth-child(even) td { background: rgba(0,0,0,.2); }
+
+    .flow-steps { margin: 16px 0 24px; }
+    .flow-step { display: flex; gap: 16px; margin-bottom: 16px; }
+    .flow-step-num {
+      width: 32px; height: 32px; border-radius: 50%; background: rgba(152,195,121,.15); border: 2px solid var(--ca);
+      color: var(--ca); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .flow-step-content h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .flow-step-content p { font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0; }
+
+    .temp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0 24px; }
+    .temp-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .temp-card .t-range { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .temp-card .t-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+    .temp-card ul { list-style: none; padding: 0; }
+    .temp-card li { font-size: 12.5px; color: var(--muted); padding: 2px 0; }
+    .temp-card.low .t-range, .temp-card.low .t-name { color: var(--info); }
+    .temp-card.mid .t-range, .temp-card.mid .t-name { color: var(--ca); }
+    .temp-card.high .t-range, .temp-card.high .t-name { color: var(--accent); }
+
+    .gcp-badge {
+      display: inline-block; background: rgba(152,195,121,.12); border: 1px solid rgba(152,195,121,.3);
+      color: var(--ca); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace; letter-spacing: .5px; margin: 2px 4px;
+    }
+
+    .nav-footer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; }
+    .nav-btn {
+      background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 7px 16px;
+      border-radius: 6px; cursor: pointer; font-size: 12px; transition: background .15s, border-color .15s;
+    }
+    .nav-btn:hover { background: rgba(152,195,121,.12); border-color: var(--ca); color: var(--ca); }
+  </style>
+</head>
+<body>
+
+<!-- ── 사이드바 ── -->
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <span class="course-badge">GOOGLE VERTEX AI</span>
+    <h1>Claude with Google Cloud Vertex AI</h1>
+    <p>GCP 인프라 위에서 Claude를 활용하는 완전 가이드</p>
+  </div>
+
+  <div id="progress-bar-wrap">
+    <div id="progressTrack"><div id="progressBar"></div></div>
+    <div id="progressLabel">1 / 10</div>
+  </div>
+
+  <nav id="nav-list">
+    <div class="nav-item active" onclick="showLesson(0)">
+      <span class="nav-num">01</span>Vertex AI & Claude 모델 이해
+    </div>
+    <div class="nav-item" onclick="showLesson(1)">
+      <span class="nav-num">02</span>첫 API 요청 & 대화 관리
+    </div>
+    <div class="nav-item" onclick="showLesson(2)">
+      <span class="nav-num">03</span>시스템 프롬프트 & 출력 제어
+    </div>
+    <div class="nav-item" onclick="showLesson(3)">
+      <span class="nav-num">04</span>프롬프트 평가 (Evals)
+    </div>
+    <div class="nav-item" onclick="showLesson(4)">
+      <span class="nav-num">05</span>프롬프트 엔지니어링
+    </div>
+    <div class="nav-item" onclick="showLesson(5)">
+      <span class="nav-num">06</span>Tool Use (도구 사용)
+    </div>
+    <div class="nav-item" onclick="showLesson(6)">
+      <span class="nav-num">07</span>RAG (검색 증강 생성)
+    </div>
+    <div class="nav-item" onclick="showLesson(7)">
+      <span class="nav-num">08</span>Claude 고급 기능
+    </div>
+    <div class="nav-item" onclick="showLesson(8)">
+      <span class="nav-num">09</span>MCP (모델 컨텍스트 프로토콜)
+    </div>
+    <div class="nav-item" onclick="showLesson(9)">
+      <span class="nav-num">10</span>에이전트 & Claude Code
+    </div>
+  </nav>
+
+  <div class="nav-footer">
+    <button class="nav-btn" onclick="showLesson(Math.max(0,currentLesson-1))">← 이전</button>
+    <button class="nav-btn" onclick="showLesson(Math.min(9,currentLesson+1))">다음 →</button>
+  </div>
+</aside>
+
+<!-- ── 메인 콘텐츠 ── -->
+<main id="main">
+
+  <!-- ══════════════════════════════════════
+       패널 01 — Vertex AI & Claude 모델 이해
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel active">
+    <div class="panel-header">
+      <span class="tag">01 · VERTEX AI SETUP</span>
+      <h2>Vertex AI & Claude 모델 이해</h2>
+      <p>Google Cloud의 Vertex AI 플랫폼에서 Claude를 사용하는 방법과 GCP 인증 설정을 마스터합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>Vertex AI 플랫폼에서 Claude 모델을 활성화하는 방법</li>
+        <li>gcloud CLI를 이용한 GCP 인증 설정 흐름</li>
+        <li>AnthropicVertex 클라이언트 생성과 모델 ID 표기법</li>
+        <li>Vertex AI와 직접 Anthropic API의 차이점 비교</li>
+        <li>API 요청 생명주기: 토큰화 → 임베딩 → 문맥 반영 → 생성</li>
+      </ul>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>핵심 요약</h3>
+      <div class="krow">
+        <div class="kcard">
+          <div class="klabel">플랫폼</div>
+          <div class="kval">Google Cloud Vertex AI를 통해 Claude 모델을 엔터프라이즈급으로 운영</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">인증</div>
+          <div class="kval">gcloud CLI + Application Default Credentials — API 키 불필요</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">모델 ID</div>
+          <div class="kval">claude-sonnet-4<span style="color:var(--ca)">@</span>20250514 (@로 버전 구분)</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">SDK</div>
+          <div class="kval">anthropic[vertex] 패키지 — AnthropicVertex 클라이언트 사용</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Vertex AI에서 Claude 활성화하기</h3>
+      <p>Claude를 Vertex AI에서 사용하려면 먼저 Google Cloud Console에서 모델을 활성화해야 합니다.</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content">
+            <h4>Vertex AI Dashboard 접속</h4>
+            <p>console.cloud.google.com/vertex-ai/dashboard에 접속 후 왼쪽 네비에서 <strong>Model Garden</strong>을 클릭합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content">
+            <h4>Anthropic 모델 검색 & 활성화</h4>
+            <p>'Search models' 박스에 <strong>Anthropic</strong>을 입력하고 원하는 모델을 선택 후 <strong>Enable</strong> 버튼을 클릭합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content">
+            <h4>gcloud CLI 설치 & 인증</h4>
+            <p>아래 명령으로 gcloud CLI를 설치하고 프로젝트를 설정합니다.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content">
+            <h4>SDK 설치</h4>
+            <p><code>pip install "anthropic[vertex]"</code>로 Vertex AI 지원이 포함된 Anthropic SDK를 설치합니다.</p>
+          </div>
+        </div>
+      </div>
+
+<pre><code><span class="cm"># gcloud CLI 인증 및 프로젝트 설정</span>
+<span class="op">$</span> gcloud init
+<span class="op">$</span> gcloud auth login
+<span class="op">$</span> gcloud config set project YOUR_PROJECT_ID
+<span class="op">$</span> gcloud auth application-default login
+
+<span class="cm"># Anthropic SDK with Vertex AI 지원 설치</span>
+<span class="op">$</span> pip install <span class="str">"anthropic[vertex]"</span></code></pre>
+
+      <div class="tip-box">
+        <span class="icon">💡</span>
+        <p><strong>Application Default Credentials (ADC)</strong>: <code>gcloud auth application-default login</code>을 실행하면 로컬 파일에 인증 정보가 저장됩니다. Anthropic SDK는 이 인증 정보을 자동으로 탐지하므로 API 키를 별도로 관리할 필요가 없습니다.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>AnthropicVertex 클라이언트 생성</h3>
+      <p>인증 설정이 완료되면 <code>AnthropicVertex</code> 클라이언트를 생성합니다. 직접 Anthropic API와 달리 <strong>region</strong>과 <strong>project_id</strong>가 필요합니다.</p>
+
+<pre><code><span class="kw">from</span> anthropic <span class="kw">import</span> <span class="cls">AnthropicVertex</span>
+
+<span class="cm"># Vertex AI 클라이언트 생성 (API 키 불필요)</span>
+client = <span class="cls">AnthropicVertex</span>(
+    region=<span class="str">"global"</span>,            <span class="cm"># 또는 "us-central1" 등 특정 리전</span>
+    project_id=<span class="str">"your-project-id"</span>  <span class="cm"># GCP 프로젝트 ID</span>
+)
+
+<span class="cm"># 모델 ID — Vertex AI에서는 '@' 기호로 버전을 구분</span>
+model = <span class="str">"claude-sonnet-4@20250514"</span>  <span class="cm"># ← Anthropic API와 다른 표기!</span></code></pre>
+
+      <div class="warn-box">
+        <span class="icon">⚠️</span>
+        <p><strong>모델 ID 표기법 차이</strong>: 직접 Anthropic API는 <code>claude-sonnet-4-20250514</code> (하이픈), Vertex AI는 <code>claude-sonnet-4@20250514</code> (<strong>@</strong>)를 사용합니다. 혼동하지 않도록 주의하세요.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Vertex AI vs. Anthropic API 직접 비교</h3>
+      <table class="compare-table">
+        <tr><th>항목</th><th>Anthropic API</th><th>Vertex AI</th></tr>
+        <tr><td>SDK 패키지</td><td><code>anthropic</code></td><td><code>anthropic[vertex]</code></td></tr>
+        <tr><td>클라이언트</td><td><code>Anthropic()</code></td><td><code>AnthropicVertex(region, project_id)</code></td></tr>
+        <tr><td>인증</td><td>API 키 (<code>ANTHROPIC_API_KEY</code>)</td><td>gcloud ADC (API 키 불필요)</td></tr>
+        <tr><td>모델 ID 형식</td><td>claude-sonnet-4-20250514</td><td>claude-sonnet-4@20250514</td></tr>
+        <tr><td>API 인터페이스</td><td><code>client.messages.create()</code></td><td><code>client.messages.create()</code></td></tr>
+        <tr><td>인프라</td><td>Anthropic 직접</td><td>Google Cloud VPC 내부</td></tr>
+        <tr><td>GCP 통합</td><td>없음</td><td>Cloud Logging, IAM, VPC-SC 등</td></tr>
+      </table>
+
+      <div class="tip-box">
+        <span class="icon">🔑</span>
+        <p><strong>중요한 사실</strong>: 클라이언트 생성 방식과 모델 ID를 제외하면 <code>client.messages.create()</code> 이후의 모든 API는 완전히 동일합니다. Anthropic API를 알고 있다면 Vertex AI로 전환하는 데 추가 학습이 거의 필요하지 않습니다.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>API 요청 생명주기 (Request Lifecycle)</h3>
+      <p>사용자 입력이 Claude 응답으로 변환되는 5단계 과정을 이해하면 더 나은 애플리케이션을 설계할 수 있습니다.</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content"><h4>Request to Server</h4><p>클라이언트 앱이 여러분의 서버로 요청 전송 — 절대 클라이언트에서 직접 Vertex를 호출하지 마세요 (보안 위험)</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content"><h4>Request to Vertex</h4><p>여러분의 서버가 GCP 인증 정보으로 Vertex AI에 안전하게 요청 전송</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content"><h4>Model Processing</h4><p>Claude가 토큰화 → 임베딩 → 문맥 반영 → 생성 4단계로 응답 생성</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content"><h4>Response to Server</h4><p>Vertex가 생성 텍스트 + 사용 토큰 + stop_reason 반환</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-content"><h4>Response to Client</h4><p>여러분의 서버가 클라이언트에게 최종 응답 전달</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-box">
+      <h4>생각해보기</h4>
+      <p>Vertex AI의 주요 장점은 GCP 생태계와의 통합입니다. Cloud Logging으로 모든 API 호출을 추적하고, VPC Service Controls로 데이터 유출을 방지하고, IAM으로 세밀한 권한 관리가 가능합니다. 여러분의 조직이 이미 GCP를 사용한다면 Vertex AI가 자연스러운 선택입니다.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 02 — 첫 API 요청 & 대화 관리
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">02 · API REQUESTS</span>
+      <h2>첫 API 요청 & 대화 관리</h2>
+      <p>AnthropicVertex로 첫 요청을 보내고, 멀티턴 대화와 스트리밍을 구현합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>messages.create()로 기본 요청 보내기 및 응답 추출</li>
+        <li>멀티턴 대화 상태 관리 — 메시지 기록 수동 관리</li>
+        <li>스트리밍으로 실시간 응답 출력하기</li>
+        <li>구조화된 출력 (JSON 형식 강제)</li>
+      </ul>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>핵심 요약</h3>
+      <div class="krow">
+        <div class="kcard">
+          <div class="klabel">기본 요청</div>
+          <div class="kval">client.messages.create(model, max_tokens, messages) — Anthropic API와 동일한 인터페이스</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">응답 추출</div>
+          <div class="kval">message.content[0].text — 항상 이 패턴으로 텍스트 추출</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">상태 관리</div>
+          <div class="kval">Claude는 상태가 없음 — 개발자가 메시지 기록을 직접 유지해야 함</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>첫 번째 API 요청</h3>
+<pre><code><span class="kw">from</span> anthropic <span class="kw">import</span> <span class="cls">AnthropicVertex</span>
+
+client = <span class="cls">AnthropicVertex</span>(region=<span class="str">"global"</span>, project_id=<span class="str">"my-project"</span>)
+model = <span class="str">"claude-sonnet-4@20250514"</span>
+
+<span class="cm"># 기본 요청</span>
+message = client.messages.create(
+    model=model,
+    max_tokens=<span class="num">1000</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"양자 컴퓨팅이란 무엇인가요? 한 문장으로 설명해주세요."</span>}
+    ]
+)
+
+<span class="cm"># 응답 텍스트 추출</span>
+<span class="fn">print</span>(message.content[<span class="num">0</span>].text)
+
+<span class="cm"># 응답 메타데이터 확인</span>
+<span class="fn">print</span>(message.usage.input_tokens, message.usage.output_tokens)
+<span class="fn">print</span>(message.stop_reason)  <span class="cm"># "end_turn" 또는 "max_tokens"</span></code></pre>
+
+      <h4>응답 구조 이해하기</h4>
+      <p><code>message.content</code>는 리스트 형태로 반환됩니다. 일반 텍스트 응답은 항상 인덱스 0에, 타입은 <code>"text"</code>입니다. Tool Use 시에는 여러 content 블록이 포함될 수 있습니다.</p>
+    </div>
+
+    <div class="content-section">
+      <h3>멀티턴 대화 관리</h3>
+      <p>Claude는 완전히 <strong>무상태(stateless)</strong>입니다. 이전 대화를 기억하지 못하므로 매 요청마다 전체 대화 기록을 함께 전송해야 합니다.</p>
+<pre><code><span class="kw">def</span> <span class="fn">add_user_message</span>(messages, text):
+    messages.append({<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: text})
+
+<span class="kw">def</span> <span class="fn">add_assistant_message</span>(messages, text):
+    messages.append({<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: text})
+
+<span class="kw">def</span> <span class="fn">chat</span>(messages, system=<span class="kw">None</span>, temperature=<span class="num">1.0</span>):
+    params = {
+        <span class="str">"model"</span>: model,
+        <span class="str">"max_tokens"</span>: <span class="num">1000</span>,
+        <span class="str">"messages"</span>: messages,
+        <span class="str">"temperature"</span>: temperature,
+    }
+    <span class="kw">if</span> system:
+        params[<span class="str">"system"</span>] = system
+    message = client.messages.create(**params)
+    <span class="kw">return</span> message.content[<span class="num">0</span>].text
+
+<span class="cm"># 멀티턴 대화 예시</span>
+messages = []
+<span class="fn">add_user_message</span>(messages, <span class="str">"양자 컴퓨팅이란?"</span>)
+answer = <span class="fn">chat</span>(messages)
+<span class="fn">add_assistant_message</span>(messages, answer)   <span class="cm"># ← 응답을 기록에 추가!</span>
+<span class="fn">add_user_message</span>(messages, <span class="str">"그 응용 분야는 무엇인가요?"</span>)
+follow_up = <span class="fn">chat</span>(messages)             <span class="cm"># 전체 기록 포함하여 전송</span></code></pre>
+
+      <div class="warn-box">
+        <span class="icon">⚠️</span>
+        <p><strong>흔한 실수</strong>: Claude 응답을 메시지 기록에 추가하지 않으면 다음 요청에서 context가 사라집니다. <code>add_assistant_message(messages, answer)</code>를 항상 호출하세요.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>스트리밍 응답</h3>
+      <p>스트리밍을 사용하면 생성이 완료되기 전에 토큰이 도착하는 즉시 사용자에게 보여줄 수 있습니다.</p>
+<pre><code><span class="cm"># 스트리밍으로 실시간 출력</span>
+<span class="kw">with</span> client.messages.stream(
+    model=model,
+    max_tokens=<span class="num">1000</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"파이썬의 장점을 설명해주세요"</span>}]
+) <span class="kw">as</span> stream:
+    <span class="kw">for</span> text <span class="kw">in</span> stream.text_stream:
+        <span class="fn">print</span>(text, end=<span class="str">""</span>, flush=<span class="kw">True</span>)  <span class="cm"># 실시간 출력</span>
+
+<span class="cm"># 스트림 완료 후 최종 메시지 접근 가능</span>
+final_message = stream.get_final_message()</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>구조화된 출력 (JSON)</h3>
+      <p>데이터 추출이나 구조적 응답이 필요할 때 JSON 형식을 강제할 수 있습니다.</p>
+<pre><code>response = client.messages.create(
+    model=model,
+    max_tokens=<span class="num">500</span>,
+    messages=[{
+        <span class="str">"role"</span>: <span class="str">"user"</span>,
+        <span class="str">"content"</span>: <span class="str">"""다음 텍스트에서 정보를 추출하세요:
+        '홍길동, 28세, 서울 거주, 개발자'
+
+        JSON 형식으로만 응답하세요:
+        {"name": "...", "age": ..., "city": "...", "job": "..."}"""</span>
+    }]
+)
+
+<span class="kw">import</span> json
+data = json.loads(response.content[<span class="num">0</span>].text)
+<span class="fn">print</span>(data[<span class="str">"name"</span>])  <span class="cm"># "홍길동"</span></code></pre>
+
+      <div class="tip-box">
+        <span class="icon">💡</span>
+        <p>보다 안정적인 구조화 출력이 필요하다면 <strong>Tool Use</strong>(패널 06)를 사용하세요. Tool Use는 JSON Schema로 출력 형식을 강제할 수 있어 파싱 오류가 훨씬 줄어듭니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 03 — 시스템 프롬프트 & 출력 제어
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">03 · SYSTEM PROMPTS</span>
+      <h2>시스템 프롬프트 & 출력 제어</h2>
+      <p>시스템 프롬프트로 Claude의 역할과 행동을 정의하고, Temperature와 기타 파라미터로 출력을 세밀하게 제어합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>시스템 프롬프트의 역할과 효과적인 작성법</li>
+        <li>Temperature로 창의성 수준 조절하기</li>
+        <li>max_tokens, stop_sequences로 출력 길이 제어</li>
+        <li>어시스턴트 프리필(Prefill)로 응답 형식 유도</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h3>시스템 프롬프트</h3>
+      <p>시스템 프롬프트는 Claude에게 역할, 톤, 제약사항을 정의합니다. <code>messages</code>와 독립적으로 <code>system</code> 파라미터로 전달됩니다.</p>
+<pre><code><span class="cm"># 수학 튜터 시스템 프롬프트 예시</span>
+system_prompt = <span class="str">"""당신은 인내심 있는 수학 튜터입니다.
+학생의 질문에 직접 답을 주지 마세요.
+대신 힌트와 유도 질문으로 학생이 스스로 답을 찾도록 도와주세요.
+단계적으로 안내하고, 격려하는 톤을 유지하세요."""</span>
+
+messages = []
+<span class="fn">add_user_message</span>(messages, <span class="str">"5x + 2 = 3 에서 x를 구하려면 어떻게 해야 하나요?"</span>)
+answer = <span class="fn">chat</span>(messages, system=system_prompt)</code></pre>
+
+      <div class="tip-box">
+        <span class="icon">💡</span>
+        <p>시스템 프롬프트는 대화 전반에 걸쳐 일관되게 적용됩니다. 멀티턴 대화에서도 <code>system</code> 파라미터를 매번 전달해야 Claude가 역할을 유지합니다.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Temperature — 창의성 다이얼</h3>
+      <p>Temperature는 Claude 응답의 예측 가능성과 창의성을 조절하는 0~1 사이의 값입니다.</p>
+      <div class="temp-grid">
+        <div class="temp-card low">
+          <div class="t-range">0.0 ~ 0.3</div>
+          <div class="t-name">정밀 모드</div>
+          <ul>
+            <li>사실적 응답</li>
+            <li>코딩 지원</li>
+            <li>데이터 추출</li>
+            <li>콘텐츠 검열</li>
+          </ul>
+        </div>
+        <div class="temp-card mid">
+          <div class="t-range">0.4 ~ 0.7</div>
+          <div class="t-name">균형 모드</div>
+          <ul>
+            <li>요약 작업</li>
+            <li>교육 콘텐츠</li>
+            <li>문제 해결</li>
+            <li>제한된 창작</li>
+          </ul>
+        </div>
+        <div class="temp-card high">
+          <div class="t-range">0.8 ~ 1.0</div>
+          <div class="t-name">창의 모드</div>
+          <ul>
+            <li>브레인스토밍</li>
+            <li>자유 창작</li>
+            <li>마케팅 문안</li>
+            <li>유머/농담</li>
+          </ul>
+        </div>
+      </div>
+
+<pre><code><span class="cm"># Temperature 제어 예시</span>
+<span class="kw">def</span> <span class="fn">chat</span>(messages, system=<span class="kw">None</span>, temperature=<span class="num">1.0</span>):
+    params = {
+        <span class="str">"model"</span>: model,
+        <span class="str">"max_tokens"</span>: <span class="num">1000</span>,
+        <span class="str">"messages"</span>: messages,
+        <span class="str">"temperature"</span>: temperature,
+    }
+    <span class="kw">if</span> system:
+        params[<span class="str">"system"</span>] = system
+    message = client.messages.create(**params)
+    <span class="kw">return</span> message.content[<span class="num">0</span>].text
+
+<span class="cm"># 예측 가능한 코드 생성 (temperature 낮게)</span>
+code = <span class="fn">chat</span>(messages, temperature=<span class="num">0.1</span>)
+
+<span class="cm"># 창의적인 슬로건 생성 (temperature 높게)</span>
+slogans = <span class="fn">chat</span>(messages, temperature=<span class="num">0.9</span>)</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>출력 길이 제어 & Stop Sequences</h3>
+<pre><code>response = client.messages.create(
+    model=model,
+    max_tokens=<span class="num">500</span>,        <span class="cm"># 최대 500 토큰 (예산이지 목표가 아님)</span>
+    stop_sequences=[<span class="str">"---"</span>, <span class="str">"END"</span>],  <span class="cm"># 이 문자열이 등장하면 즉시 중단</span>
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"항목별 요약을 작성해주세요"</span>}]
+)</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>어시스턴트 프리필 (Prefill)</h3>
+      <p>응답의 시작 부분을 미리 지정하여 원하는 형식으로 유도할 수 있습니다.</p>
+<pre><code>messages = [
+    {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"파이썬과 자바스크립트를 비교해주세요"</span>},
+    {<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: <span class="str">"```json\n{"</span>}  <span class="cm"># ← JSON으로 시작하도록 유도</span>
+]
+
+response = client.messages.create(model=model, max_tokens=<span class="num">1000</span>, messages=messages)</code></pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 04 — 프롬프트 평가 (Evals)
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">04 · PROMPT EVALS</span>
+      <h2>프롬프트 평가 (Evals)</h2>
+      <p>체계적인 평가 워크플로우로 프롬프트 품질을 측정하고 지속적으로 개선합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>Eval이 필요한 이유 — "LLM 심리학" 극복하기</li>
+        <li>5단계 Eval 워크플로우 전체 흐름</li>
+        <li>Haiku로 테스트 데이터셋 자동 생성하기</li>
+        <li>코드 기반 채점 vs. 모델 기반 채점 비교</li>
+        <li>평가 결과 분석 및 프롬프트 반복 개선</li>
+      </ul>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>핵심 요약</h3>
+      <div class="krow">
+        <div class="kcard">
+          <div class="klabel">핵심 원칙</div>
+          <div class="kval">느낌이 아닌 데이터로 프롬프트 결정 — 체계적 측정이 곧 품질</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">채점 방식</div>
+          <div class="kval">코드 기반(정확 매칭) + 모델 기반(의미적 판단) 조합</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">데이터셋</div>
+          <div class="kval">Haiku로 빠르게 생성 — 저비용으로 다양한 테스트 케이스 확보</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>5단계 Eval 워크플로우</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content"><h4>작업 정의</h4><p>Claude에게 맡길 정확한 작업과 성공 기준을 명확히 정의합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content"><h4>테스트 데이터셋 생성</h4><p>실제 입력 예시와 기대 출력(golden answers)을 포함한 데이터셋을 준비합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content"><h4>Eval 실행</h4><p>각 테스트 케이스에 대해 Claude를 실행하고 출력을 수집합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content"><h4>채점</h4><p>코드 기반 또는 모델 기반으로 각 응답을 점수화합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-content"><h4>반복 개선</h4><p>결과를 분석하고 프롬프트를 수정한 뒤 다시 Eval을 실행합니다.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Haiku로 테스트 데이터셋 생성</h3>
+<pre><code><span class="cm"># 빠르고 저렴한 claude-haiku로 테스트 케이스 생성</span>
+haiku_model = <span class="str">"claude-haiku-4-5@20251001"</span>
+
+<span class="kw">def</span> <span class="fn">generate_test_cases</span>(task_description, n=<span class="num">20</span>):
+    prompt = <span class="fn">f</span><span class="str">"""다음 작업에 대한 테스트 케이스 {n}개를 JSON 형식으로 생성하세요.
+
+작업: {task_description}
+
+형식:
+[
+  {{"input": "...", "expected_output": "...", "category": "..."}},
+  ...
+]"""</span>
+
+    response = client.messages.create(
+        model=haiku_model,
+        max_tokens=<span class="num">4000</span>,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}]
+    )
+    <span class="kw">return</span> json.loads(response.content[<span class="num">0</span>].text)
+
+test_cases = <span class="fn">generate_test_cases</span>(<span class="str">"고객 리뷰에서 감정(긍정/부정/중립)을 분류하기"</span>)</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>모델 기반 채점 (LLM-as-Judge)</h3>
+<pre><code><span class="kw">def</span> <span class="fn">grade_response</span>(question, expected, actual):
+    prompt = <span class="fn">f</span><span class="str">"""다음 답변이 기대 답변과 의미적으로 동일한지 평가하세요.
+
+질문: {question}
+기대 답변: {expected}
+실제 답변: {actual}
+
+"correct" 또는 "incorrect"로만 응답하세요."""</span>
+
+    response = client.messages.create(
+        model=haiku_model,
+        max_tokens=<span class="num">10</span>,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}]
+    )
+    <span class="kw">return</span> response.content[<span class="num">0</span>].text.strip().lower() == <span class="str">"correct"</span>
+
+<span class="cm"># 전체 Eval 실행</span>
+results = []
+<span class="kw">for</span> case <span class="kw">in</span> test_cases:
+    response = <span class="fn">chat</span>([{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: case[<span class="str">"input"</span>]}])
+    is_correct = <span class="fn">grade_response</span>(case[<span class="str">"input"</span>], case[<span class="str">"expected_output"</span>], response)
+    results.append(is_correct)
+
+accuracy = <span class="fn">sum</span>(results) / <span class="fn">len</span>(results)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"정확도: {accuracy:.1%}"</span>)</code></pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 05 — 프롬프트 엔지니어링
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">05 · PROMPT ENGINEERING</span>
+      <h2>프롬프트 엔지니어링</h2>
+      <p>Claude로부터 더 정확하고 유용한 응답을 끌어내는 4가지 핵심 기법을 익힙니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>명확성 & 직접성 — 구체적으로 원하는 것을 명시</li>
+        <li>구체성 — 모호함 없이 상세하게 지시하기</li>
+        <li>XML 태그로 프롬프트 구조화하기</li>
+        <li>예시 제공 (Few-shot) 으로 품질 향상</li>
+      </ul>
+    </div>
+
+    <div class="priority-grid">
+      <div class="priority-card">
+        <div class="p-label">기법 1</div>
+        <div class="p-title">명확성 & 직접성</div>
+        <div class="p-desc">원하는 것을 명시적으로 요청하세요. Claude는 의도를 추측하지 않습니다.</div>
+      </div>
+      <div class="priority-card">
+        <div class="p-label">기법 2</div>
+        <div class="p-title">구체성</div>
+        <div class="p-desc">길이, 형식, 대상 독자, 톤 등 세부 사항을 구체적으로 지정하세요.</div>
+      </div>
+      <div class="priority-card">
+        <div class="p-label">기법 3</div>
+        <div class="p-title">XML 태그</div>
+        <div class="p-desc">복잡한 프롬프트는 XML 태그로 구조화하여 Claude가 각 부분을 명확히 이해하도록 합니다.</div>
+      </div>
+      <div class="priority-card">
+        <div class="p-label">기법 4</div>
+        <div class="p-title">예시 제공</div>
+        <div class="p-desc">기대하는 입출력 예시를 보여주면 Claude가 패턴을 학습하여 더 정확한 응답을 생성합니다.</div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>기법 비교: 나쁜 예 vs. 좋은 예</h3>
+      <table class="compare-table">
+        <tr><th>기법</th><th>나쁜 프롬프트</th><th>좋은 프롬프트</th></tr>
+        <tr><td>명확성</td><td>"이메일 써줘"</td><td>"고객 환불 거절에 대한 정중한 사과 이메일을 써줘"</td></tr>
+        <tr><td>구체성</td><td>"설명해줘"</td><td>"10살 아이가 이해할 수 있는 수준으로, 3문장 이내로 설명해줘"</td></tr>
+        <tr><td>XML</td><td>긴 텍스트를 하나의 덩어리로</td><td>&lt;document&gt;, &lt;task&gt;, &lt;format&gt; 태그로 분리</td></tr>
+        <tr><td>예시</td><td>"감정을 분류해줘"</td><td>"긍정: '좋아요!' / 부정: '별로야' / 중립: '그냥 그래' 처럼 분류해줘"</td></tr>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h3>XML 태그 구조화 예시</h3>
+<pre><code>prompt = <span class="str">"""
+&lt;document&gt;
+{full_document_text}
+&lt;/document&gt;
+
+&lt;task&gt;
+위 문서를 요약하세요.
+&lt;/task&gt;
+
+&lt;format&gt;
+- 핵심 포인트 3가지를 불릿 포인트로 작성
+- 각 포인트는 한 문장
+- 전문 용어는 괄호 안에 한국어 설명 추가
+&lt;/format&gt;
+"""</span></code></pre>
+
+      <div class="tip-box">
+        <span class="icon">💡</span>
+        <p>XML 태그는 Claude 훈련 데이터에 많이 등장하여 Claude가 매우 잘 인식합니다. 긴 문서 처리 시 <code>&lt;document&gt;</code>, <code>&lt;instructions&gt;</code>, <code>&lt;examples&gt;</code>처럼 나누면 응답 품질이 크게 향상됩니다.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Few-shot 예시 제공</h3>
+<pre><code>prompt = <span class="str">"""고객 리뷰를 긍정/부정/중립으로 분류하세요.
+
+예시:
+리뷰: "정말 훌륭한 제품이에요!" → 긍정
+리뷰: "배송이 너무 늦었어요." → 부정
+리뷰: "평범한 제품이에요." → 중립
+
+이제 다음 리뷰를 분류하세요:
+리뷰: "가격 대비 괜찮은 것 같아요. 다음에도 살 것 같아요."
+"""</span>
+
+response = client.messages.create(
+    model=model,
+    max_tokens=<span class="num">20</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}]
+)
+<span class="cm"># → "긍정"</span></code></pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 06 — Tool Use
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">06 · TOOL USE</span>
+      <h2>Tool Use (도구 사용)</h2>
+      <p>Claude에게 함수 호출 능력을 부여하여 실시간 데이터 접근, 계산, 외부 서비스 연동을 가능하게 합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>Tool Use의 작동 원리 — 4단계 사이클</li>
+        <li>JSON Schema로 도구 함수 정의하기</li>
+        <li>tool_use 응답 감지 및 함수 실행</li>
+        <li>tool_result를 Claude에게 다시 전송하기</li>
+        <li>멀티플 도구 & Batch Tool Use</li>
+        <li>toolChoice로 도구 사용 강제/방지</li>
+      </ul>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>핵심 요약</h3>
+      <div class="krow">
+        <div class="kcard">
+          <div class="klabel">핵심 원리</div>
+          <div class="kval">Claude는 도구를 직접 실행하지 않음 — 어떤 도구를 어떤 인수로 호출할지 "결정"만 함</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">흐름</div>
+          <div class="kval">도구 정의 → API 요청 → tool_use 감지 → 실행 → tool_result 전송 → 최종 응답</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Tool Use 4단계 사이클</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content"><h4>도구 정의</h4><p>JSON Schema로 도구의 이름, 설명, 입력 파라미터를 정의합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content"><h4>API 요청</h4><p><code>tools</code> 파라미터에 도구 목록을 포함하여 Claude에게 요청합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content"><h4>도구 실행</h4><p><code>stop_reason == "tool_use"</code>이면 여러분의 코드가 해당 함수를 실행합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content"><h4>결과 전송</h4><p><code>tool_result</code> 메시지로 실행 결과를 Claude에게 보내 최종 응답을 생성하게 합니다.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>전체 Tool Use 구현 예시</h3>
+<pre><code><span class="kw">import</span> json
+
+<span class="cm"># 1. 도구 정의 (JSON Schema)</span>
+tools = [{
+    <span class="str">"name"</span>: <span class="str">"get_weather"</span>,
+    <span class="str">"description"</span>: <span class="str">"특정 도시의 현재 날씨를 가져옵니다"</span>,
+    <span class="str">"input_schema"</span>: {
+        <span class="str">"type"</span>: <span class="str">"object"</span>,
+        <span class="str">"properties"</span>: {
+            <span class="str">"city"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"description"</span>: <span class="str">"도시 이름"</span>},
+            <span class="str">"unit"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"enum"</span>: [<span class="str">"celsius"</span>, <span class="str">"fahrenheit"</span>]}
+        },
+        <span class="str">"required"</span>: [<span class="str">"city"</span>]
+    }
+}]
+
+<span class="cm"># 실제 함수 (여러분이 구현)</span>
+<span class="kw">def</span> <span class="fn">get_weather</span>(city, unit=<span class="str">"celsius"</span>):
+    <span class="kw">return</span> {<span class="str">"city"</span>: city, <span class="str">"temperature"</span>: <span class="num">22</span>, <span class="str">"condition"</span>: <span class="str">"맑음"</span>}
+
+<span class="cm"># 2. API 요청</span>
+messages = [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"서울 날씨 어때?"</span>}]
+response = client.messages.create(
+    model=model, max_tokens=<span class="num">1000</span>, messages=messages, tools=tools
+)
+
+<span class="cm"># 3. tool_use 감지 & 실행</span>
+<span class="kw">while</span> response.stop_reason == <span class="str">"tool_use"</span>:
+    tool_uses = [b <span class="kw">for</span> b <span class="kw">in</span> response.content <span class="kw">if</span> b.type == <span class="str">"tool_use"</span>]
+
+    messages.append({<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: response.content})
+    tool_results = []
+
+    <span class="kw">for</span> tool_use <span class="kw">in</span> tool_uses:
+        result = <span class="fn">get_weather</span>(**tool_use.input)
+        tool_results.append({
+            <span class="str">"type"</span>: <span class="str">"tool_result"</span>,
+            <span class="str">"tool_use_id"</span>: tool_use.id,
+            <span class="str">"content"</span>: json.dumps(result, ensure_ascii=<span class="kw">False</span>)
+        })
+
+    <span class="cm"># 4. 결과 전송 → 최종 응답</span>
+    messages.append({<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: tool_results})
+    response = client.messages.create(
+        model=model, max_tokens=<span class="num">1000</span>, messages=messages, tools=tools
+    )
+
+<span class="fn">print</span>(response.content[<span class="num">0</span>].text)  <span class="cm"># "서울은 현재 22도이며 맑습니다."</span></code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>Tool Choice로 도구 사용 제어</h3>
+<pre><code><span class="cm"># 도구 사용 강제 (특정 도구)</span>
+response = client.messages.create(
+    model=model, max_tokens=<span class="num">1000</span>, messages=messages, tools=tools,
+    tool_choice={<span class="str">"type"</span>: <span class="str">"tool"</span>, <span class="str">"name"</span>: <span class="str">"get_weather"</span>}  <span class="cm"># 반드시 이 도구 사용</span>
+)
+
+<span class="cm"># 도구 사용 완전 비활성화</span>
+response = client.messages.create(
+    model=model, max_tokens=<span class="num">1000</span>, messages=messages, tools=tools,
+    tool_choice={<span class="str">"type"</span>: <span class="str">"none"</span>}  <span class="cm"># 도구 사용 금지</span>
+)</code></pre>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 07 — RAG
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">07 · RAG</span>
+      <h2>RAG (검색 증강 생성)</h2>
+      <p>외부 문서나 데이터베이스에서 관련 정보를 검색하여 Claude에게 컨텍스트로 제공하는 RAG 파이프라인을 구축합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>RAG가 필요한 이유 — 지식 컷오프 및 프라이빗 데이터</li>
+        <li>텍스트 청킹 전략 (고정 크기 vs. 의미 기반)</li>
+        <li>VoyageAI 임베딩으로 벡터화하기</li>
+        <li>코사인 유사도 기반 벡터 검색</li>
+        <li>BM25 렉시컬 검색으로 하이브리드 검색</li>
+        <li>Contextual Retrieval로 정확도 향상</li>
+        <li>Vertex AI Search를 활용한 관리형 RAG</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h3>RAG 파이프라인 전체 흐름</h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">1</div>
+          <div class="flow-step-content"><h4>문서 청킹</h4><p>긴 문서를 적절한 크기(500~1000 토큰)의 청크로 분할합니다. 오버랩(10~20%)으로 경계 정보 손실을 방지합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">2</div>
+          <div class="flow-step-content"><h4>임베딩 생성 & 저장</h4><p>각 청크를 임베딩 벡터로 변환하고 벡터 DB에 저장합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">3</div>
+          <div class="flow-step-content"><h4>쿼리 임베딩</h4><p>사용자 질문도 같은 모델로 임베딩합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">4</div>
+          <div class="flow-step-content"><h4>유사도 검색</h4><p>코사인 유사도로 가장 관련성 높은 상위 K개 청크를 검색합니다.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">5</div>
+          <div class="flow-step-content"><h4>Claude 응답 생성</h4><p>검색된 청크를 컨텍스트로 Claude에게 전달하여 답변을 생성합니다.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>기본 RAG 구현</h3>
+<pre><code><span class="kw">import</span> voyageai
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+voyage_client = voyageai.<span class="cls">Client</span>()
+
+<span class="kw">def</span> <span class="fn">generate_embedding</span>(text):
+    result = voyage_client.embed([text], model=<span class="str">"voyage-3"</span>)
+    <span class="kw">return</span> result.embeddings[<span class="num">0</span>]
+
+<span class="kw">def</span> <span class="fn">cosine_similarity</span>(a, b):
+    <span class="kw">return</span> np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+<span class="cm"># 문서 청킹 & 임베딩</span>
+chunks = <span class="fn">chunk_document</span>(document, chunk_size=<span class="num">500</span>, overlap=<span class="num">50</span>)
+vector_store = []
+<span class="kw">for</span> chunk <span class="kw">in</span> chunks:
+    embedding = <span class="fn">generate_embedding</span>(chunk)
+    vector_store.append({<span class="str">"content"</span>: chunk, <span class="str">"embedding"</span>: embedding})
+
+<span class="cm"># 검색 & 응답 생성</span>
+<span class="kw">def</span> <span class="fn">rag_query</span>(question, k=<span class="num">3</span>):
+    q_embedding = <span class="fn">generate_embedding</span>(question)
+
+    <span class="cm"># 유사도 계산 & 상위 K개 선택</span>
+    scored = [(cosine_similarity(q_embedding, doc[<span class="str">"embedding"</span>]), doc[<span class="str">"content"</span>])
+              <span class="kw">for</span> doc <span class="kw">in</span> vector_store]
+    top_k = <span class="fn">sorted</span>(scored, reverse=<span class="kw">True</span>)[:k]
+    context = <span class="str">"\n\n"</span>.join([content <span class="kw">for</span> _, content <span class="kw">in</span> top_k])
+
+    <span class="cm"># Claude에 컨텍스트와 함께 질문</span>
+    prompt = <span class="fn">f</span><span class="str">"""&lt;context&gt;
+{context}
+&lt;/context&gt;
+
+위 컨텍스트를 바탕으로 질문에 답하세요: {question}"""</span>
+
+    response = client.messages.create(
+        model=model, max_tokens=<span class="num">1000</span>,
+        messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}]
+    )
+    <span class="kw">return</span> response.content[<span class="num">0</span>].text</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>하이브리드 검색 (시맨틱 + BM25)</h3>
+      <p>시맨틱 검색만으로는 특정 용어(예: <code>INC-2023-Q4-011</code>)를 정확히 찾지 못할 수 있습니다. BM25 렉시컬 검색과 결합하면 두 가지 장점을 모두 얻을 수 있습니다.</p>
+      <table class="compare-table">
+        <tr><th>방식</th><th>장점</th><th>단점</th></tr>
+        <tr><td>시맨틱 검색</td><td>의미적으로 유사한 내용 검색</td><td>정확한 키워드 매칭 부족</td></tr>
+        <tr><td>BM25 렉시컬</td><td>특정 용어나 ID 정확 매칭</td><td>동의어나 문맥 이해 부족</td></tr>
+        <tr><td>하이브리드</td><td>두 방식의 장점 결합</td><td>구현 복잡도 증가</td></tr>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <span class="icon">☁️</span>
+      <p><strong>Vertex AI Search</strong>: GCP의 관리형 검색 서비스로, 직접 벡터 DB를 구축하지 않고도 엔터프라이즈급 RAG를 구현할 수 있습니다. Google Cloud Storage나 BigQuery의 데이터를 자동으로 인덱싱하고 검색합니다.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 08 — Claude 고급 기능
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">08 · ADVANCED FEATURES</span>
+      <h2>Claude 고급 기능</h2>
+      <p>Extended Thinking, 멀티모달(이미지/PDF), Citations, 프롬프트 캐싱으로 애플리케이션의 성능과 비용 효율을 극대화합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>Extended Thinking — 복잡한 문제를 위한 깊은 사고</li>
+        <li>이미지 처리 — Vertex AI에서 비전 기능 활용</li>
+        <li>PDF 문서 분석 — 직접 PDF 파일 처리</li>
+        <li>Citations — 응답 근거를 소스와 연결</li>
+        <li>프롬프트 캐싱 — 반복 토큰 비용 90% 절감</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h3>Extended Thinking (확장 사고)</h3>
+      <p>복잡한 수학, 코딩, 다단계 추론 문제에서 Claude가 응답 전에 깊이 생각할 수 있게 합니다.</p>
+<pre><code>response = client.messages.create(
+    model=<span class="str">"claude-sonnet-4@20250514"</span>,
+    max_tokens=<span class="num">16000</span>,
+    thinking={
+        <span class="str">"type"</span>: <span class="str">"enabled"</span>,
+        <span class="str">"budget_tokens"</span>: <span class="num">10000</span>  <span class="cm"># 사고에 쓸 최대 토큰</span>
+    },
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"다음 알고리즘의 시간 복잡도를 분석하세요..."</span>}]
+)
+
+<span class="cm"># 사고 블록과 응답 블록 분리</span>
+<span class="kw">for</span> block <span class="kw">in</span> response.content:
+    <span class="kw">if</span> block.type == <span class="str">"thinking"</span>:
+        <span class="fn">print</span>(<span class="str">"[사고 과정]"</span>, block.thinking)
+    <span class="kw">elif</span> block.type == <span class="str">"text"</span>:
+        <span class="fn">print</span>(<span class="str">"[최종 답변]"</span>, block.text)</code></pre>
+
+      <div class="tip-box">
+        <span class="icon">💡</span>
+        <p>Extended Thinking은 추가 토큰을 소비하므로 <code>max_tokens</code>를 충분히 크게 설정해야 합니다. <code>budget_tokens</code>는 사고에만 사용되고, 응답은 별도로 생성됩니다.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>이미지 처리 (Vision)</h3>
+<pre><code><span class="kw">import</span> base64
+
+<span class="cm"># 로컬 이미지를 base64로 인코딩</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"chart.png"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    image_data = base64.standard_b64encode(f.read()).decode(<span class="str">"utf-8"</span>)
+
+response = client.messages.create(
+    model=model,
+    max_tokens=<span class="num">1000</span>,
+    messages=[{
+        <span class="str">"role"</span>: <span class="str">"user"</span>,
+        <span class="str">"content"</span>: [
+            {
+                <span class="str">"type"</span>: <span class="str">"image"</span>,
+                <span class="str">"source"</span>: {
+                    <span class="str">"type"</span>: <span class="str">"base64"</span>,
+                    <span class="str">"media_type"</span>: <span class="str">"image/png"</span>,
+                    <span class="str">"data"</span>: image_data
+                }
+            },
+            {<span class="str">"type"</span>: <span class="str">"text"</span>, <span class="str">"content"</span>: <span class="str">"이 차트에서 주요 트렌드를 설명해주세요."</span>}
+        ]
+    }]
+)
+
+<span class="cm"># GCS URL로도 이미지 전송 가능 (Vertex AI 특화)</span>
+<span class="cm"># source = {"type": "url", "url": "gs://bucket/image.png"}</span></code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>프롬프트 캐싱 (Prompt Caching)</h3>
+      <p>긴 시스템 프롬프트나 문서를 반복 처리할 때 캐싱을 활성화하면 비용을 최대 <strong>90%</strong> 절감할 수 있습니다.</p>
+<pre><code><span class="cm"># 캐시 포인트 설정 — Vertex AI에서도 동일한 방식</span>
+response = client.messages.create(
+    model=model,
+    max_tokens=<span class="num">1000</span>,
+    system=[
+        {
+            <span class="str">"type"</span>: <span class="str">"text"</span>,
+            <span class="str">"text"</span>: long_system_prompt,          <span class="cm"># 긴 시스템 프롬프트</span>
+        },
+        {<span class="str">"type"</span>: <span class="str">"text"</span>, <span class="str">"text"</span>: large_document,
+         <span class="str">"cache_control"</span>: {<span class="str">"type"</span>: <span class="str">"ephemeral"</span>}}  <span class="cm"># ← 캐시 포인트</span>
+    ],
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"이 문서에서 핵심 내용을 추출하세요"</span>}]
+)
+
+<span class="cm"># 캐시 히트 확인</span>
+<span class="fn">print</span>(response.usage.cache_read_input_tokens)   <span class="cm"># 캐시에서 읽은 토큰</span>
+<span class="fn">print</span>(response.usage.cache_creation_input_tokens) <span class="cm"># 새로 캐시에 저장된 토큰</span></code></pre>
+
+      <table class="compare-table">
+        <tr><th>상황</th><th>비용 배율</th><th>설명</th></tr>
+        <tr><td>일반 입력 토큰</td><td>1x</td><td>기본 요금</td></tr>
+        <tr><td>캐시 저장 (쓰기)</td><td>1.25x</td><td>최초 캐시 생성 시 25% 추가</td></tr>
+        <tr><td>캐시 히트 (읽기)</td><td>0.1x</td><td>재사용 시 90% 절감!</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 09 — MCP
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">09 · MCP</span>
+      <h2>MCP (모델 컨텍스트 프로토콜)</h2>
+      <p>MCP로 Claude에게 표준화된 방식으로 도구와 리소스를 연결하여 진정한 AI 에이전트를 구축합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>MCP 아키텍처 — 클라이언트, 서버, 프로토콜</li>
+        <li>MCP 서버에서 도구(Tools) 정의하기</li>
+        <li>리소스(Resources)와 프롬프트(Prompts) 활용</li>
+        <li>Python MCP 서버 구현 패턴</li>
+        <li>Vertex AI 환경에서 MCP 클라이언트 구현</li>
+        <li>GCP 서비스를 위한 MCP 서버 활용</li>
+      </ul>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>핵심 요약</h3>
+      <div class="krow">
+        <div class="kcard">
+          <div class="klabel">MCP란?</div>
+          <div class="kval">Model Context Protocol — AI 모델과 외부 시스템을 연결하는 표준화된 오픈 프로토콜</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">3가지 기능</div>
+          <div class="kval">Tools (함수 실행) + Resources (데이터 접근) + Prompts (재사용 가능한 템플릿)</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">GCP 통합</div>
+          <div class="kval">BigQuery, Cloud Storage, Pub/Sub 등 GCP 서비스용 MCP 서버 활용 가능</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>MCP 서버 구현 (Python)</h3>
+<pre><code><span class="kw">from</span> mcp.server.fastmcp <span class="kw">import</span> <span class="cls">FastMCP</span>
+
+mcp = <span class="cls">FastMCP</span>(<span class="str">"GCP 데이터 서버"</span>)
+
+<span class="cm"># Tool 정의</span>
+@mcp.tool()
+<span class="kw">def</span> <span class="fn">query_bigquery</span>(sql: str) -> str:
+    <span class="str">"""BigQuery에서 SQL 쿼리를 실행합니다."""</span>
+    <span class="kw">from</span> google.cloud <span class="kw">import</span> bigquery
+    client = bigquery.<span class="cls">Client</span>()
+    results = client.query(sql).result()
+    <span class="kw">return</span> <span class="fn">str</span>(<span class="fn">list</span>(results))
+
+@mcp.tool()
+<span class="kw">def</span> <span class="fn">read_gcs_file</span>(bucket: str, path: str) -> str:
+    <span class="str">"""Google Cloud Storage에서 파일을 읽습니다."""</span>
+    <span class="kw">from</span> google.cloud <span class="kw">import</span> storage
+    client = storage.<span class="cls">Client</span>()
+    bucket_obj = client.bucket(bucket)
+    blob = bucket_obj.blob(path)
+    <span class="kw">return</span> blob.download_as_text()
+
+<span class="cm"># Resource 정의</span>
+@mcp.resource(<span class="str">"gcp://datasets/list"</span>)
+<span class="kw">def</span> <span class="fn">list_datasets</span>() -> str:
+    <span class="str">"""사용 가능한 BigQuery 데이터셋 목록을 반환합니다."""</span>
+    <span class="kw">return</span> <span class="str">"dataset_a, dataset_b, dataset_c"</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    mcp.run()</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>MCP 클라이언트 구현 (Vertex AI)</h3>
+<pre><code><span class="kw">from</span> mcp <span class="kw">import</span> <span class="cls">ClientSession</span>, <span class="cls">StdioServerParameters</span>
+<span class="kw">from</span> mcp.client.stdio <span class="kw">import</span> stdio_client
+<span class="kw">from</span> anthropic <span class="kw">import</span> <span class="cls">AnthropicVertex</span>
+
+client = <span class="cls">AnthropicVertex</span>(region=<span class="str">"global"</span>, project_id=<span class="str">"my-project"</span>)
+model = <span class="str">"claude-sonnet-4@20250514"</span>
+
+<span class="kw">async def</span> <span class="fn">run_with_mcp</span>():
+    server_params = <span class="cls">StdioServerParameters</span>(
+        command=<span class="str">"python"</span>, args=[<span class="str">"gcp_server.py"</span>]
+    )
+
+    <span class="kw">async with</span> stdio_client(server_params) <span class="kw">as</span> (read, write):
+        <span class="kw">async with</span> <span class="cls">ClientSession</span>(read, write) <span class="kw">as</span> session:
+            <span class="kw">await</span> session.initialize()
+
+            <span class="cm"># 사용 가능한 도구 목록 조회</span>
+            tools_result = <span class="kw">await</span> session.list_tools()
+            tools = [<span class="fn">convert_to_claude_tool</span>(t) <span class="kw">for</span> t <span class="kw">in</span> tools_result.tools]
+
+            <span class="cm"># Claude에게 GCP 도구와 함께 질문</span>
+            response = client.messages.create(
+                model=model,
+                max_tokens=<span class="num">4000</span>,
+                tools=tools,
+                messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>,
+                           <span class="str">"content"</span>: <span class="str">"sales 데이터셋에서 이번달 매출 합계를 조회해줘"</span>}]
+            )</code></pre>
+    </div>
+
+    <div class="tip-box">
+      <span class="icon">☁️</span>
+      <p><strong>GCP MCP 서버 생태계</strong>: Google Cloud가 공식 MCP 서버를 제공합니다. BigQuery MCP 서버, Cloud Storage MCP 서버, Google Workspace MCP 서버 등을 활용하면 GCP 서비스를 직접 Claude에 연결할 수 있습니다.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       패널 10 — 에이전트 & Claude Code
+       ══════════════════════════════════════ -->
+  <section class="lesson-panel">
+    <div class="panel-header">
+      <span class="tag">10 · AGENTS</span>
+      <h2>에이전트 & Claude Code</h2>
+      <p>에이전트 루프 패턴으로 자율적으로 작업을 완수하는 AI 에이전트를 구축하고, Claude Code를 개발 워크플로우에 통합합니다.</p>
+    </div>
+
+    <div class="learn-box">
+      <h3>이 섹션에서 배울 내용</h3>
+      <ul>
+        <li>에이전트 루프 패턴 — 도구 사용을 반복하며 목표 달성</li>
+        <li>멀티 에이전트 시스템 — 오케스트레이터 + 서브에이전트</li>
+        <li>에이전트의 3가지 핵심 속성</li>
+        <li>Claude Code 설정 및 활용</li>
+        <li>Computer Use — 화면을 보고 조작하는 에이전트</li>
+        <li>Vertex AI Agents — GCP 관리형 에이전트 서비스</li>
+      </ul>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>핵심 요약</h3>
+      <div class="krow">
+        <div class="kcard">
+          <div class="klabel">에이전트란?</div>
+          <div class="kval">목표가 주어지면 스스로 계획하고 도구를 사용하며 완료될 때까지 반복하는 AI 시스템</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">핵심 속성</div>
+          <div class="kval">인식(Perception) + 추론(Reasoning) + 행동(Action)</div>
+        </div>
+        <div class="kcard">
+          <div class="klabel">GCP 통합</div>
+          <div class="kval">Vertex AI Agents로 완전 관리형 에이전트 인프라 운영</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>에이전트 루프 구현</h3>
+      <p>에이전트는 목표가 달성될 때까지 <strong>생각 → 도구 사용 → 결과 처리</strong>를 반복합니다.</p>
+<pre><code><span class="kw">from</span> anthropic <span class="kw">import</span> <span class="cls">AnthropicVertex</span>
+
+client = <span class="cls">AnthropicVertex</span>(region=<span class="str">"global"</span>, project_id=<span class="str">"my-project"</span>)
+model = <span class="str">"claude-sonnet-4@20250514"</span>
+
+<span class="kw">def</span> <span class="fn">run_agent</span>(goal: str, tools: list, tool_functions: dict):
+    messages = [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: goal}]
+
+    <span class="kw">while</span> <span class="kw">True</span>:
+        response = client.messages.create(
+            model=model,
+            max_tokens=<span class="num">4000</span>,
+            tools=tools,
+            messages=messages,
+            system=<span class="str">"""당신은 목표를 달성하기 위해 도구를 활용하는 에이전트입니다.
+            주어진 도구를 최대한 활용하여 목표를 달성하세요."""</span>
+        )
+
+        <span class="cm"># 에이전트 완료 — 자연스러운 종료</span>
+        <span class="kw">if</span> response.stop_reason == <span class="str">"end_turn"</span>:
+            <span class="kw">return</span> response.content[<span class="num">0</span>].text
+
+        <span class="cm"># 도구 사용 처리</span>
+        <span class="kw">if</span> response.stop_reason == <span class="str">"tool_use"</span>:
+            messages.append({<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: response.content})
+            tool_results = []
+
+            <span class="kw">for</span> block <span class="kw">in</span> response.content:
+                <span class="kw">if</span> block.type == <span class="str">"tool_use"</span>:
+                    fn = tool_functions[block.name]
+                    result = <span class="fn">fn</span>(**block.input)
+                    tool_results.append({
+                        <span class="str">"type"</span>: <span class="str">"tool_result"</span>,
+                        <span class="str">"tool_use_id"</span>: block.id,
+                        <span class="str">"content"</span>: <span class="fn">str</span>(result)
+                    })
+
+            messages.append({<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: tool_results})
+
+<span class="cm"># 에이전트 실행</span>
+result = <span class="fn">run_agent</span>(
+    goal=<span class="str">"BigQuery에서 지난 30일 매출 데이터를 분석하고 인사이트를 제공해줘"</span>,
+    tools=gcp_tools,
+    tool_functions={<span class="str">"query_bigquery"</span>: query_bigquery, <span class="str">"read_gcs_file"</span>: read_gcs_file}
+)</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>에이전트의 3가지 핵심 속성</h3>
+      <div class="priority-grid">
+        <div class="priority-card">
+          <div class="p-label">속성 1</div>
+          <div class="p-title">인식 (Perception)</div>
+          <div class="p-desc">텍스트, 이미지, 데이터, 도구 결과 등 다양한 입력을 이해하고 상황을 파악합니다.</div>
+        </div>
+        <div class="priority-card">
+          <div class="p-label">속성 2</div>
+          <div class="p-title">추론 (Reasoning)</div>
+          <div class="p-desc">현재 상황을 분석하고, 목표 달성을 위한 최적 행동을 계획하며, 결과를 평가합니다.</div>
+        </div>
+        <div class="priority-card">
+          <div class="p-label">속성 3</div>
+          <div class="p-title">행동 (Action)</div>
+          <div class="p-desc">도구 호출, 코드 실행, 파일 조작, 외부 API 호출 등 실제 세계에 영향을 미칩니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h3>Claude Code 활용</h3>
+      <p>Claude Code는 코드베이스 전체를 이해하고 수정할 수 있는 AI 코딩 어시스턴트입니다.</p>
+
+      <h4>설치 및 시작</h4>
+<pre><code><span class="cm"># Claude Code 설치</span>
+<span class="op">$</span> npm install -g @anthropic-ai/claude-code
+
+<span class="cm"># 프로젝트 디렉토리에서 시작</span>
+<span class="op">$</span> cd my-vertex-project
+<span class="op">$</span> claude
+
+<span class="cm"># 주요 명령어</span>
+<span class="str">"Vertex AI 클라이언트 설정 파일을 만들어줘"</span>
+<span class="str">"BigQuery 연결 오류를 디버깅해줘"</span>
+<span class="str">"이 RAG 파이프라인의 성능을 개선해줘"</span>
+<span class="str">"GCP 서비스 계정 인증 코드를 리팩토링해줘"</span></code></pre>
+
+      <h4>멀티 에이전트로 Claude Code 활용</h4>
+<pre><code><span class="cm"># Claude Code를 서브에이전트로 실행 (프로그래밍 방식)</span>
+<span class="kw">import</span> subprocess
+
+result = subprocess.run(
+    [<span class="str">"claude"</span>, <span class="str">"-p"</span>, <span class="str">"tests/를 실행하고 실패한 테스트를 모두 수정해줘"</span>, <span class="str">"--output-format"</span>, <span class="str">"json"</span>],
+    capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>
+)
+<span class="fn">print</span>(result.stdout)</code></pre>
+    </div>
+
+    <div class="content-section">
+      <h3>Vertex AI Agents (관리형 에이전트)</h3>
+      <p>Google Cloud의 Vertex AI Agents 서비스는 에이전트 인프라를 완전히 관리해줍니다.</p>
+      <table class="compare-table">
+        <tr><th>방식</th><th>장점</th><th>적합한 상황</th></tr>
+        <tr><td>직접 구현 (에이전트 루프)</td><td>완전한 제어권, 유연성</td><td>특수한 에이전트 로직이 필요한 경우</td></tr>
+        <tr><td>Vertex AI Agents</td><td>인프라 자동 관리, GCP 통합</td><td>빠른 배포, GCP 네이티브 통합</td></tr>
+        <tr><td>MCP + Vertex</td><td>표준화된 도구 연결</td><td>다양한 GCP 서비스 통합</td></tr>
+      </table>
+    </div>
+
+    <div class="warn-box">
+      <span class="icon">⚠️</span>
+      <p><strong>에이전트 안전성</strong>: 에이전트가 BigQuery 수정, GCS 파일 삭제, Pub/Sub 메시지 발행 등 되돌리기 어려운 작업을 수행할 때는 반드시 <strong>인간 확인 체크포인트</strong>를 포함하세요. IAM 최소 권한 원칙을 적용하여 에이전트의 권한을 필요한 최소한으로 제한합니다.</p>
+    </div>
+
+    <div class="reflection-box">
+      <h4>최종 정리</h4>
+      <p>이 코스에서 배운 모든 것을 종합하면: <strong>AnthropicVertex 클라이언트</strong>로 시작하고, <strong>멀티턴 대화 + 시스템 프롬프트</strong>로 기반을 다지고, <strong>Evals로 품질을 측정</strong>하고, <strong>Tool Use + RAG</strong>로 기능을 확장하고, <strong>MCP</strong>로 GCP 서비스를 연결하고, 최종적으로 <strong>에이전트 루프</strong>로 자율적인 시스템을 구축합니다. Vertex AI의 엔터프라이즈 인프라 위에서 Claude의 강력한 AI 능력을 최대한 활용하세요.</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  let currentLesson = 0;
+  function showLesson(idx) {
+    document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+    document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+    const total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+    document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('main').scrollTo({ top: 0, behavior: 'smooth' });
+    currentLesson = idx;
+  }
+</script>
+</body>
+</html>

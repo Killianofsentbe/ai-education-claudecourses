@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCP 심화 | Model Context Protocol: Advanced Topics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --surface: #16161c;
+      --surface2: #1e1e28;
+      --surface3: #252530;
+      --border: #2e2e3e;
+      --border2: #3a3a50;
+      --text: #e8e8f0;
+      --text2: #a8a8c0;
+      --text3: #6868a0;
+      --accent: #d97f3a;
+      --accent2: #7b6ef6;
+      --accent3: #4ec9b0;
+      --accent4: #e06c75;
+      --accent5: #61afef;
+      --success: #4caf80;
+      --warn: #e6c84a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 270px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+    .sidebar-header {
+      padding: 24px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .course-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent2), #5a4fc4);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .sidebar-header h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .sidebar-header p {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 6px;
+    }
+    .progress-bar-wrap {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .progress-label {
+      font-size: 11px;
+      color: var(--text3);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .progress-track {
+      height: 4px;
+      background: var(--surface3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius: 2px;
+      width: 12.5%;
+      transition: width .4s;
+    }
+    .nav-list { padding: 10px 0; flex: 1; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all .2s;
+    }
+    .nav-item:hover { background: var(--surface2); }
+    .nav-item.active {
+      background: var(--surface2);
+      border-left-color: var(--accent2);
+    }
+    .nav-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--surface3);
+      color: var(--text3);
+      font-size: 10px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .nav-item.active .nav-num {
+      background: var(--accent2);
+      color: #fff;
+    }
+    .nav-text {
+      font-size: 12.5px;
+      color: var(--text2);
+      line-height: 1.3;
+    }
+    .nav-item.active .nav-text { color: var(--text); font-weight: 600; }
+
+    /* ── Main ── */
+    .main {
+      margin-left: 270px;
+      flex: 1;
+      min-height: 100vh;
+    }
+    .top-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { border-color: var(--accent2); color: var(--text); }
+    .tab-btn.active {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      color: #fff;
+      font-weight: 600;
+    }
+    .content-wrap { padding: 40px 48px 80px; max-width: 900px; }
+
+    /* ── Lesson Panel ── */
+    .lesson-panel { display: none; }
+    .lesson-panel.active { display: block; }
+
+    .lesson-hero {
+      margin-bottom: 32px;
+    }
+    .lesson-tag {
+      display: inline-block;
+      background: rgba(123,110,246,.18);
+      color: var(--accent2);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .lesson-hero h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .lesson-hero .subtitle {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── Components ── */
+    .learn-box {
+      background: linear-gradient(135deg, rgba(123,110,246,.1), rgba(217,127,58,.08));
+      border: 1px solid rgba(123,110,246,.3);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-bottom: 28px;
+    }
+    .learn-box h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent2);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .learn-box ul { list-style: none; padding: 0; }
+    .learn-box ul li {
+      padding: 6px 0;
+      color: var(--text2);
+      font-size: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .learn-box ul li::before {
+      content: '✓';
+      color: var(--accent2);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .key-takeaways {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 22px 26px;
+      margin-bottom: 28px;
+    }
+    .key-takeaways h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .key-takeaways ul { list-style: none; padding: 0; }
+    .key-takeaways ul li {
+      padding: 7px 0;
+      color: var(--text2);
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .key-takeaways ul li:last-child { border-bottom: none; }
+    .key-takeaways ul li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .content-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+    .content-section h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .content-section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 16px 0 10px;
+    }
+    .content-section p {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .content-section ul, .content-section ol {
+      padding-left: 22px;
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .content-section li { margin-bottom: 4px; }
+    .content-section strong { color: var(--text); font-weight: 600; }
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .priority-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      transition: border-color .2s;
+    }
+    .priority-card:hover { border-color: var(--accent2); }
+    .priority-card .card-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .priority-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .priority-card p {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .compare-table th {
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .compare-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      vertical-align: top;
+    }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .tip-box {
+      background: rgba(78,201,176,.08);
+      border: 1px solid rgba(78,201,176,.25);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .tip-box .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .tip-box-content h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent3);
+      margin-bottom: 6px;
+    }
+    .tip-box-content p {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .warn-box {
+      background: rgba(230,200,74,.08);
+      border: 1px solid rgba(230,200,74,.25);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .warn-box .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .warn-box .tip-box-content h4 { color: var(--warn); }
+    .code-block {
+      background: #0d0d14;
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 14px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: #abb2bf;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+    .code-block .kw { color: #c678dd; }
+    .code-block .fn { color: #61afef; }
+    .code-block .str { color: #98c379; }
+    .code-block .cmt { color: #5c6370; font-style: italic; }
+    .code-block .num { color: #d19a66; }
+    .code-block .dec { color: #e5c07b; }
+    .reflection-box {
+      background: linear-gradient(135deg, rgba(217,127,58,.1), rgba(123,110,246,.08));
+      border: 1px solid rgba(217,127,58,.25);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-top: 28px;
+    }
+    .reflection-box h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .reflection-box ul { list-style: none; padding: 0; }
+    .reflection-box ul li {
+      padding: 8px 0;
+      color: var(--text2);
+      font-size: 14px;
+      border-bottom: 1px dashed var(--border);
+      display: flex;
+      gap: 10px;
+    }
+    .reflection-box ul li:last-child { border-bottom: none; }
+    .reflection-box ul li::before { content: '💭'; flex-shrink: 0; }
+    .checklist { list-style: none; padding: 0; margin-bottom: 20px; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text2);
+      font-size: 14px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: '□';
+      color: var(--accent2);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .flow-step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent2);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .flow-step-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .flow-step-content p {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+    .arrow-connector {
+      text-align: center;
+      color: var(--text3);
+      font-size: 18px;
+      margin: 2px 0 2px 14px;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-purple {
+      background: rgba(123,110,246,.15);
+      color: var(--accent2);
+      border: 1px solid rgba(123,110,246,.3);
+    }
+    .badge-orange {
+      background: rgba(217,127,58,.15);
+      color: var(--accent);
+      border: 1px solid rgba(217,127,58,.3);
+    }
+    .badge-green {
+      background: rgba(78,201,176,.15);
+      color: var(--accent3);
+      border: 1px solid rgba(78,201,176,.3);
+    }
+    .badge-red {
+      background: rgba(224,108,117,.15);
+      color: var(--accent4);
+      border: 1px solid rgba(224,108,117,.3);
+    }
+    .badge-blue {
+      background: rgba(97,175,239,.15);
+      color: var(--accent5);
+      border: 1px solid rgba(97,175,239,.3);
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="course-badge">Advanced MCP</div>
+    <h2>MCP 심화 과정</h2>
+    <p>Model Context Protocol 고급 기능</p>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>학습 진행도</span>
+      <span id="progressLabel">1 / 8</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+  </div>
+  <nav class="nav-list">
+    <div class="nav-item active" onclick="showLesson(0)">
+      <div class="nav-num">1</div>
+      <div class="nav-text">Sampling 개념</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(1)">
+      <div class="nav-num">2</div>
+      <div class="nav-text">Sampling 구현 실습</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(2)">
+      <div class="nav-num">3</div>
+      <div class="nav-text">로그 및 진행률 알림</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(3)">
+      <div class="nav-num">4</div>
+      <div class="nav-text">Roots: 파일 접근 권한</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(4)">
+      <div class="nav-num">5</div>
+      <div class="nav-text">JSON 메시지 타입</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(5)">
+      <div class="nav-num">6</div>
+      <div class="nav-text">STDIO 트랜스포트</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(6)">
+      <div class="nav-num">7</div>
+      <div class="nav-text">StreamableHTTP 트랜스포트</div>
+    </div>
+    <div class="nav-item" onclick="showLesson(7)">
+      <div class="nav-num">8</div>
+      <div class="nav-text">상태 관리 & Stateless HTTP</div>
+    </div>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="top-bar">
+    <button class="tab-btn active" onclick="showLesson(0)">Sampling</button>
+    <button class="tab-btn" onclick="showLesson(1)">구현 실습</button>
+    <button class="tab-btn" onclick="showLesson(2)">알림</button>
+    <button class="tab-btn" onclick="showLesson(3)">Roots</button>
+    <button class="tab-btn" onclick="showLesson(4)">JSON 메시지</button>
+    <button class="tab-btn" onclick="showLesson(5)">STDIO</button>
+    <button class="tab-btn" onclick="showLesson(6)">StreamableHTTP</button>
+    <button class="tab-btn" onclick="showLesson(7)">상태 관리</button>
+  </div>
+
+  <div class="content-wrap">
+
+    <!-- ── 레슨 1: Sampling 개념 ── -->
+    <div class="lesson-panel active">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 1 · Sampling</div>
+        <h1>Sampling: 서버가 AI를 빌리는 방법</h1>
+        <p class="subtitle">MCP 서버가 직접 Claude를 호출하지 않고, 클라이언트를 통해 LLM 기능을 위임하는 혁신적인 패턴을 학습합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>Sampling이 해결하는 문제와 그 작동 원리를 설명할 수 있다</li>
+          <li>서버 측과 클라이언트 측의 Sampling 구현 방법을 이해한다</li>
+          <li>언제 Sampling을 활용해야 하는지 판단할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>Sampling은 MCP 서버가 클라이언트에게 "Claude를 대신 호출해 달라"고 요청하는 메커니즘</li>
+          <li>서버는 API 키 없이도 AI 기능을 활용할 수 있어 복잡성과 비용이 크게 감소</li>
+          <li>공개 MCP 서버에 특히 유용 — 서버가 아닌 각 클라이언트가 AI 사용 비용을 부담</li>
+          <li>서버: <code>ctx.session.create_message()</code> 호출 / 클라이언트: <code>sampling_callback</code> 구현</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>Sampling이 해결하는 문제</h2>
+        <p>위키피디아에서 정보를 수집해 보고서로 요약하는 MCP 서버를 만들 때 어떻게 해야 할까요? 데이터를 가져왔지만, 이제 AI로 요약해야 합니다.</p>
+
+        <div class="compare-table-wrap" style="overflow-x:auto; margin: 16px 0;">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>방법</th>
+                <th>서버에 직접 Claude 통합</th>
+                <th>Sampling 활용</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>API 키 필요</strong></td>
+                <td>서버에 직접 API 키 보관 필요</td>
+                <td>클라이언트가 이미 보유, 서버는 불필요</td>
+              </tr>
+              <tr>
+                <td><strong>비용 부담</strong></td>
+                <td>서버 운영자가 모든 AI 비용 부담</td>
+                <td>각 클라이언트가 자신의 AI 비용 부담</td>
+              </tr>
+              <tr>
+                <td><strong>구현 복잡성</strong></td>
+                <td>높음 — 인증, 오류 처리 등 직접 구현</td>
+                <td>낮음 — 단순 요청 전달</td>
+              </tr>
+              <tr>
+                <td><strong>공개 서버 적합성</strong></td>
+                <td>불리 — 무제한 AI 비용 발생 위험</td>
+                <td>최적 — 사용자별 비용 독립</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Sampling 작동 흐름</h2>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <h4>서버 작업 완료</h4>
+              <p>서버가 도구 함수 내에서 본래 작업(예: 위키피디아 검색)을 완료합니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <h4>프롬프트 생성 및 Sampling 요청</h4>
+              <p>서버가 텍스트 생성이 필요한 프롬프트를 구성하고 <code>ctx.session.create_message()</code>로 클라이언트에 요청합니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <h4>클라이언트가 Claude 호출</h4>
+              <p>클라이언트의 <code>sampling_callback</code>이 호출되어 Anthropic SDK로 Claude에게 요청합니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-content">
+              <h4>결과 반환</h4>
+              <p>생성된 텍스트가 클라이언트 → 서버로 전달되고, 서버는 이를 최종 응답에 활용합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>서버 측 구현</h2>
+        <p>서버의 도구 함수 내에서 <code>ctx.session.create_message()</code>를 사용합니다:</p>
+        <div class="code-block">
+<span class="dec">@mcp.tool()</span>
+<span class="kw">async def</span> <span class="fn">summarize</span>(text_to_summarize: <span class="fn">str</span>, ctx: Context):
+    prompt = <span class="str">f"""
+    Please summarize the following text:
+    {text_to_summarize}
+    """</span>
+
+    result = <span class="kw">await</span> ctx.session.<span class="fn">create_message</span>(
+        messages=[
+            <span class="fn">SamplingMessage</span>(
+                role=<span class="str">"user"</span>,
+                content=<span class="fn">TextContent</span>(
+                    type=<span class="str">"text"</span>,
+                    text=prompt
+                )
+            )
+        ],
+        max_tokens=<span class="num">4000</span>,
+        system_prompt=<span class="str">"You are a helpful research assistant"</span>,
+    )
+
+    <span class="kw">if</span> result.content.type == <span class="str">"text"</span>:
+        <span class="kw">return</span> result.content.text
+    <span class="kw">else</span>:
+        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">"Sampling failed"</span>)
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>클라이언트 측 구현</h2>
+        <p>클라이언트는 <code>sampling_callback</code>을 구현하고 세션 초기화 시 전달합니다:</p>
+        <div class="code-block">
+<span class="kw">async def</span> <span class="fn">sampling_callback</span>(
+    context: RequestContext, params: CreateMessageRequestParams
+):
+    <span class="cmt"># Anthropic SDK로 Claude 호출</span>
+    text = <span class="kw">await</span> <span class="fn">chat</span>(params.messages)
+
+    <span class="kw">return</span> <span class="fn">CreateMessageResult</span>(
+        role=<span class="str">"assistant"</span>,
+        model=model,
+        content=<span class="fn">TextContent</span>(type=<span class="str">"text"</span>, text=text),
+    )
+
+<span class="cmt"># 세션 초기화 시 콜백 전달</span>
+<span class="kw">async with</span> <span class="fn">ClientSession</span>(
+    read,
+    write,
+    sampling_callback=sampling_callback  <span class="cmt"># ← 핵심</span>
+) <span class="kw">as</span> session:
+    <span class="kw">await</span> session.<span class="fn">initialize</span>()
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-box-content">
+          <h4>언제 Sampling을 써야 할까?</h4>
+          <p>공개 접근 가능한 MCP 서버를 구축할 때가 핵심 사용 사례입니다. 불특정 다수 사용자가 AI를 무제한으로 사용하면서 그 비용이 서버 운영자에게 전가되는 것을 방지할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>공개 MCP 서버를 운영할 때 Sampling 없이 직접 Claude를 호출하면 어떤 위험이 있을까요?</li>
+          <li>클라이언트가 <code>sampling_callback</code>을 구현하지 않은 경우, 서버의 Sampling 요청은 어떻게 처리될까요?</li>
+          <li>Sampling을 이용한 요청에서 클라이언트는 서버의 프롬프트를 수정할 수 있을까요? 이것이 보안적으로 어떤 의미를 가질까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 2: Sampling 구현 실습 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 2 · Sampling Walkthrough</div>
+        <h1>Sampling 단계별 구현 가이드</h1>
+        <p class="subtitle">실제 프로젝트를 통해 Sampling의 모든 구현 단계를 체계적으로 살펴봅니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>서버에서 <code>create_message()</code>를 올바르게 초기화하는 방법을 익힌다</li>
+          <li>MCP 메시지 형식과 Anthropic SDK 형식의 차이를 이해하고 변환한다</li>
+          <li>Sampling 콜백의 전체 생명주기를 파악한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>서버는 <code>create_message()</code>로 Sampling을 시작하며, 메시지는 MCP 형식으로 전달됨</li>
+          <li>MCP 메시지와 Anthropic SDK 메시지는 형식이 달라 변환 로직이 필요</li>
+          <li>클라이언트는 생성된 텍스트를 <code>CreateMessageResult</code>로 감싸 반환</li>
+          <li>콜백은 반드시 <code>ClientSession</code> 초기화 시 전달해야 함 — 나중에 추가 불가</li>
+          <li>생성된 텍스트 수신 후 서버는 워크플로우에 활용하거나 재호출하거나 그대로 반환 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>구현 단계 상세 분석</h2>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <h4>Sampling 시작 (서버)</h4>
+              <p>도구 호출 중 <code>create_message()</code> 메서드를 실행합니다. LLM에 전송할 메시지 목록을 포함시킵니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <h4>Sampling 콜백 (클라이언트)</h4>
+              <p>클라이언트는 반드시 sampling callback을 구현해야 합니다. 이 콜백은 서버가 제공한 메시지 목록을 받습니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <h4>메시지 형식 변환</h4>
+              <p>서버가 전달한 MCP 형식 메시지는 사용 중인 LLM SDK와 호환되지 않을 수 있습니다. Anthropic SDK의 경우 변환 로직을 작성해야 합니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-content">
+              <h4>생성 텍스트 반환</h4>
+              <p>LLM으로 텍스트를 생성한 후 <code>CreateMessageResult</code>에 담아 반환합니다. 이 결과가 서버로 전달됩니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">5</div>
+            <div class="flow-step-content">
+              <h4>콜백 연결</h4>
+              <p>클라이언트의 콜백을 <code>ClientSession</code> 호출에 전달하는 것을 잊지 마세요.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">6</div>
+            <div class="flow-step-content">
+              <h4>결과 활용 (서버)</h4>
+              <p>서버에서 생성된 텍스트를 받은 후: 워크플로우에 사용, 추가 Sampling 요청, 또는 그대로 반환할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>server.py 핵심 코드</h2>
+        <div class="code-block">
+mcp = <span class="fn">FastMCP</span>(name=<span class="str">"DemoServer"</span>)
+
+<span class="dec">@mcp.tool()</span>
+<span class="kw">async def</span> <span class="fn">summarize</span>(text_to_summarize: <span class="fn">str</span>, ctx: Context):
+    prompt = <span class="str">f"""Please summarize the following text: {text_to_summarize}"""</span>
+
+    result = <span class="kw">await</span> ctx.session.<span class="fn">create_message</span>(
+        messages=[
+            <span class="fn">SamplingMessage</span>(
+                role=<span class="str">"user"</span>,
+                content=<span class="fn">TextContent</span>(type=<span class="str">"text"</span>, text=prompt)
+            )
+        ],
+        max_tokens=<span class="num">4000</span>,
+        system_prompt=<span class="str">"You are a helpful research assistant"</span>,
+    )
+
+    <span class="kw">if</span> result.content.type == <span class="str">"text"</span>:
+        <span class="kw">return</span> result.content.text  <span class="cmt"># 생성된 텍스트 반환</span>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>메시지 형식 호환성 주의</h4>
+          <p>MCP 메시지 형식은 모든 LLM SDK와 직접 호환되지 않습니다. Anthropic SDK 사용 시 MCP <code>SamplingMessage</code>를 SDK 형식으로 변환하는 코드가 필요합니다. 이 변환 로직을 미리 준비해 두세요.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>Sampling 결과를 받은 후 서버가 다시 Sampling을 요청할 수 있을까요? 이런 패턴이 유용한 경우는?</li>
+          <li>메시지 형식 변환 로직은 어느 쪽(서버/클라이언트)에서 처리해야 할까요? 그 이유는?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 3: 로그 및 진행률 알림 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 3 · Notifications</div>
+        <h1>로그와 진행률 알림으로 UX 개선</h1>
+        <p class="subtitle">장시간 실행되는 도구의 상태를 실시간으로 클라이언트에 전달해 답답한 대기 경험을 해소합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li><code>context.info()</code>와 <code>context.report_progress()</code>로 알림을 구현할 수 있다</li>
+          <li>클라이언트에서 로그 콜백과 진행률 콜백을 설정하는 방법을 이해한다</li>
+          <li>알림이 다양한 애플리케이션 유형에서 어떻게 표시될 수 있는지 파악한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>알림은 선택 사항이지만, 사용자 경험에 엄청난 차이를 만들어냄</li>
+          <li><code>context.info()</code>, <code>context.warning()</code>, <code>context.debug()</code>, <code>context.error()</code>로 다양한 레벨의 로그 전송</li>
+          <li><code>context.report_progress(progress, total)</code>로 진행률 업데이트 전송</li>
+          <li>로그 콜백은 <code>ClientSession</code> 생성 시, 진행률 콜백은 <code>call_tool()</code> 호출 시 전달</li>
+          <li>알림 표시 방식은 클라이언트 애플리케이션이 결정 — CLI, 웹, 데스크탑 각각 다름</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>왜 알림이 중요한가?</h2>
+        <p>Claude가 오래 걸리는 도구(예: 리서치, 데이터 처리)를 호출할 때 기본적으로 사용자는 작업이 완료될 때까지 아무것도 볼 수 없습니다. 마치 프로그램이 멈춘 것처럼 보이죠. 로그와 진행률 알림을 활성화하면 사용자는 뒤에서 무슨 일이 일어나는지 실시간으로 볼 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h2>서버 측: Context 객체 활용</h2>
+        <div class="code-block">
+<span class="dec">@mcp.tool(
+    name=<span class="str">"research"</span>,
+    description=<span class="str">"Research a given topic"</span>
+)</span>
+<span class="kw">async def</span> <span class="fn">research</span>(
+    topic: <span class="fn">str</span> = <span class="fn">Field</span>(description=<span class="str">"Topic to research"</span>),
+    *,
+    context: Context
+):
+    <span class="kw">await</span> context.<span class="fn">info</span>(<span class="str">"About to do research..."</span>)  <span class="cmt"># 로그 전송</span>
+    <span class="kw">await</span> context.<span class="fn">report_progress</span>(<span class="num">20</span>, <span class="num">100</span>)  <span class="cmt"># 진행률 20%</span>
+    sources = <span class="kw">await</span> <span class="fn">do_research</span>(topic)
+
+    <span class="kw">await</span> context.<span class="fn">info</span>(<span class="str">"Writing report..."</span>)
+    <span class="kw">await</span> context.<span class="fn">report_progress</span>(<span class="num">70</span>, <span class="num">100</span>)  <span class="cmt"># 진행률 70%</span>
+    results = <span class="kw">await</span> <span class="fn">generate_report</span>(sources)
+
+    <span class="kw">return</span> results
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>클라이언트 측: 콜백 구현</h2>
+        <div class="code-block">
+<span class="kw">async def</span> <span class="fn">logging_callback</span>(params: LoggingMessageNotificationParams):
+    <span class="fn">print</span>(params.data)  <span class="cmt"># 로그 메시지 출력</span>
+
+<span class="kw">async def</span> <span class="fn">print_progress_callback</span>(
+    progress: <span class="fn">float</span>, total: <span class="fn">float</span> | <span class="kw">None</span>, message: <span class="fn">str</span> | <span class="kw">None</span>
+):
+    <span class="kw">if</span> total <span class="kw">is not None</span>:
+        percentage = (progress / total) * <span class="num">100</span>
+        <span class="fn">print</span>(<span class="str">f"Progress: {progress}/{total} ({percentage:.1f}%)"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">f"Progress: {progress}"</span>)
+
+<span class="kw">async with</span> <span class="fn">ClientSession</span>(
+    read, write,
+    logging_callback=logging_callback  <span class="cmt"># ← 세션 생성 시 전달</span>
+) <span class="kw">as</span> session:
+    <span class="kw">await</span> session.<span class="fn">initialize</span>()
+
+    <span class="kw">await</span> session.<span class="fn">call_tool</span>(
+        name=<span class="str">"research"</span>,
+        arguments={<span class="str">"topic"</span>: <span class="str">"MCP"</span>},
+        progress_callback=print_progress_callback  <span class="cmt"># ← 툴 호출 시 전달</span>
+    )
+        </div>
+      </div>
+
+      <div class="priority-grid">
+        <div class="priority-card">
+          <div class="card-icon">💻</div>
+          <h4>CLI 애플리케이션</h4>
+          <p>터미널에 메시지와 진행률을 단순 출력</p>
+        </div>
+        <div class="priority-card">
+          <div class="card-icon">🌐</div>
+          <h4>웹 애플리케이션</h4>
+          <p>WebSocket, SSE, 또는 폴링으로 브라우저에 업데이트 푸시</p>
+        </div>
+        <div class="priority-card">
+          <div class="card-icon">🖥️</div>
+          <h4>데스크탑 앱</h4>
+          <p>UI의 진행 표시줄과 상태 표시 업데이트</p>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-box-content">
+          <h4>알림은 완전히 선택 사항</h4>
+          <p>알림을 완전히 무시하거나, 특정 유형만 표시하거나, 원하는 방식으로 표현할 수 있습니다. 순전히 사용자 경험을 위한 향상 기능이므로, 구현 여부를 자유롭게 결정하세요.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>진행률을 표시할 수 없는 작업(총 단계를 알 수 없는 경우)에서는 어떻게 사용자에게 피드백을 줄 수 있을까요?</li>
+          <li>로그 레벨(<code>info</code>, <code>warning</code>, <code>error</code>)을 어떤 기준으로 선택해야 할까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 4: Roots ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 4 · Roots</div>
+        <h1>Roots: 파일 시스템 접근 권한 관리</h1>
+        <p class="subtitle">MCP 서버에 특정 파일과 폴더에 대한 접근 권한을 부여하면서도 보안 경계를 유지하는 방법을 학습합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>Roots가 사용자 경험과 보안 모두를 개선하는 원리를 설명할 수 있다</li>
+          <li>클라이언트에서 Roots를 제공하고 서버에서 접근하는 방법을 구현한다</li>
+          <li><code>is_path_allowed()</code> 패턴으로 파일 접근 권한을 검증할 수 있다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>Roots = "이 파일/폴더들은 MCP 서버가 접근해도 됩니다"라고 알려주는 권한 시스템</li>
+          <li>사용자가 전체 경로 없이 파일명만 말해도 Claude가 Roots에서 파일을 찾을 수 있음</li>
+          <li>MCP SDK는 자동으로 Roots 제한을 적용하지 않음 — <strong>직접 검증 코드를 작성해야 함</strong></li>
+          <li>서버는 <code>ctx.session.list_roots()</code>로 허용된 경로 목록을 조회</li>
+          <li>URI는 반드시 <code>file://</code>로 시작해야 함 (MCP 스펙 요구사항)</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>Roots가 해결하는 문제</h2>
+        <p>파일을 MP4에서 MOV로 변환하는 MCP 서버를 상상해 보세요. 사용자가 "biking.mp4를 변환해 줘"라고 하면:</p>
+        <ul style="color:var(--text2);padding-left:20px;margin:10px 0">
+          <li>Roots 없이: Claude는 파일이 어디 있는지 알 수 없어 전체 경로 입력을 요구함</li>
+          <li>Roots 있이: Claude가 허용된 디렉토리에서 파일을 검색해 자동으로 전체 경로를 파악</li>
+        </ul>
+
+        <h3>Roots 활용 워크플로우</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <h4>사용자 요청</h4>
+              <p>"biking.mp4를 mov 형식으로 변환해 줘"</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <h4>Claude가 <code>list_roots</code> 호출</h4>
+              <p>접근 가능한 디렉토리 목록을 조회합니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <h4>파일 탐색</h4>
+              <p>허용된 디렉토리에서 <code>read_dir</code>로 파일을 찾습니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-content">
+              <h4>변환 도구 호출</h4>
+              <p>전체 경로를 찾은 후 변환 도구를 호출합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>구현: 클라이언트 측</h2>
+        <div class="code-block">
+<span class="cmt"># CLI 인수로 허용할 경로 수신</span>
+root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /path/to/videos</span>
+
+<span class="cmt"># Root 객체 생성 (file:// URI 형식)</span>
+<span class="kw">def</span> <span class="fn">create_roots</span>(paths):
+    <span class="kw">return</span> [<span class="fn">Root</span>(uri=<span class="str">f"file://{path}"</span>) <span class="kw">for</span> path <span class="kw">in</span> paths]
+
+<span class="cmt"># 루트 목록 콜백</span>
+<span class="kw">async def</span> <span class="fn">list_roots_callback</span>():
+    <span class="kw">return</span> <span class="fn">ListRootsResult</span>(roots=<span class="fn">create_roots</span>(root_paths))
+
+<span class="cmt"># 세션 초기화 시 콜백 전달</span>
+<span class="kw">async with</span> <span class="fn">ClientSession</span>(
+    read, write,
+    list_roots_callback=list_roots_callback
+) <span class="kw">as</span> session:
+    <span class="kw">await</span> session.<span class="fn">initialize</span>()
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>구현: 서버 측 — 접근 권한 검증</h2>
+        <div class="code-block">
+<span class="cmt"># 서버에서 Roots 조회</span>
+<span class="kw">async def</span> <span class="fn">get_approved_paths</span>(ctx: Context):
+    roots_result = <span class="kw">await</span> ctx.session.<span class="fn">list_roots</span>()
+    <span class="kw">return</span> [root.uri.replace(<span class="str">"file://"</span>, <span class="str">""</span>) <span class="kw">for</span> root <span class="kw">in</span> roots_result.roots]
+
+<span class="cmt"># ⚠️ 반드시 직접 구현해야 함: MCP SDK는 자동으로 제한하지 않음!</span>
+<span class="kw">async def</span> <span class="fn">is_path_allowed</span>(requested_path: <span class="fn">str</span>, ctx: Context) -> <span class="fn">bool</span>:
+    approved = <span class="kw">await</span> <span class="fn">get_approved_paths</span>(ctx)
+    <span class="kw">return any</span>(requested_path.<span class="fn">startswith</span>(root) <span class="kw">for</span> root <span class="kw">in</span> approved)
+
+<span class="cmt"># 모든 파일 접근 도구에서 검증 실행</span>
+<span class="dec">@mcp.tool()</span>
+<span class="kw">async def</span> <span class="fn">convert_video</span>(file_path: <span class="fn">str</span>, ctx: Context):
+    <span class="kw">if not await</span> <span class="fn">is_path_allowed</span>(file_path, ctx):
+        <span class="kw">raise</span> <span class="fn">PermissionError</span>(<span class="str">f"Access denied: {file_path}"</span>)
+    <span class="cmt"># 실제 변환 로직...</span>
+        </div>
+      </div>
+
+      <div class="priority-grid">
+        <div class="priority-card">
+          <div class="card-icon">👤</div>
+          <h4>사용자 친화적</h4>
+          <p>전체 경로 없이 파일명만으로 작업 가능</p>
+        </div>
+        <div class="priority-card">
+          <div class="card-icon">🔒</div>
+          <h4>보안 경계</h4>
+          <p>허용된 디렉토리 외부 파일에는 접근 불가</p>
+        </div>
+        <div class="priority-card">
+          <div class="card-icon">⚡</div>
+          <h4>빠른 탐색</h4>
+          <p>Claude는 승인된 디렉토리만 검색하므로 효율적</p>
+        </div>
+        <div class="priority-card">
+          <div class="card-icon">🎛️</div>
+          <h4>유연성</h4>
+          <p>도구나 프롬프트를 통해 Roots 제공 방법 다양</p>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>SDK 자동 제한 없음 — 직접 구현 필수</h4>
+          <p>MCP SDK는 서버가 접근하는 파일 경로를 자동으로 제한하지 않습니다. <code>is_path_allowed()</code> 같은 검증 함수를 파일/디렉토리에 접근하는 모든 도구에 직접 적용해야 합니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>사용자가 악의적으로 경로 탈출(<code>../../etc/passwd</code>)을 시도하면 <code>is_path_allowed()</code>로 막을 수 있을까요?</li>
+          <li>Roots를 프롬프트에 직접 주입하는 방식과 별도 도구로 제공하는 방식의 트레이드오프는 무엇인가요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 5: JSON 메시지 타입 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 5 · JSON Message Types</div>
+        <h1>MCP의 JSON 메시지 타입 이해</h1>
+        <p class="subtitle">MCP 통신의 기반이 되는 JSON 메시지 타입을 분류하고, 양방향 프로토콜의 설계 원리를 이해합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>요청-결과 메시지와 알림 메시지의 차이를 설명할 수 있다</li>
+          <li>클라이언트 메시지와 서버 메시지를 구분한다</li>
+          <li>MCP가 양방향 프로토콜인 이유와 그 중요성을 이해한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>모든 MCP 통신은 JSON 메시지를 통해 이루어짐</li>
+          <li>메시지는 두 범주: <strong>요청-결과 쌍</strong>(응답 필요)과 <strong>알림</strong>(단방향, 응답 불필요)</li>
+          <li>서버와 클라이언트 모두 메시지를 시작할 수 있음 — MCP는 양방향 프로토콜</li>
+          <li>공식 스펙은 GitHub의 별도 저장소에 TypeScript로 정의됨</li>
+          <li>서버가 클라이언트에게 메시지를 보낼 수 있다는 점이 HTTP 트랜스포트 선택에 영향을 줌</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>메시지 범주</h2>
+
+        <h3>요청-결과 메시지 (Request-Result Pairs)</h3>
+        <p>항상 쌍으로 옵니다. 요청을 보내면 결과를 기대합니다:</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr><th>요청</th><th>결과</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Call Tool Request</td><td>Call Tool Result</td></tr>
+            <tr><td>List Prompts Request</td><td>List Prompts Result</td></tr>
+            <tr><td>Read Resource Request</td><td>Read Resource Result</td></tr>
+            <tr><td>Initialize Request</td><td>Initialize Result</td></tr>
+          </tbody>
+        </table>
+
+        <h3>알림 메시지 (Notifications)</h3>
+        <p>단방향 이벤트 알림 — 응답 불필요:</p>
+        <div class="badge-row">
+          <div class="badge badge-purple">📊 Progress Notification</div>
+          <div class="badge badge-orange">📝 Logging Message Notification</div>
+          <div class="badge badge-green">🔧 Tool List Changed Notification</div>
+          <div class="badge badge-blue">📄 Resource Updated Notification</div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>클라이언트 vs 서버 메시지</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>발신자</th><th>메시지 종류</th><th>예시</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>클라이언트 → 서버</strong></td>
+              <td>대부분의 요청</td>
+              <td>도구 호출, 리소스 읽기, 프롬프트 목록 요청</td>
+            </tr>
+            <tr>
+              <td><strong>서버 → 클라이언트</strong></td>
+              <td>Sampling, Roots 요청 + 알림</td>
+              <td>Create Message Request, List Roots Request, Progress Notification</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-icon">💡</div>
+        <div class="tip-box-content">
+          <h4>왜 이것이 중요한가?</h4>
+          <p>서버가 클라이언트에게 메시지를 시작할 수 있다는 것이 트랜스포트 선택에 핵심적 영향을 줍니다. 일부 HTTP 설정에서는 서버가 클라이언트로 메시지를 보내기 어렵기 때문에, Sampling이나 진행률 알림 같은 기능이 제한될 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>알림과 요청의 차이는 무엇인가요? 알림은 왜 응답을 기대하지 않을까요?</li>
+          <li>MCP가 단방향 프로토콜(클라이언트만 요청 가능)이었다면 어떤 기능이 불가능했을까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 6: STDIO 트랜스포트 ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 6 · STDIO Transport</div>
+        <h1>STDIO 트랜스포트: 가장 단순한 통신 방식</h1>
+        <p class="subtitle">표준 입출력 스트림을 통해 클라이언트와 서버가 통신하는 가장 기본적이고 직관적인 MCP 트랜스포트를 이해합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>STDIO 트랜스포트의 작동 원리와 적합한 사용 시나리오를 설명할 수 있다</li>
+          <li>MCP 연결 초기화 시 필요한 3단계 핸드셰이크를 이해한다</li>
+          <li>STDIO와 HTTP 트랜스포트의 차이점을 파악한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>STDIO 트랜스포트: 클라이언트가 서버를 서브프로세스로 실행, stdin/stdout으로 통신</li>
+          <li>클라이언트와 서버가 <strong>같은 머신</strong>에서 실행될 때만 사용 가능</li>
+          <li>개발/테스트에 완벽 — 터미널에서 직접 JSON 메시지를 붙여넣어 테스트 가능</li>
+          <li>모든 MCP 연결은 3단계 핸드셰이크로 시작: Initialize Request → Initialize Result → Initialized Notification</li>
+          <li>양방향 통신이 자연스러움 — HTTP 트랜스포트의 제약을 이해하기 위한 기준점</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>STDIO 트랜스포트 작동 원리</h2>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <h4>클라이언트가 서버를 서브프로세스로 실행</h4>
+              <p><code>uv run server.py</code> 같은 명령으로 서버를 시작합니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <h4>stdin으로 메시지 전송</h4>
+              <p>클라이언트는 서버의 <code>stdin</code>에 JSON 메시지를 씁니다.</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <h4>stdout으로 응답 수신</h4>
+              <p>서버는 <code>stdout</code>에 응답을 씁니다. 서버도 언제든지 먼저 메시지를 시작할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>MCP 연결 핸드셰이크</h2>
+        <p>모든 MCP 연결은 정해진 3단계 순서로 시작해야 합니다:</p>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <h4>Initialize Request (클라이언트 → 서버)</h4>
+              <p>클라이언트가 먼저 보내는 첫 번째 메시지</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <h4>Initialize Result (서버 → 클라이언트)</h4>
+              <p>서버가 자신의 기능(capabilities)을 담아 응답</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <h4>Initialized Notification (클라이언트 → 서버)</h4>
+              <p>클라이언트가 초기화 완료를 확인 (서버 응답 없음)</p>
+            </div>
+          </div>
+        </div>
+        <div class="tip-box" style="margin-top:16px">
+          <div class="tip-icon">💡</div>
+          <div class="tip-box-content">
+            <h4>핸드셰이크 후에만 도구 호출 가능</h4>
+            <p>이 3단계 핸드셰이크 완료 후에야 도구 호출, 프롬프트 목록 요청 등 다른 작업을 수행할 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>4가지 통신 패턴</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>패턴</th><th>방향</th><th>채널</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>클라이언트 요청</td><td>클라이언트 → 서버</td><td>서버의 stdin에 씀</td></tr>
+            <tr><td>서버 응답</td><td>서버 → 클라이언트</td><td>서버의 stdout에 씀</td></tr>
+            <tr><td>서버 요청 (Sampling 등)</td><td>서버 → 클라이언트</td><td>서버의 stdout에 씀</td></tr>
+            <tr><td>클라이언트 응답</td><td>클라이언트 → 서버</td><td>서버의 stdin에 씀</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>STDIO의 한계: 동일 머신 전용</h4>
+          <p>STDIO 트랜스포트는 클라이언트와 서버가 반드시 같은 머신에서 실행되어야 합니다. 원격 배포가 필요하다면 StreamableHTTP 트랜스포트를 사용해야 합니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>STDIO 트랜스포트를 사용할 때 여러 클라이언트가 동시에 같은 서버에 접속할 수 있을까요?</li>
+          <li>STDIO의 양방향 통신이 쉬운 이유는 무엇인가요? HTTP에서 이것이 어려운 이유와 비교해 보세요.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 7: StreamableHTTP ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 7 · StreamableHTTP</div>
+        <h1>StreamableHTTP 트랜스포트: 원격 MCP 서버</h1>
+        <p class="subtitle">HTTP를 통해 원격으로 호스팅된 MCP 서버에 연결하는 방법과 SSE를 이용한 양방향 통신 구현 원리를 이해합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li>StreamableHTTP가 HTTP의 단방향 제약을 극복하는 방법을 설명할 수 있다</li>
+          <li>SSE(Server-Sent Events) 연결의 역할과 이중 SSE 연결 모델을 이해한다</li>
+          <li><code>stateless_http</code>와 <code>json_response</code> 플래그의 영향을 파악한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li>StreamableHTTP는 HTTP로 원격 MCP 서버에 접속 가능하게 하는 트랜스포트</li>
+          <li>핵심 문제: HTTP는 클라이언트→서버 방향이 기본, 서버→클라이언트는 어려움</li>
+          <li>해결책: <strong>SSE(Server-Sent Events)</strong>를 이용한 지속적 연결로 서버→클라이언트 통신 가능</li>
+          <li>도구 호출 시 두 개의 SSE 연결 생성: Primary (서버 요청용) + Tool-Specific (도구 결과용)</li>
+          <li><code>stateless_http=True</code> 또는 <code>json_response=True</code>는 SSE 우회 메커니즘을 깨뜨림</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>HTTP의 근본적 문제</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>방향</th><th>HTTP 지원 여부</th><th>이유</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>클라이언트 → 서버 요청</td><td>✅ 쉬움</td><td>서버는 알려진 URL을 가짐</td></tr>
+            <tr><td>서버 → 클라이언트 응답</td><td>✅ 쉬움</td><td>요청에 대한 응답</td></tr>
+            <tr><td>서버 → 클라이언트 요청</td><td>❌ 어려움</td><td>클라이언트는 알려진 URL이 없음</td></tr>
+            <tr><td>클라이언트 → 서버 응답 (역방향)</td><td>❌ 어려움</td><td>연결이 클라이언트 주도로만 시작 가능</td></tr>
+          </tbody>
+        </table>
+        <p style="color:var(--text2);font-size:14px;margin-top:8px">이 HTTP 제약이 Sampling, Roots 요청, 진행률 알림 등 서버→클라이언트 통신이 필요한 MCP 기능에 영향을 줍니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h2>StreamableHTTP의 SSE 우회 방식</h2>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-content">
+              <h4>초기화 + Session ID</h4>
+              <p>클라이언트가 Initialize Request 전송 → 서버가 <code>mcp-session-id</code> 헤더를 포함한 결과 반환</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-content">
+              <h4>SSE 연결 수립</h4>
+              <p>클라이언트가 GET 요청으로 SSE 연결 수립 — 서버가 언제든 이 채널로 메시지를 보낼 수 있음</p>
+            </div>
+          </div>
+          <div class="arrow-connector">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-content">
+              <h4>이중 SSE 연결 (도구 호출 시)</h4>
+              <p>Primary SSE: 서버 요청 전용, 영구적 유지<br>Tool-Specific SSE: 도구 결과 전용, 결과 수신 후 종료</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>메시지 라우팅</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>메시지 유형</th><th>사용되는 연결</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>진행률 알림</td><td>Primary SSE 연결 (영구)</td></tr>
+            <tr><td>로그 메시지</td><td>Tool-Specific SSE 연결 (임시)</td></tr>
+            <tr><td>도구 결과</td><td>Tool-Specific SSE 연결 (임시)</td></tr>
+            <tr><td>Sampling 요청 (서버→클라이언트)</td><td>Primary SSE 연결 (영구)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>설정 플래그가 기능을 망가뜨릴 수 있음</h4>
+          <p><code>stateless_http=True</code> 또는 <code>json_response=True</code>를 설정하면 SSE 기반 양방향 통신이 불가능해집니다. 진행률 알림, Sampling, 로그 등 서버→클라이언트 통신이 필요한 모든 기능이 중단됩니다.</p>
+        </div>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>왜 MCP는 WebSocket 대신 SSE를 선택했을까요? 각각의 장단점은?</li>
+          <li>Session ID가 없다면 로드 밸런서 환경에서 어떤 문제가 발생할까요?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 레슨 8: 상태 관리 & Stateless HTTP ── -->
+    <div class="lesson-panel">
+      <div class="lesson-hero">
+        <div class="lesson-tag">레슨 8 · State Management</div>
+        <h1>Stateless HTTP와 확장성 설계</h1>
+        <p class="subtitle">수천 명의 클라이언트를 지원하는 프로덕션 MCP 서버를 구축할 때 상태 관리와 수평 확장의 트레이드오프를 이해합니다.</p>
+      </div>
+
+      <div class="learn-box">
+        <h3>🎯 학습 목표</h3>
+        <ul>
+          <li><code>stateless_http</code>와 <code>json_response</code> 플래그의 역할과 영향을 설명할 수 있다</li>
+          <li>로드 밸런서 환경에서 상태 관리가 어려운 이유를 이해한다</li>
+          <li>각 플래그를 사용해야 하는 시나리오를 파악한다</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <h3>💡 핵심 요약</h3>
+        <ul>
+          <li><code>stateless_http=True</code>: 수평 확장을 위해 세션 상태를 포기. Sampling, 진행률 알림 비활성화</li>
+          <li><code>json_response=True</code>: SSE 스트리밍 없이 최종 결과만 JSON으로 반환</li>
+          <li>로드 밸런서 환경에서 GET(SSE)과 POST(도구 호출)가 다른 서버 인스턴스로 라우팅될 수 있어 조정 문제 발생</li>
+          <li>Stateless HTTP의 유일한 장점: 클라이언트 초기화 핸드셰이크 불필요</li>
+          <li>개발 시 프로덕션과 동일한 트랜스포트로 테스트해야 예기치 않은 문제를 조기에 발견 가능</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h2>확장성 문제</h2>
+        <p>MCP 서버가 인기를 얻어 수천 명의 클라이언트를 처리해야 한다면:</p>
+        <div class="priority-grid">
+          <div class="priority-card">
+            <div class="card-icon">1️⃣</div>
+            <h4>단일 서버</h4>
+            <p>소수 클라이언트에 적합. 상태 관리 쉬움</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⚖️</div>
+            <h4>로드 밸런서</h4>
+            <p>수천 클라이언트를 여러 인스턴스에 분산</p>
+          </div>
+          <div class="priority-card">
+            <div class="card-icon">⚠️</div>
+            <h4>조정 문제</h4>
+            <p>GET(SSE)과 POST가 다른 인스턴스로 가면 Sampling 불가</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>두 플래그 비교</h2>
+        <table class="compare-table">
+          <thead>
+            <tr><th>플래그</th><th>효과</th><th>포기하는 것</th><th>얻는 것</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>stateless_http=True</code></td>
+              <td>세션 ID 없음, GET SSE 경로 비활성화</td>
+              <td>Sampling, 진행률 알림, 구독, 서버→클라이언트 요청</td>
+              <td>수평 확장, 로드 밸런서 호환, 초기화 핸드셰이크 불필요</td>
+            </tr>
+            <tr>
+              <td><code>json_response=True</code></td>
+              <td>스트리밍 없이 최종 JSON만 반환</td>
+              <td>중간 진행 메시지, 실행 중 로그, 스트리밍 응답</td>
+              <td>단순한 HTTP 응답, 비스트리밍 시스템 통합 용이</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>언제 어떤 플래그를 써야 할까?</h2>
+        <h3>Stateless HTTP를 사용할 때</h3>
+        <ul style="color:var(--text2);padding-left:20px;margin-bottom:14px">
+          <li>로드 밸런서를 사용한 수평 확장이 필요할 때</li>
+          <li>서버→클라이언트 통신이 불필요한 경우</li>
+          <li>도구가 AI 모델 Sampling을 요구하지 않을 때</li>
+          <li>연결 오버헤드를 최소화하려 할 때</li>
+        </ul>
+        <h3>JSON Response를 사용할 때</h3>
+        <ul style="color:var(--text2);padding-left:20px">
+          <li>스트리밍 응답이 불필요한 경우</li>
+          <li>표준 JSON을 기대하는 시스템과 통합할 때</li>
+          <li>단순한 HTTP 요청-응답 패턴을 선호할 때</li>
+        </ul>
+      </div>
+
+      <div class="warn-box">
+        <div class="tip-icon">⚠️</div>
+        <div class="tip-box-content">
+          <h4>개발 환경 ≠ 프로덕션 환경</h4>
+          <p>로컬 STDIO로 개발하다가 HTTP로 배포하면 동작이 달라질 수 있습니다. Stateful과 Stateless 모드의 차이가 크므로, 개발 단계부터 프로덕션과 동일한 트랜스포트 설정으로 테스트해야 합니다.</p>
+        </div>
+      </div>
+
+      <div class="key-takeaways" style="margin-top:24px">
+        <h3>📋 코스 전체 요약</h3>
+        <ul>
+          <li><strong>Sampling</strong>: 서버가 클라이언트를 통해 AI 기능을 위임 — API 키·비용 없이</li>
+          <li><strong>알림</strong>: <code>context.info()</code>와 <code>report_progress()</code>로 실시간 UX 향상</li>
+          <li><strong>Roots</strong>: 파일 시스템 접근 권한 — 사용자 친화성 + 보안 경계</li>
+          <li><strong>JSON 메시지</strong>: MCP는 양방향 프로토콜 — 서버도 클라이언트에 요청 가능</li>
+          <li><strong>STDIO</strong>: 개발/테스트에 최적. 동일 머신 전용</li>
+          <li><strong>StreamableHTTP</strong>: 원격 배포 가능. SSE로 양방향 통신 구현</li>
+          <li><strong>Stateless/JSON Response</strong>: 확장성을 위해 일부 기능을 포기하는 트레이드오프</li>
+        </ul>
+      </div>
+
+      <div class="reflection-box">
+        <h3>🤔 성찰 질문</h3>
+        <ul>
+          <li>공개 MCP 서버를 구축한다면 기본값으로 Stateful과 Stateless 중 어느 것을 선택하겠습니까? 그 이유는?</li>
+          <li>Sampling이 필요한 도구와 필요하지 않은 도구를 같은 서버에 함께 제공하면서 수평 확장하는 방법이 있을까요?</li>
+          <li>이 과정에서 배운 MCP 심화 기능 중 실제 프로젝트에 가장 먼저 적용하고 싶은 것은?</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function showLesson(idx) {
+    document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+    document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
+    const total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+    document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
