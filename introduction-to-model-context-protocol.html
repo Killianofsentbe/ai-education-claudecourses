@@ -112,13 +112,15 @@
     .flow-step-content { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
     .flow-step-content strong { color: var(--text); }
     @media (max-width: 800px) { .layout { grid-template-columns: 1fr; padding: 0 1rem; } aside { display: none; } main { padding: 2rem 0; } .priority-grid { grid-template-columns: 1fr; } .course-hero h1 { font-size: 1.8rem; } }
+      a.logo { text-decoration: none; transition: opacity .2s; }
+    a.logo:hover { opacity: .7; }
   </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <span class="logo">Anthropic Academy</span>
+    <a href="index.html" class="logo">⬡ Anthropic Academy</a>
     <span class="sep">/</span>
     <span class="course-title-small">MCP 입문 — Introduction to Model Context Protocol</span>
   </div>

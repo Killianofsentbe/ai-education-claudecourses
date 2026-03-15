@@ -102,13 +102,15 @@
     .progress-bar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; height: 4px; margin-bottom: 1.5rem; overflow: hidden; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width 0.4s ease; }
     @media (max-width: 800px) { .layout { grid-template-columns: 1fr; padding: 0 1rem; } aside { display: none; } main { padding: 2rem 0; } .priority-grid { grid-template-columns: 1fr; } .four-d-grid { grid-template-columns: 1fr; } .course-hero h1 { font-size: 1.8rem; } }
+      a.logo { text-decoration: none; transition: opacity .2s; }
+    a.logo:hover { opacity: .7; }
   </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <span class="logo">Anthropic Academy</span>
+    <a href="index.html" class="logo">⬡ Anthropic Academy</a>
     <span class="sep">/</span>
     <span class="course-title-small">AI 유창성 교수법 (Teaching AI Fluency)</span>
   </div>
