@@ -99,6 +99,38 @@
       display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
       animation: fadeUp .6s .4s ease both;
     }
+
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: fadeUp .6s .8s ease both;
+      cursor: pointer; text-decoration: none;
+      opacity: .55; transition: opacity .2s;
+    }
+    .scroll-hint:hover { opacity: 1; }
+    .scroll-hint-text {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .scroll-hint-arrow {
+      width: 20px; height: 20px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(45deg);
+      animation: scrollBounce 1.6s ease-in-out infinite;
+    }
+    .scroll-hint-arrow2 {
+      width: 20px; height: 20px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(45deg) translateY(-8px);
+      animation: scrollBounce 1.6s .2s ease-in-out infinite;
+      opacity: .4;
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50%       { transform: rotate(45deg) translateY(5px); }
+    }
     .btn-primary {
       display: inline-flex; align-items: center; gap: 8px;
       background: linear-gradient(135deg, var(--accent2), #5a4fd8);
@@ -311,10 +343,15 @@
     <a href="index.html" class="btn-primary">강의 목록 보기 →</a>
     <a href="guide.html" class="btn-secondary">📖 사용 가이드</a>
   </div>
+  <a href="#site-structure" class="scroll-hint" aria-label="아래로 스크롤">
+    <span class="scroll-hint-text">scroll</span>
+    <div class="scroll-hint-arrow"></div>
+    <div class="scroll-hint-arrow2"></div>
+  </a>
 </div>
 
 <!-- ── 페이지 구조 ── -->
-<section class="reveal">
+<section id="site-structure" class="reveal">
   <div class="section-label">Site Structure</div>
   <div class="section-title">이 사이트는 어떻게 구성되어 있나요?</div>
   <div class="section-desc">메인 강의 목록, 각 강의 상세 페이지, 그리고 이 가이드 페이지로 구성됩니다.</div>
