@@ -4,8 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>사용 가이드 — Anthropic Academy 한국어 학습 자료</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
     :root {
       --bg:      #0d0d10;
@@ -24,7 +23,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Noto Sans KR', sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
     }
@@ -39,8 +38,8 @@
       overflow: hidden; z-index: 100;
     }
     .sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    .sidebar-logo { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: .1em; margin-bottom: 10px; }
-    .sidebar-header h2 { font-family: 'Noto Serif KR', serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .sidebar-logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; color: var(--accent); letter-spacing: .1em; margin-bottom: 10px; }
+    .sidebar-header h2 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
     .sidebar-header p { font-size: 11px; color: var(--muted); }
     .nav-list { flex: 1; overflow-y: auto; padding: 8px 0; }
     .nav-list::-webkit-scrollbar { width: 3px; }
@@ -55,7 +54,7 @@
     .nav-item:hover { background: var(--surface); color: var(--text); border-left-color: var(--accent); }
     .nav-item.active { background: var(--surface); color: var(--text); border-left-color: var(--accent2); }
     .nav-num {
-      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9.5px; font-weight: 700;
       min-width: 20px; height: 17px; border-radius: 3px;
       background: var(--surface2); color: var(--accent);
       display: flex; align-items: center; justify-content: center;
@@ -76,7 +75,7 @@
       font-size: 10.5px; font-weight: 700; letter-spacing: .6px;
       padding: 3px 11px; border-radius: 20px; margin-bottom: 16px;
     }
-    header h1 { font-family: 'Noto Serif KR', serif; font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+    header h1 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
     header p { color: var(--muted); font-size: 14px; line-height: 1.75; max-width: 580px; }
 
     main { padding: 40px 48px 80px; }
@@ -84,7 +83,7 @@
     /* ── 섹션 ── */
     .section { margin-bottom: 52px; }
     .section-title {
-      font-family: 'Noto Serif KR', serif; font-size: 19px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 19px; font-weight: 700;
       color: var(--text); margin-bottom: 6px;
       display: flex; align-items: center; gap: 10px;
     }
@@ -101,7 +100,7 @@
     }
     .step:hover { border-color: var(--accent2); }
     .step-num {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 700;
       color: var(--bg); background: var(--accent2);
       min-width: 28px; height: 28px; border-radius: 6px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -109,7 +108,7 @@
     .step-body h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
     .step-body p { font-size: 13px; color: var(--text2); line-height: 1.7; }
     .step-body code {
-      font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11.5px;
       background: var(--surface2); color: var(--accent);
       padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border);
     }
@@ -118,18 +117,18 @@
     .course-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .course-table th {
       background: var(--surface2); padding: 10px 14px; text-align: left;
-      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; letter-spacing: .1em;
       text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border);
     }
     .course-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text2); line-height: 1.6; }
     .course-table tr:hover td { background: var(--surface); }
-    .course-table td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+    .course-table td:first-child { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; color: var(--muted); }
     .course-table td a { color: var(--accent2); text-decoration: none; }
     .course-table td a:hover { text-decoration: underline; }
     .badge {
       display: inline-block; font-size: 9.5px; font-weight: 700;
       padding: 2px 7px; border-radius: 4px; letter-spacing: .3px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     .badge-video { background: rgba(217,127,58,.1); color: var(--accent); border: 1px solid rgba(217,127,58,.3); }
     .badge-text { background: rgba(96,96,160,.12); color: var(--muted); border: 1px solid rgba(96,96,160,.25); }
@@ -142,13 +141,13 @@
     .panel-blue { background: rgba(123,110,246,.07); border: 1px solid rgba(123,110,246,.25); }
     .panel-orange { background: rgba(217,127,58,.07); border: 1px solid rgba(217,127,58,.25); }
     .panel-green { background: rgba(76,175,128,.07); border: 1px solid rgba(76,175,128,.25); }
-    .panel-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+    .panel-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
     .panel-blue .panel-label { color: var(--accent2); }
     .panel-orange .panel-label { color: var(--accent); }
     .panel-green .panel-label { color: var(--green); }
     .panel p, .panel li { font-size: 13.5px; color: var(--text2); line-height: 1.75; }
     .panel ul { list-style: none; display: flex; flex-direction: column; gap: 5px; padding-left: 4px; }
-    .panel ul li::before { content: '→'; color: var(--accent2); margin-right: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .panel ul li::before { content: '→'; color: var(--accent2); margin-right: 8px; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; }
     .panel-orange ul li::before { color: var(--accent); }
     .panel-green ul li::before { content: '✓'; color: var(--green); }
 
@@ -159,7 +158,7 @@
       padding: 16px 18px; position: relative; overflow: hidden;
     }
     .page-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--pc, var(--accent)); }
-    .page-card .pc-label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--muted); margin-bottom: 6px; }
+    .page-card .pc-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9.5px; color: var(--muted); margin-bottom: 6px; }
     .page-card h4 { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .page-card p { font-size: 12px; color: var(--text2); line-height: 1.65; }
     .page-card a { color: var(--accent2); font-size: 11px; text-decoration: none; display: inline-block; margin-top: 8px; }
@@ -183,7 +182,7 @@
     }
     .quick-links a {
       display: inline-flex; align-items: center; gap: 5px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; font-weight: 600;
       padding: 5px 11px; border-radius: 6px; text-decoration: none;
       transition: all .2s; white-space: nowrap; letter-spacing: .02em;
       backdrop-filter: blur(8px);

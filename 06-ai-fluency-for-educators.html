@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Fluency for Educators — Anthropic Academy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
     :root {
       --bg: #0d0d10;
@@ -33,7 +33,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Noto Sans KR', sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 15px;
       line-height: 1.8;
       min-height: 100vh;
@@ -56,7 +56,7 @@
       gap: 1.5rem;
       height: 56px;
     }
-    .logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
+    .logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
     .sep { color: var(--text-dim); }
     .course-title-small { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -81,7 +81,7 @@
       scrollbar-color: var(--border) transparent;
     }
     .sidebar-label {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 10px;
       letter-spacing: 0.15em;
       color: var(--text-dim);
@@ -106,7 +106,7 @@
     }
     .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
     .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--accent); }
-    .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); min-width: 20px; margin-top: 1px; flex-shrink: 0; }
+    .nav-num { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--accent); min-width: 20px; margin-top: 1px; flex-shrink: 0; }
 
     /* ── MAIN ── */
     main { padding: 3rem 0 4rem 3rem; min-width: 0; }
@@ -115,14 +115,14 @@
     .course-hero { margin-bottom: 2.5rem; }
     .course-badge {
       display: inline-flex; align-items: center; gap: 0.5rem;
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px;
       color: var(--accent); background: rgba(58,168,217,0.1);
       border: 1px solid rgba(58,168,217,0.25);
       padding: 0.3rem 0.75rem; border-radius: 100px;
       margin-bottom: 1.25rem; letter-spacing: 0.08em;
     }
     .course-hero h1 {
-      font-family: 'Noto Serif KR', serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 2.2rem; font-weight: 700;
       line-height: 1.25; color: var(--text);
       margin-bottom: 0.5rem;
@@ -146,7 +146,7 @@
     .audience-text strong { color: var(--accent); }
 
     /* ── 진행바 ── */
-    .progress-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-bottom: 0.4rem; letter-spacing: 0.08em; }
+    .progress-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--text-dim); margin-bottom: 0.4rem; letter-spacing: 0.08em; }
     .progress-bar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; height: 4px; margin-bottom: 2.5rem; overflow: hidden; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; transition: width 0.4s ease; }
 
@@ -161,21 +161,21 @@
       border-bottom: 1px solid var(--border);
     }
     .lesson-number-badge {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px;
       font-weight: 600; color: var(--bg); background: var(--accent);
       padding: 0.25rem 0.6rem; border-radius: 4px;
       white-space: nowrap; margin-top: 6px;
       letter-spacing: 0.05em; flex-shrink: 0;
     }
     .lesson-title-block h2 {
-      font-family: 'Noto Serif KR', serif; font-size: 1.55rem;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.55rem;
       font-weight: 700; color: var(--text); line-height: 1.3;
       margin-bottom: 0.3rem;
     }
-    .lesson-time { font-size: 12px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+    .lesson-time { font-size: 12px; color: var(--text-dim); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
     .lesson-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
     .tag {
-      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      display: inline-block; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
       padding: 0.15rem 0.5rem; border-radius: 100px; border: 1px solid;
     }
@@ -190,17 +190,17 @@
       border-left: 3px solid var(--accent); border-radius: 10px;
       padding: 1.25rem 1.5rem; margin-bottom: 2rem;
     }
-    .learn-box-title { font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .learn-box-title { font-size: 10px; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
     .learn-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
     .learn-box ul li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 13.5px; color: var(--text-muted); }
-    .learn-box ul li::before { content: '→'; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+    .learn-box ul li::before { content: '→'; color: var(--accent); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
 
     /* ── 핵심 요약 ── */
     .key-takeaways {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;
     }
-    .key-takeaways-title { font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--edu-gold); margin-bottom: 0.75rem; }
+    .key-takeaways-title { font-size: 10px; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--edu-gold); margin-bottom: 0.75rem; }
     .key-takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
     .key-takeaways ul li { display: flex; gap: 0.75rem; font-size: 13.5px; color: var(--text-muted); line-height: 1.65; }
     .key-takeaways ul li::before { content: '✦'; color: var(--edu-gold); font-size: 11px; margin-top: 3px; flex-shrink: 0; }
@@ -208,7 +208,7 @@
     /* ── 섹션 ── */
     .content-section { margin-bottom: 2rem; }
     .content-section h3 {
-      font-family: 'Noto Serif KR', serif; font-size: 1.1rem;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.1rem;
       font-weight: 700; color: var(--text); margin-bottom: 0.75rem;
       padding-bottom: 0.4rem; border-bottom: 1px solid var(--border);
     }
@@ -229,14 +229,14 @@
     }
     .exercise-card-header .ex-icon { font-size: 1.1rem; }
     .exercise-card-header .ex-title { font-weight: 700; color: var(--text); font-size: 14px; }
-    .exercise-card-header .ex-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-left: auto; }
+    .exercise-card-header .ex-time { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--text-dim); margin-left: auto; }
     .exercise-card-body { padding: 1.25rem; }
 
     /* ── 단계 리스트 ── */
     .step-list { display: flex; flex-direction: column; gap: 0.9rem; margin: 0.75rem 0; }
     .step-item { display: flex; gap: 1rem; align-items: flex-start; }
     .step-num {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px;
       font-weight: 700; color: var(--bg); background: var(--accent);
       width: 22px; height: 22px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -251,7 +251,7 @@
       background: var(--surface2); border: 1px solid var(--border);
       border-radius: 8px; padding: 1rem 1.1rem;
     }
-    .option-card .opt-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .option-card .opt-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
     .option-card .opt-title { font-weight: 700; color: var(--text); font-size: 13.5px; margin-bottom: 0.4rem; }
     .option-card .opt-body { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
 
@@ -270,7 +270,7 @@
     /* ── 체크리스트 ── */
     .checklist { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin: 0.75rem 0; }
     .checklist li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
-    .checklist li::before { content: '□'; font-family: 'JetBrains Mono', monospace; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+    .checklist li::before { content: '□'; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
 
     /* ── 팁/인포 박스 ── */
     .tip-box {
@@ -278,33 +278,33 @@
       border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0;
       font-size: 13.5px; color: var(--text-muted); line-height: 1.7;
     }
-    .tip-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--edu-teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .tip-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9px; color: var(--edu-teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
     .info-box {
       background: rgba(123,110,246,0.07); border: 1px solid rgba(123,110,246,0.22);
       border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0;
       font-size: 13.5px; color: var(--text-muted); line-height: 1.7;
     }
-    .info-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .info-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9px; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
     .warn-box {
       background: rgba(217,166,58,0.06); border: 1px solid rgba(217,166,58,0.22);
       border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0;
       font-size: 13.5px; color: var(--text-muted); line-height: 1.7;
     }
-    .warn-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--edu-gold); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+    .warn-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9px; color: var(--edu-gold); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; }
 
     /* ── 리플렉션 ── */
     .reflection-box {
       background: var(--surface); border: 1px dashed var(--border);
       border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
     }
-    .ref-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .ref-title { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
     .reflection-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
     .reflection-box ul li { display: flex; gap: 0.6rem; font-size: 13.5px; color: var(--text-muted); font-style: italic; }
     .reflection-box ul li::before { content: '◇'; color: var(--text-dim); flex-shrink: 0; }
 
     /* ── 비교표 ── */
     .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13px; }
-    .compare-table th { background: var(--surface2); padding: 0.7rem 1rem; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
+    .compare-table th { background: var(--surface2); padding: 0.7rem 1rem; text-align: left; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--border); }
     .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-muted); line-height: 1.6; }
     .compare-table tr:hover td { background: var(--surface); }
     .compare-table td:first-child { font-weight: 600; color: var(--text); }
@@ -316,8 +316,8 @@
       border: 1px solid var(--border); border-radius: 12px; text-align: center;
     }
     .complete-banner .cb-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .complete-banner .cb-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
-    .complete-banner h3 { font-family: 'Noto Serif KR', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 0.5rem; }
+    .complete-banner .cb-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .complete-banner h3 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.4rem; color: var(--text); margin-bottom: 0.5rem; }
     .complete-banner p { font-size: 13px; color: var(--text-muted); margin-top: 0.4rem; max-width: 500px; margin-inline: auto; }
 
     /* ── 단계별 스테이지 ── */
@@ -328,7 +328,7 @@
       width: 32px; height: 32px; border-radius: 50%;
       background: var(--surface2); border: 2px solid var(--accent);
       display: flex; align-items: center; justify-content: center;
-      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px;
       font-weight: 700; color: var(--accent); flex-shrink: 0;
     }
     .stage-line { flex: 1; width: 2px; background: var(--border); margin: 4px 0; }
@@ -406,14 +406,14 @@
       background: rgba(123,110,246,0.15); border: 1px solid rgba(123,110,246,0.4);
       color: #a89ef8; text-decoration: none; font-size: 12px; font-weight: 600;
       padding: 0.45rem 1rem; border-radius: 6px; white-space: nowrap;
-      font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: 0.04em;
       transition: background 0.2s, border-color 0.2s;
     }
     .nlm-banner-btn:hover { background: rgba(123,110,246,0.28); border-color: rgba(123,110,246,0.6); }
     .video-badge-inline {
       display: inline-flex; align-items: center; gap: 0.3rem;
       background: rgba(217,127,58,0.1); border: 1px solid rgba(217,127,58,0.3);
-      color: var(--accent, #d97f3a); font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      color: var(--accent, #d97f3a); font-size: 11px; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 0.3rem 0.7rem; border-radius: 5px; letter-spacing: 0.04em;
     }
   
@@ -424,7 +424,7 @@
     }
     .quick-links a {
       display: inline-flex; align-items: center; gap: 5px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; font-weight: 600;
       padding: 5px 11px; border-radius: 6px; text-decoration: none;
       transition: all .2s; white-space: nowrap; letter-spacing: .02em;
       backdrop-filter: blur(8px);
@@ -473,7 +473,7 @@
   });
 </script>
 
-<a href="index.html" id="home-btn" style="position:fixed;top:12px;left:14px;z-index:9999;font-family:'JetBrains Mono',monospace;font-size:12px;color:#d97f3a;text-decoration:none;letter-spacing:.05em;background:rgba(13,13,16,.92);padding:5px 11px;border-radius:5px;border:1px solid #2a2a3a;backdrop-filter:blur(4px);transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">&#x2B21; Anthropic Academy</a>
+<a href="index.html" id="home-btn" style="position:fixed;top:12px;left:14px;z-index:9999;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;color:#d97f3a;text-decoration:none;letter-spacing:.05em;background:rgba(13,13,16,.92);padding:5px 11px;border-radius:5px;border:1px solid #2a2a3a;backdrop-filter:blur(4px);transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">&#x2B21; Anthropic Academy</a>
 
 <header>
   <div class="header-inner">

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Claude API로 개발하기 — Anthropic Academy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
     :root {
       --bg: #0d0d10; --surface: #16161c; --surface2: #1e1e27;
@@ -15,41 +15,41 @@
       --ca: #56b6c2;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.8; min-height: 100vh; }
+    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.8; min-height: 100vh; }
     header { background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #0d0f1a 100%); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
     .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 56px; }
-    .logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
+    .logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--accent); letter-spacing: 0.05em; white-space: nowrap; }
     .sep { color: var(--text-dim); }
     .course-title-small { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 270px 1fr; gap: 0; padding: 0 2rem; }
     aside { position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1.5rem 2rem 0; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-    .sidebar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
+    .sidebar-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
     .lesson-nav { display: flex; flex-direction: column; gap: 2px; }
     .nav-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-muted); font-size: 13px; line-height: 1.4; transition: all 0.15s; border: 1px solid transparent; }
     .nav-item:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
     .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--ca); }
-    .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ca); min-width: 18px; margin-top: 1px; }
+    .nav-num { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; color: var(--ca); min-width: 18px; margin-top: 1px; }
     .sidebar-progress { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-    .progress-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
+    .progress-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
     .progress-bar-bg { height: 4px; background: var(--surface2); border-radius: 2px; }
     .progress-bar-fill { height: 100%; background: var(--ca); border-radius: 2px; transition: width 0.3s; }
     main { padding: 2rem 0 4rem 2.5rem; }
     .lesson-panel { display: none; }
     .lesson-panel.active { display: block; }
     .lesson-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-    .lesson-number-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ca); letter-spacing: 0.15em; background: rgba(86,182,194,0.1); border: 1px solid rgba(86,182,194,0.2); padding: 0.25rem 0.75rem; border-radius: 4px; display: inline-block; margin-bottom: 0.75rem; }
-    .lesson-header h2 { font-family: 'Noto Serif KR', serif; font-size: 1.8rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; }
+    .lesson-number-badge { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--ca); letter-spacing: 0.15em; background: rgba(86,182,194,0.1); border: 1px solid rgba(86,182,194,0.2); padding: 0.25rem 0.75rem; border-radius: 4px; display: inline-block; margin-bottom: 0.75rem; }
+    .lesson-header h2 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1.8rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; }
     .lesson-subtitle { font-size: 14px; color: var(--text-muted); }
     .content-section { margin-bottom: 2rem; }
     .content-section h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
     .content-section h3::before { content: ''; display: inline-block; width: 3px; height: 1em; background: var(--ca); border-radius: 2px; }
     .learn-box { background: linear-gradient(135deg, rgba(86,182,194,0.08) 0%, rgba(86,182,194,0.04) 100%); border: 1px solid rgba(86,182,194,0.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
-    .learn-box h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
+    .learn-box h4 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
     .learn-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
     .learn-box ul li { padding-left: 1.5rem; position: relative; color: var(--text-muted); font-size: 14px; }
     .learn-box ul li::before { content: '◆'; position: absolute; left: 0; color: var(--ca); font-size: 8px; top: 6px; }
     .key-takeaways { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ca); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
-    .key-takeaways h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
+    .key-takeaways h4 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; letter-spacing: 0.15em; color: var(--ca); text-transform: uppercase; margin-bottom: 1rem; }
     .key-takeaways ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
     .key-takeaways ul li { padding-left: 1.5rem; position: relative; font-size: 14px; color: var(--text-muted); }
     .key-takeaways ul li::before { content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: bold; }
@@ -57,7 +57,7 @@
     ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
     li { margin-bottom: 0.4rem; color: var(--text-muted); }
     strong { color: var(--text); font-weight: 600; }
-    code { font-family: 'JetBrains Mono', monospace; font-size: 13px; background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--ca); border: 1px solid var(--border); }
+    code { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--ca); border: 1px solid var(--border); }
     pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0 1.5rem; overflow-x: auto; }
     pre code { background: none; border: none; padding: 0; color: #abb2bf; font-size: 13px; line-height: 1.6; }
     .tip-box { background: rgba(76,175,128,0.08); border: 1px solid rgba(76,175,128,0.25); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
@@ -65,11 +65,11 @@
     .warn-box { background: rgba(232,168,56,0.08); border: 1px solid rgba(232,168,56,0.25); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
     .warn-box strong { color: var(--warning); }
     .reflection-box { background: rgba(123,110,246,0.08); border: 1px solid rgba(123,110,246,0.2); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
-    .reflection-box h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem; }
+    .reflection-box h4 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; letter-spacing: 0.15em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem; }
     .reflection-box ul { list-style: none; }
     .reflection-box ul li { padding: 0.6rem 0 0.6rem 1.5rem; position: relative; border-bottom: 1px solid rgba(123,110,246,0.1); font-size: 14px; color: var(--text-muted); }
     .reflection-box ul li:last-child { border-bottom: none; }
-    .reflection-box ul li::before { content: '?'; position: absolute; left: 0; color: var(--accent2); font-weight: bold; font-family: 'JetBrains Mono', monospace; }
+    .reflection-box ul li::before { content: '?'; position: absolute; left: 0; color: var(--accent2); font-weight: bold; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
     .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 14px; }
     .compare-table th { background: var(--surface2); padding: 0.75rem 1rem; text-align: left; font-size: 12px; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 2px solid var(--border); }
     .compare-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
@@ -81,14 +81,14 @@
     .priority-card p { font-size: 13px; margin: 0; color: var(--text-muted); }
     .flow-steps { display: flex; flex-direction: column; gap: 0; margin: 1rem 0 1.5rem; }
     .flow-step { display: flex; gap: 1rem; align-items: flex-start; }
-    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(86,182,194,0.15); border: 1px solid rgba(86,182,194,0.4); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ca); flex-shrink: 0; margin-top: 3px; }
+    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(86,182,194,0.15); border: 1px solid rgba(86,182,194,0.4); display: flex; align-items: center; justify-content: center; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; color: var(--ca); flex-shrink: 0; margin-top: 3px; }
     .flow-step-content { flex: 1; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); margin-bottom: 0; }
     .flow-step:last-child .flow-step-content { border-bottom: none; }
     .flow-step-content strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 0.25rem; }
     .flow-step-content p { font-size: 13px; margin: 0; }
     .temp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0; }
     .temp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
-    .temp-card .temp-range { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ca); font-weight: 600; margin-bottom: 0.5rem; }
+    .temp-card .temp-range { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--ca); font-weight: 600; margin-bottom: 0.5rem; }
     .temp-card .temp-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
     .temp-card ul { list-style: none; padding: 0; margin: 0; }
     .temp-card ul li { font-size: 12px; color: var(--text-muted); padding: 0.2rem 0; padding-left: 1rem; position: relative; }
@@ -156,14 +156,14 @@
       background: rgba(123,110,246,0.15); border: 1px solid rgba(123,110,246,0.4);
       color: #a89ef8; text-decoration: none; font-size: 12px; font-weight: 600;
       padding: 0.45rem 1rem; border-radius: 6px; white-space: nowrap;
-      font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: 0.04em;
       transition: background 0.2s, border-color 0.2s;
     }
     .nlm-banner-btn:hover { background: rgba(123,110,246,0.28); border-color: rgba(123,110,246,0.6); }
     .video-badge-inline {
       display: inline-flex; align-items: center; gap: 0.3rem;
       background: rgba(217,127,58,0.1); border: 1px solid rgba(217,127,58,0.3);
-      color: var(--accent, #d97f3a); font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      color: var(--accent, #d97f3a); font-size: 11px; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 0.3rem 0.7rem; border-radius: 5px; letter-spacing: 0.04em;
     }
   
@@ -174,7 +174,7 @@
     }
     .quick-links a {
       display: inline-flex; align-items: center; gap: 5px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; font-weight: 600;
       padding: 5px 11px; border-radius: 6px; text-decoration: none;
       transition: all .2s; white-space: nowrap; letter-spacing: .02em;
       backdrop-filter: blur(8px);
@@ -223,7 +223,7 @@
   });
 </script>
 
-<a href="index.html" id="home-btn" style="position:fixed;top:12px;left:14px;z-index:9999;font-family:'JetBrains Mono',monospace;font-size:12px;color:#d97f3a;text-decoration:none;letter-spacing:.05em;background:rgba(13,13,16,.92);padding:5px 11px;border-radius:5px;border:1px solid #2a2a3a;backdrop-filter:blur(4px);transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">&#x2B21; Anthropic Academy</a>
+<a href="index.html" id="home-btn" style="position:fixed;top:12px;left:14px;z-index:9999;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;color:#d97f3a;text-decoration:none;letter-spacing:.05em;background:rgba(13,13,16,.92);padding:5px 11px;border-radius:5px;border:1px solid #2a2a3a;backdrop-filter:blur(4px);transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">&#x2B21; Anthropic Academy</a>
   <header>
     <div class="header-inner">
       <a href="index.html" class="logo">⬡ Anthropic Academy</a>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anthropic Academy — AI 교육 코스 한국어 학습 자료</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
     :root {
       --bg:      #080810;
@@ -24,7 +24,7 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; line-height: 1.7; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.7; overflow-x: hidden; }
 
     /* ── 네비게이션 ── */
     nav {
@@ -34,7 +34,7 @@
       background: rgba(8,8,16,.85); backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(123,110,246,.15);
     }
-    .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: .08em; text-decoration: none; }
+    .nav-logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--accent); letter-spacing: .08em; text-decoration: none; }
     .nav-links { display: flex; gap: 6px; }
     .nav-links a {
       font-size: 12px; color: var(--text2); text-decoration: none;
@@ -64,7 +64,7 @@
     }
     .hero-eyebrow {
       display: inline-flex; align-items: center; gap: 8px;
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; font-weight: 700;
       letter-spacing: .12em; text-transform: uppercase;
       color: var(--accent2); background: rgba(123,110,246,.1);
       border: 1px solid rgba(123,110,246,.3); padding: 5px 16px;
@@ -72,7 +72,7 @@
       animation: fadeUp .6s ease both;
     }
     .hero h1 {
-      font-family: 'Noto Serif KR', serif; font-size: clamp(36px, 6vw, 72px);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: clamp(36px, 6vw, 72px);
       font-weight: 900; line-height: 1.1; margin-bottom: 24px;
       animation: fadeUp .6s .1s ease both;
     }
@@ -89,7 +89,7 @@
     }
     .hero-stat { text-align: center; }
     .hero-stat .num {
-      font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 36px; font-weight: 700;
       background: linear-gradient(135deg, var(--accent2), var(--accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       display: block; line-height: 1;
@@ -120,12 +120,12 @@
     /* ── 공통 섹션 ── */
     section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
     .section-label {
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; font-weight: 700;
       letter-spacing: .15em; text-transform: uppercase; color: var(--accent2);
       margin-bottom: 12px;
     }
     .section-title {
-      font-family: 'Noto Serif KR', serif; font-size: clamp(24px, 4vw, 40px);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: clamp(24px, 4vw, 40px);
       font-weight: 700; line-height: 1.2; margin-bottom: 14px; color: var(--text);
     }
     .section-desc { font-size: 15px; color: var(--text2); max-width: 560px; line-height: 1.8; margin-bottom: 52px; }
@@ -143,16 +143,16 @@
       background: var(--pc, linear-gradient(90deg, var(--accent2), var(--accent)));
     }
     .page-card:hover { border-color: rgba(123,110,246,.4); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
-    .page-tag { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .page-tag { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
     .page-card h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
     .page-card p { font-size: 13px; color: var(--text2); line-height: 1.75; margin-bottom: 16px; }
-    .page-link { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent2); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: gap .15s; }
+    .page-link { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; color: var(--accent2); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: gap .15s; }
     .page-link:hover { gap: 8px; }
 
     /* ── 강의 목록 ── */
     .course-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
     .filter-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; font-weight: 600;
       padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
       background: transparent; color: var(--text2); cursor: pointer; transition: all .15s;
     }
@@ -167,10 +167,10 @@
     .course-card-top {
       padding: 20px 22px 0; display: flex; justify-content: space-between; align-items: flex-start;
     }
-    .course-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+    .course-num { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; color: var(--muted); }
     .course-badges { display: flex; gap: 6px; }
     .badge {
-      font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 9px; font-weight: 700;
       padding: 2px 7px; border-radius: 4px; letter-spacing: .04em;
     }
     .badge-video { background: rgba(217,127,58,.15); color: var(--accent); border: 1px solid rgba(217,127,58,.3); }
@@ -183,12 +183,12 @@
       display: flex; align-items: center; justify-content: space-between;
       border-top: 1px solid var(--border); margin-top: 14px;
     }
-    .course-lessons { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+    .course-lessons { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; color: var(--muted); }
     .course-actions { display: flex; gap: 8px; }
     .btn-sm {
       font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 6px;
       text-decoration: none; transition: all .2s; border: 1px solid;
-      font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; display: inline-flex; align-items: center; gap: 4px;
     }
     .btn-study { background: rgba(255,255,255,.05); color: var(--text2); border-color: var(--border); }
     .btn-study:hover { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
@@ -209,7 +209,7 @@
       font-size: 12.5px; color: var(--text2); display: flex; align-items: center; gap: 8px;
     }
     .path-steps li::before {
-      content: '→'; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      content: '→'; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px;
       color: var(--pc, var(--accent2)); flex-shrink: 0;
     }
 
@@ -224,7 +224,7 @@
       position: absolute; top: -40px; right: -20px; font-size: 200px;
       color: rgba(123,110,246,.04); line-height: 1; pointer-events: none;
     }
-    .nlm-title { font-family: 'Noto Serif KR', serif; font-size: 32px; font-weight: 700; margin-bottom: 14px; }
+    .nlm-title { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 14px; }
     .nlm-desc { font-size: 15px; color: var(--text2); max-width: 520px; margin: 0 auto 32px; line-height: 1.8; }
     .nlm-examples { display: flex; flex-direction: column; gap: 10px; max-width: 480px; margin: 0 auto 36px; text-align: left; }
     .nlm-example {
@@ -241,7 +241,7 @@
       padding: 24px; position: relative; overflow: hidden;
     }
     .how-num {
-      font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 48px; font-weight: 700;
       color: rgba(123,110,246,.12); position: absolute; top: 12px; right: 16px; line-height: 1;
     }
     .how-card h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
