@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anthropic Academy — AI 교육 코스 한국어 학습 자료</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:      #080810;
+      --bg2:     #0f0f1a;
+      --surface: #14141f;
+      --surface2:#1c1c2e;
+      --border:  #252538;
+      --text:    #eeeef8;
+      --text2:   #9898c0;
+      --muted:   #5555a0;
+      --accent:  #d97f3a;
+      --accent2: #7b6ef6;
+      --green:   #4caf80;
+      --blue:    #56b6c2;
+      --pink:    #e06c75;
+      --purple:  #c678dd;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; line-height: 1.7; overflow-x: hidden; }
+
+    /* ── 네비게이션 ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 48px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(8,8,16,.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(123,110,246,.15);
+    }
+    .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: .08em; text-decoration: none; }
+    .nav-links { display: flex; gap: 6px; }
+    .nav-links a {
+      font-size: 12px; color: var(--text2); text-decoration: none;
+      padding: 6px 14px; border-radius: 6px; border: 1px solid transparent;
+      transition: all .2s;
+    }
+    .nav-links a:hover { background: var(--surface2); color: var(--text); border-color: var(--border); }
+    .nav-links a.cta {
+      background: rgba(123,110,246,.15); color: var(--accent2);
+      border-color: rgba(123,110,246,.35); font-weight: 600;
+    }
+    .nav-links a.cta:hover { background: rgba(123,110,246,.28); }
+
+    /* ── 히어로 ── */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 900px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(123,110,246,.12) 0%, rgba(217,127,58,.06) 40%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent2); background: rgba(123,110,246,.1);
+      border: 1px solid rgba(123,110,246,.3); padding: 5px 16px;
+      border-radius: 100px; margin-bottom: 28px;
+      animation: fadeUp .6s ease both;
+    }
+    .hero h1 {
+      font-family: 'Noto Serif KR', serif; font-size: clamp(36px, 6vw, 72px);
+      font-weight: 900; line-height: 1.1; margin-bottom: 24px;
+      animation: fadeUp .6s .1s ease both;
+    }
+    .hero h1 .gr1 { background: linear-gradient(135deg, #fff 0%, #c0c0e0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero h1 .gr2 { background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 18px); color: var(--text2); max-width: 600px;
+      margin: 0 auto 40px; line-height: 1.8;
+      animation: fadeUp .6s .2s ease both;
+    }
+    .hero-stats {
+      display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 44px; animation: fadeUp .6s .3s ease both;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num {
+      font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      display: block; line-height: 1;
+    }
+    .hero-stat .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; letter-spacing: .04em; }
+    .hero-cta {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp .6s .4s ease both;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--accent2), #5a4fd8);
+      color: #fff; font-size: 14px; font-weight: 700; text-decoration: none;
+      padding: 13px 28px; border-radius: 10px; border: none; cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(123,110,246,.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(123,110,246,.5); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.05); color: var(--text2);
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      padding: 13px 28px; border-radius: 10px;
+      border: 1px solid var(--border); transition: all .2s;
+    }
+    .btn-secondary:hover { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
+
+    /* ── 공통 섹션 ── */
+    section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--accent2);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Noto Serif KR', serif; font-size: clamp(24px, 4vw, 40px);
+      font-weight: 700; line-height: 1.2; margin-bottom: 14px; color: var(--text);
+    }
+    .section-desc { font-size: 15px; color: var(--text2); max-width: 560px; line-height: 1.8; margin-bottom: 52px; }
+
+    /* ── 페이지 구조 ── */
+    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .page-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px 26px; position: relative; overflow: hidden;
+      transition: border-color .25s, transform .2s, box-shadow .25s;
+      cursor: default;
+    }
+    .page-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--pc, linear-gradient(90deg, var(--accent2), var(--accent)));
+    }
+    .page-card:hover { border-color: rgba(123,110,246,.4); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+    .page-tag { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .page-card h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .page-card p { font-size: 13px; color: var(--text2); line-height: 1.75; margin-bottom: 16px; }
+    .page-link { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent2); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: gap .15s; }
+    .page-link:hover { gap: 8px; }
+
+    /* ── 강의 목록 ── */
+    .course-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+    .filter-btn {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+      padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--text2); cursor: pointer; transition: all .15s;
+    }
+    .filter-btn:hover, .filter-btn.active { background: rgba(123,110,246,.15); color: var(--accent2); border-color: rgba(123,110,246,.4); }
+    .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .course-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; transition: border-color .25s, transform .2s, box-shadow .25s;
+      display: flex; flex-direction: column;
+    }
+    .course-card:hover { border-color: var(--cc, var(--accent2)); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+    .course-card-top {
+      padding: 20px 22px 0; display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .course-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+    .course-badges { display: flex; gap: 6px; }
+    .badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px; letter-spacing: .04em;
+    }
+    .badge-video { background: rgba(217,127,58,.15); color: var(--accent); border: 1px solid rgba(217,127,58,.3); }
+    .badge-cat { background: rgba(123,110,246,.12); color: var(--accent2); border: 1px solid rgba(123,110,246,.25); }
+    .course-card-body { padding: 12px 22px 0; flex: 1; }
+    .course-card-body h3 { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+    .course-card-body p { font-size: 12.5px; color: var(--text2); line-height: 1.7; }
+    .course-card-footer {
+      padding: 14px 22px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border); margin-top: 14px;
+    }
+    .course-lessons { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+    .course-actions { display: flex; gap: 8px; }
+    .btn-sm {
+      font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 6px;
+      text-decoration: none; transition: all .2s; border: 1px solid;
+      font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .btn-study { background: rgba(255,255,255,.05); color: var(--text2); border-color: var(--border); }
+    .btn-study:hover { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
+    .btn-nlm { background: rgba(123,110,246,.12); color: #b8b0f8; border-color: rgba(123,110,246,.35); }
+    .btn-nlm:hover { background: rgba(123,110,246,.24); border-color: rgba(123,110,246,.6); color: #d0cbff; }
+
+    /* ── 학습 경로 ── */
+    .paths-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .path-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 22px 24px; transition: border-color .25s, transform .2s;
+    }
+    .path-card:hover { border-color: var(--pc, var(--accent2)); transform: translateY(-2px); }
+    .path-icon { font-size: 28px; margin-bottom: 12px; }
+    .path-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .path-steps { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .path-steps li {
+      font-size: 12.5px; color: var(--text2); display: flex; align-items: center; gap: 8px;
+    }
+    .path-steps li::before {
+      content: '→'; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      color: var(--pc, var(--accent2)); flex-shrink: 0;
+    }
+
+    /* ── NotebookLM 섹션 ── */
+    .nlm-section {
+      background: linear-gradient(135deg, rgba(123,110,246,.08) 0%, rgba(217,127,58,.04) 100%);
+      border: 1px solid rgba(123,110,246,.2); border-radius: 20px;
+      padding: 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .nlm-section::before {
+      content: '⬡';
+      position: absolute; top: -40px; right: -20px; font-size: 200px;
+      color: rgba(123,110,246,.04); line-height: 1; pointer-events: none;
+    }
+    .nlm-title { font-family: 'Noto Serif KR', serif; font-size: 32px; font-weight: 700; margin-bottom: 14px; }
+    .nlm-desc { font-size: 15px; color: var(--text2); max-width: 520px; margin: 0 auto 32px; line-height: 1.8; }
+    .nlm-examples { display: flex; flex-direction: column; gap: 10px; max-width: 480px; margin: 0 auto 36px; text-align: left; }
+    .nlm-example {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: var(--text2); display: flex; gap: 10px; align-items: flex-start;
+    }
+    .nlm-example::before { content: '"'; color: var(--accent2); font-size: 20px; line-height: 1; flex-shrink: 0; margin-top: -2px; }
+
+    /* ── 학습 방법 ── */
+    .how-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .how-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px; position: relative; overflow: hidden;
+    }
+    .how-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700;
+      color: rgba(123,110,246,.12); position: absolute; top: 12px; right: 16px; line-height: 1;
+    }
+    .how-card h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .how-card p { font-size: 13px; color: var(--text2); line-height: 1.75; }
+
+    /* ── 푸터 ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 32px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px; max-width: 100%;
+    }
+    footer p { font-size: 12px; color: var(--muted); }
+    footer a { color: var(--accent2); text-decoration: none; font-size: 12px; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── 애니메이션 ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── 반응형 ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links a:not(.cta) { display: none; }
+      section { padding: 64px 20px; }
+      .hero { padding: 100px 20px 64px; }
+      .hero-stats { gap: 24px; }
+      .nlm-section { padding: 36px 24px; }
+      footer { padding: 24px 20px; }
+    }
+
+    /* 필터 JS 숨김 */
+    .course-card[data-cat].hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── 네비게이션 ── -->
+<nav>
+  <a href="index.html" class="nav-logo">⬡ Anthropic Academy</a>
+  <div class="nav-links">
+    <a href="#courses">강의 목록</a>
+    <a href="#paths">학습 경로</a>
+    <a href="guide.html">가이드</a>
+    <a href="index.html" class="cta">수강 시작 →</a>
+  </div>
+</nav>
+
+<!-- ── 히어로 ── -->
+<div class="hero">
+  <div class="hero-eyebrow">⬡ Anthropic Academy · 한국어 학습 자료</div>
+  <h1>
+    <span class="gr1">AI를 진짜로<br>다루는 법을</span><br>
+    <span class="gr2">배웁니다</span>
+  </h1>
+  <p class="hero-sub">
+    Anthropic의 공식 교육 과정 13개를 한국어로 정리했습니다.<br>
+    Claude API부터 MCP, Bedrock, Vertex AI까지 — 실전에서 바로 쓰는 지식.
+  </p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="num">13</span><div class="lbl">코스</div></div>
+    <div class="hero-stat"><span class="num">321</span><div class="lbl">레슨</div></div>
+    <div class="hero-stat"><span class="num">6</span><div class="lbl">영상 강의</div></div>
+    <div class="hero-stat"><span class="num">13</span><div class="lbl">NotebookLM</div></div>
+  </div>
+  <div class="hero-cta">
+    <a href="index.html" class="btn-primary">강의 목록 보기 →</a>
+    <a href="guide.html" class="btn-secondary">📖 사용 가이드</a>
+  </div>
+</div>
+
+<!-- ── 페이지 구조 ── -->
+<section class="reveal">
+  <div class="section-label">Site Structure</div>
+  <div class="section-title">이 사이트는 어떻게 구성되어 있나요?</div>
+  <div class="section-desc">메인 강의 목록, 각 강의 상세 페이지, 그리고 이 가이드 페이지로 구성됩니다.</div>
+  <div class="pages-grid">
+    <div class="page-card" style="--pc: linear-gradient(90deg, var(--accent), #e8a838)">
+      <div class="page-tag">Main · index.html</div>
+      <h3>🗂 강의 카드 목록</h3>
+      <p>13개 강의를 분류별 카드로 탐색합니다. 각 카드에 NotebookLM 링크와 영상 뱃지가 표시됩니다.</p>
+      <a href="index.html" class="page-link">강의 목록 보기 →</a>
+    </div>
+    <div class="page-card" style="--pc: linear-gradient(90deg, var(--accent2), var(--purple))">
+      <div class="page-tag">Guide · guide.html</div>
+      <h3>📖 사용 가이드</h3>
+      <p>사이트 구조, 4단계 학습법, 강의 목록 전체, NotebookLM 활용법, 역할별 추천 경로를 안내합니다.</p>
+      <a href="guide.html" class="page-link">가이드 보기 →</a>
+    </div>
+    <div class="page-card" style="--pc: linear-gradient(90deg, var(--green), var(--blue))">
+      <div class="page-tag">Course Pages · ×13</div>
+      <h3>🎓 강의 상세 페이지</h3>
+      <p>각 강의의 전체 레슨을 탭으로 탐색. 상단 NotebookLM 배너로 AI 대화 학습을 바로 시작할 수 있습니다.</p>
+      <a href="01-claude-code-in-action.html" class="page-link">예시 페이지 보기 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 강의 목록 ── -->
+<section id="courses" class="reveal">
+  <div class="section-label">All Courses</div>
+  <div class="section-title">13개 강의, 지금 바로 시작하세요</div>
+  <div class="section-desc">관심 분야를 선택하거나 전체 목록을 탐색하세요.</div>
+
+  <div class="course-filters">
+    <button class="filter-btn active" onclick="filterCourses('all', this)">전체</button>
+    <button class="filter-btn" onclick="filterCourses('dev', this)">개발자</button>
+    <button class="filter-btn" onclick="filterCourses('mcp', this)">MCP</button>
+    <button class="filter-btn" onclick="filterCourses('fluency', this)">AI Fluency</button>
+    <button class="filter-btn" onclick="filterCourses('cloud', this)">클라우드</button>
+  </div>
+
+  <div class="courses-grid">
+
+    <div class="course-card" data-cat="dev" style="--cc:#98c379">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 01</div>
+        <div class="course-badges"><span class="badge badge-cat">Claude Code</span><span class="badge badge-video">📹 영상</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>Claude Code 실전 활용</h3>
+        <p>코드베이스 탐색, 디버깅, 자동화까지 — Claude Code를 실제 개발 워크플로우에 통합하는 방법.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">21 레슨</span>
+        <div class="course-actions">
+          <a href="01-claude-code-in-action.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/59848c35-9a15-4413-8e00-212297b8ab45" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="fluency" style="--cc:#e5c07b">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 02</div>
+        <div class="course-badges"><span class="badge badge-cat">기초</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>Claude 101</h3>
+        <p>Claude를 처음 접하는 분을 위한 완벽한 입문. 핵심 기능, 프롬프트 작성법, 실무 활용까지.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">14 레슨</span>
+        <div class="course-actions">
+          <a href="02-claude-101.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/7be249e7-74e7-4d79-9e5b-a4b26683fbd4" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="fluency" style="--cc:#d97f3a">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 03</div>
+        <div class="course-badges"><span class="badge badge-cat">AI Fluency</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>AI Fluency: 프레임워크 & 기초</h3>
+        <p>4D 프레임워크(위임·설명·식별·철저함)와 인간-AI 협업의 핵심 원칙을 체계적으로 학습.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">15 레슨</span>
+        <div class="course-actions">
+          <a href="03-ai-fluency-framework-foundations.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/fae28103-b5e2-4239-8be2-25d74d16c884" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="dev" style="--cc:#56b6c2">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 04</div>
+        <div class="course-badges"><span class="badge badge-cat">API 개발</span><span class="badge badge-video">📹 영상</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>Anthropic API로 Claude 개발하기</h3>
+        <p>96강의 대형 과정. API 기초부터 Tool Use, RAG, 에이전트까지 개발자 풀스택 가이드.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">96 레슨</span>
+        <div class="course-actions">
+          <a href="04-claude-with-the-anthropic-api.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/12b30b40-ec4d-4895-ada0-5334e019dfbe" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="mcp" style="--cc:#7b6ef6">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 05</div>
+        <div class="course-badges"><span class="badge badge-cat">MCP</span><span class="badge badge-video">📹 영상</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>MCP 입문</h3>
+        <p>Model Context Protocol이란 무엇인가? Tools·Resources·Prompts와 서버-클라이언트 구조 실습.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">14 레슨</span>
+        <div class="course-actions">
+          <a href="05-introduction-to-model-context-protocol.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/0c1d93bd-4256-4e8a-9b79-11f0ec214c3b" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="fluency" style="--cc:#e06c75">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 06</div>
+        <div class="course-badges"><span class="badge badge-cat">AI Fluency</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>교육자를 위한 AI Fluency</h3>
+        <p>교수 실무에 AI를 통합하는 방법. 코스 설계, 자료 제작, 교육 컨텍스트 문서 작성법.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">5 레슨</span>
+        <div class="course-actions">
+          <a href="06-ai-fluency-for-educators.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/92952b14-b194-4c60-bd41-3599b1d66bc1" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="fluency" style="--cc:#56b6c2">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 07</div>
+        <div class="course-badges"><span class="badge badge-cat">AI Fluency</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>학생을 위한 AI Fluency</h3>
+        <p>학습과 연구에서 AI를 효과적이고 윤리적으로 활용하는 핵심 스킬을 개발합니다.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">6 레슨</span>
+        <div class="course-actions">
+          <a href="07-ai-fluency-for-students.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/595e9272-048d-46f7-b43c-71bef9931a5f" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="mcp" style="--cc:#c678dd">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 08</div>
+        <div class="course-badges"><span class="badge badge-cat">MCP 심화</span><span class="badge badge-video">📹 영상</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>MCP 고급 주제</h3>
+        <p>Sampling, 알림, Roots, STDIO·StreamableHTTP 전송, 복잡한 상태 관리 심화 구현.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">15 레슨</span>
+        <div class="course-actions">
+          <a href="08-model-context-protocol-advanced-topics.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/b4c1fe69-8f03-4302-96a7-d0b9174d71e3" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="cloud" style="--cc:#e5c07b">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 09</div>
+        <div class="course-badges"><span class="badge badge-cat">AWS Bedrock</span><span class="badge badge-video">📹 영상</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>Amazon Bedrock으로 Claude 활용</h3>
+        <p>boto3 + Converse API, Inference Profiles, Knowledge Bases, 에이전트, IAM 보안까지.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">83 레슨</span>
+        <div class="course-actions">
+          <a href="09-claude-in-amazon-bedrock.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/763ffe42-de91-405b-a0ed-8f5285bdc085" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="cloud" style="--cc:#98c379">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 10</div>
+        <div class="course-badges"><span class="badge badge-cat">Google Vertex</span><span class="badge badge-video">📹 영상</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>Google Vertex AI로 Claude 개발하기</h3>
+        <p>AnthropicVertex 클라이언트, gcloud 인증, 멀티모달 기능, Vertex AI Agents 완전 가이드.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">93 레슨</span>
+        <div class="course-actions">
+          <a href="10-claude-with-google-vertex.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/a4c2d82e-9a48-4579-9f06-8a14116ab0fd" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="fluency" style="--cc:#d97f3a">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 11</div>
+        <div class="course-badges"><span class="badge badge-cat">AI Fluency</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>AI Fluency 가르치기</h3>
+        <p>교수진·교수 설계자를 위한 AI Fluency 교육 방법론. 위임-철저함 루프 기반 커리큘럼 설계.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">8 레슨</span>
+        <div class="course-actions">
+          <a href="11-teaching-ai-fluency.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/abe117d5-931e-47bc-a08e-92f38e445563" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="fluency" style="--cc:#61afef">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 12</div>
+        <div class="course-badges"><span class="badge badge-cat">비영리</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>비영리 단체를 위한 AI Fluency</h3>
+        <p>비영리 미션을 강화하는 AI 활용법. 리서치·글쓰기·데이터 분석 실무 적용 방법.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">10 레슨</span>
+        <div class="course-actions">
+          <a href="12-ai-fluency-for-nonprofits.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/29d6cb5d-1694-4452-9dae-cfcb35964207" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="course-card" data-cat="dev" style="--cc:#7b6ef6">
+      <div class="course-card-top">
+        <div class="course-num">COURSE 13</div>
+        <div class="course-badges"><span class="badge badge-cat">Claude Code</span></div>
+      </div>
+      <div class="course-card-body">
+        <h3>에이전트 스킬 소개</h3>
+        <p>Claude Code Skills로 반복 작업을 자동화하고 팀과 공유하는 방법. CLAUDE.md와의 차이점.</p>
+      </div>
+      <div class="course-card-footer">
+        <span class="course-lessons">6 레슨</span>
+        <div class="course-actions">
+          <a href="13-introduction-to-agent-skills.html" class="btn-sm btn-study">학습 →</a>
+          <a href="https://notebooklm.google.com/notebook/bcfc4ce0-fb03-48b7-8bcd-76bd6d2748bd" target="_blank" class="btn-sm btn-nlm">⬡ NLM</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── NotebookLM ── -->
+<section class="reveal" style="padding: 0 24px 100px;">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="nlm-section">
+      <div class="section-label" style="margin-bottom:16px">⬡ NotebookLM</div>
+      <div class="nlm-title">강의 자료가 AI와 대화합니다</div>
+      <p class="nlm-desc">13개 강의 전체가 NotebookLM에 탑재되어 있습니다. 그냥 읽지 말고, 질문하세요.</p>
+      <div class="nlm-examples">
+        <div class="nlm-example">이 강의에서 tool use를 설명한 부분을 한 페이지로 요약해줘</div>
+        <div class="nlm-example">MCP의 Sampling과 Resources의 차이가 뭐야?</div>
+        <div class="nlm-example">Bedrock에서 Claude를 호출하는 Python 코드 예시 보여줘</div>
+        <div class="nlm-example">이 과정 내용으로 퀴즈 5개 만들어줘</div>
+      </div>
+      <a href="index.html" class="btn-primary" style="font-size:13px; padding:11px 24px;">강의 선택하고 시작하기 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 학습 경로 ── -->
+<section id="paths" class="reveal">
+  <div class="section-label">Learning Paths</div>
+  <div class="section-title">나에게 맞는 경로는?</div>
+  <div class="section-desc">역할과 목적에 따라 최적의 학습 순서를 추천합니다.</div>
+  <div class="paths-grid">
+    <div class="path-card" style="--pc: var(--blue)">
+      <div class="path-icon">👋</div>
+      <h3>Claude 처음이에요</h3>
+      <ul class="path-steps">
+        <li>02 Claude 101</li>
+        <li>03 AI Fluency 기초</li>
+      </ul>
+    </div>
+    <div class="path-card" style="--pc: var(--accent2)">
+      <div class="path-icon">💻</div>
+      <h3>개발자입니다</h3>
+      <ul class="path-steps">
+        <li>04 Anthropic API</li>
+        <li>05 MCP 입문</li>
+        <li>08 MCP 심화</li>
+        <li>09 Bedrock 또는 10 Vertex</li>
+      </ul>
+    </div>
+    <div class="path-card" style="--pc: var(--green)">
+      <div class="path-icon">⌨️</div>
+      <h3>Claude Code 쓰고 싶어요</h3>
+      <ul class="path-steps">
+        <li>01 Claude Code 실전</li>
+        <li>13 에이전트 스킬</li>
+      </ul>
+    </div>
+    <div class="path-card" style="--pc: var(--pink)">
+      <div class="path-icon">🎓</div>
+      <h3>교육자 / 비영리</h3>
+      <ul class="path-steps">
+        <li>03 AI Fluency 기초</li>
+        <li>06 교육자 또는 11 교육법</li>
+        <li>12 비영리 (해당 시)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 학습 방법 ── -->
+<section class="reveal" style="padding-top:0;">
+  <div class="section-label">How to Learn</div>
+  <div class="section-title">4단계로 학습합니다</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01</div>
+      <h3>강의 선택</h3>
+      <p>메인 페이지 카드에서 관심 강의를 고릅니다. 분류 필터로 원하는 영역을 빠르게 찾을 수 있습니다.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02</div>
+      <h3>레슨 학습</h3>
+      <p>강의 페이지에서 좌측 목록 또는 탭으로 레슨을 이동합니다. 진도바로 학습 현황을 확인하세요.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03</div>
+      <h3>NotebookLM 질문</h3>
+      <p>각 강의 상단의 NotebookLM 버튼을 클릭해 AI와 대화하며 심층 학습합니다.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">04</div>
+      <h3>영상 병행 (선택)</h3>
+      <p>📹 뱃지가 있는 6개 강의는 원본 Anthropic Academy에서 영상을 함께 시청하면 더 효과적입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 푸터 ── -->
+<footer>
+  <p>Anthropic Academy 공식 코스 기반 한국어 학습 자료 · 비공식 번역</p>
+  <div style="display:flex; gap:20px;">
+    <a href="index.html">강의 목록</a>
+    <a href="guide.html">사용 가이드</a>
+    <a href="https://www.anthropic.com/learn" target="_blank">원본 →</a>
+  </div>
+</footer>
+
+<script>
+  // 필터
+  function filterCourses(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.course-card[data-cat]').forEach(card => {
+      card.classList.toggle('hidden', cat !== 'all' && card.dataset.cat !== cat);
+    });
+  }
+
+  // 스크롤 reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
