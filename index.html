@@ -239,6 +239,37 @@
       header h1 { font-size: 22px; }
       footer { padding: 18px 20px; }
     }
+
+    /* ── 카드 리팩터: wrapper + action bar ── */
+    .card { position: relative; padding-bottom: 52px; cursor: default; }
+    .card-link { display: block; text-decoration: none; color: inherit; }
+    .card-link:hover { color: inherit; }
+    .card-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 8px 14px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.02);
+      border-radius: 0 0 10px 10px;
+    }
+    .btn-nlm {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+      color: #a89ef8; text-decoration: none;
+      background: rgba(123,110,246,.1); border: 1px solid rgba(123,110,246,.3);
+      padding: 3px 10px; border-radius: 4px;
+      transition: background .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .btn-nlm:hover { background: rgba(123,110,246,.22); border-color: rgba(123,110,246,.55); color: #c4baff; }
+    .badge-video {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+      color: var(--accent); background: rgba(217,127,58,.1); border: 1px solid rgba(217,127,58,.28);
+      padding: 2px 7px; border-radius: 4px; margin-left: auto;
+    }
+    /* stats 추가 항목 */
+    .stat .num-sm { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--accent); }
   </style>
 </head>
 <body>
@@ -323,6 +354,8 @@
       <div class="stat"><div class="num">13</div><div class="lbl">코스</div></div>
       <div class="stat"><div class="num">한국어</div><div class="lbl">전체 번역</div></div>
       <div class="stat"><div class="num">무료</div><div class="lbl">오픈 소스</div></div>
+      <div class="stat"><div class="num-sm">13</div><div class="lbl">NotebookLM</div></div>
+      <div class="stat"><div class="num-sm">6</div><div class="lbl">영상 강의</div></div>
     </div>
   </header>
 
@@ -331,119 +364,197 @@
     <div class="section-title">AI Fluency 시리즈</div>
     <div class="cards">
 
-      <a href="03-ai-fluency-framework-foundations.html" class="card c3">
+      <div class="card c3">
+  <a href="03-ai-fluency-framework-foundations.html" class="card-link">
+
         <div class="card-num">COURSE 03</div>
         <div class="card-tag">AI FLUENCY</div>
         <h3>AI Fluency: 프레임워크 & 기초</h3>
         <p>4D 프레임워크(위임·설명·식별·철저함)와 인간-AI 협업의 근본 원칙을 배웁니다.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/fae28103-b5e2-4239-8be2-25d74d16c884" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
-      <a href="06-ai-fluency-for-educators.html" class="card c6">
+      <div class="card c6">
+  <a href="06-ai-fluency-for-educators.html" class="card-link">
+
         <div class="card-num">COURSE 06</div>
         <div class="card-tag">AI FLUENCY · 교육자</div>
         <h3>교육자를 위한 AI Fluency</h3>
         <p>교수 실무에 AI를 통합하는 방법. 코스 설계, 자료 제작, 평가 혁신을 다룹니다.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/92952b14-b194-4c60-bd41-3599b1d66bc1" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
-      <a href="07-ai-fluency-for-students.html" class="card c7">
+      <div class="card c7">
+  <a href="07-ai-fluency-for-students.html" class="card-link">
+
         <div class="card-num">COURSE 07</div>
         <div class="card-tag">AI FLUENCY · 학생</div>
         <h3>학생을 위한 AI Fluency</h3>
         <p>학습과 연구에서 AI를 효과적이고 윤리적으로 활용하는 핵심 스킬을 개발합니다.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/595e9272-048d-46f7-b43c-71bef9931a5f" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
-      <a href="11-teaching-ai-fluency.html" class="card c11">
+      <div class="card c11">
+  <a href="11-teaching-ai-fluency.html" class="card-link">
+
         <div class="card-num">COURSE 11</div>
         <div class="card-tag">AI FLUENCY · 교수법</div>
         <h3>AI Fluency 가르치기</h3>
         <p>위임-철저함 루프와 기술-식별 루프로 AI 유창성 교육 커리큘럼을 설계합니다.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/abe117d5-931e-47bc-a08e-92f38e445563" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
-      <a href="12-ai-fluency-for-nonprofits.html" class="card c12">
+      <div class="card c12">
+  <a href="12-ai-fluency-for-nonprofits.html" class="card-link">
+
         <div class="card-num">COURSE 12</div>
         <div class="card-tag">AI FLUENCY · 비영리</div>
         <h3>비영리 단체를 위한 AI Fluency</h3>
         <p>비영리 미션을 강화하는 AI 활용법. 리서치·글쓰기·데이터 분석 실무 적용.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/29d6cb5d-1694-4452-9dae-cfcb35964207" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
-      <a href="02-claude-101.html" class="card c2">
+      <div class="card c2">
+  <a href="02-claude-101.html" class="card-link">
+
         <div class="card-num">COURSE 02</div>
         <div class="card-tag">CLAUDE 기초</div>
         <h3>Claude 101</h3>
         <p>Claude를 일상 업무에 활용하는 법. 프롬프트 작성, 핵심 기능, 실무 응용을 다룹니다.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/7be249e7-74e7-4d79-9e5b-a4b26683fbd4" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
     </div>
 
     <div class="section-title">Claude API · 개발자 시리즈</div>
     <div class="cards">
 
-      <a href="04-claude-with-the-anthropic-api.html" class="card c4">
+      <div class="card c4">
+  <a href="04-claude-with-the-anthropic-api.html" class="card-link">
+
         <div class="card-num">COURSE 04</div>
         <div class="card-tag">ANTHROPIC API</div>
         <h3>Anthropic API로 Claude 개발하기</h3>
         <p>API 요청·멀티턴·스트리밍·Tool Use·RAG·MCP·에이전트까지, 풀스택 개발 완전 가이드.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/12b30b40-ec4d-4895-ada0-5334e019dfbe" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    <span class="badge-video">📹 영상</span>
+  </div>
+</div>
 
-      <a href="09-claude-in-amazon-bedrock.html" class="card c9">
+      <div class="card c9">
+  <a href="09-claude-in-amazon-bedrock.html" class="card-link">
+
         <div class="card-num">COURSE 09</div>
         <div class="card-tag">AMAZON BEDROCK</div>
         <h3>Amazon Bedrock으로 Claude 개발하기</h3>
         <p>boto3 + converse() API, inference profiles, Bedrock Knowledge Bases, IAM 보안까지.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/763ffe42-de91-405b-a0ed-8f5285bdc085" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    <span class="badge-video">📹 영상</span>
+  </div>
+</div>
 
-      <a href="10-claude-with-google-vertex.html" class="card c10">
+      <div class="card c10">
+  <a href="10-claude-with-google-vertex.html" class="card-link">
+
         <div class="card-num">COURSE 10</div>
         <div class="card-tag">GOOGLE VERTEX AI</div>
         <h3>Google Vertex AI로 Claude 개발하기</h3>
         <p>AnthropicVertex 클라이언트, gcloud 인증, GCP 서비스 통합, Vertex AI Agents.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/a4c2d82e-9a48-4579-9f06-8a14116ab0fd" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    <span class="badge-video">📹 영상</span>
+  </div>
+</div>
 
     </div>
 
     <div class="section-title">MCP · Claude Code 시리즈</div>
     <div class="cards">
 
-      <a href="13-introduction-to-agent-skills.html" class="card c13">
+      <div class="card c13">
+  <a href="13-introduction-to-agent-skills.html" class="card-link">
+
         <div class="card-num">COURSE 13</div>
         <div class="card-tag">CLAUDE CODE · SKILLS</div>
         <h3>에이전트 스킬 소개</h3>
         <p>Claude Code의 Skills 기능으로 반복 작업을 자동화하고 팀과 공유하는 방법을 배웁니다.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/bcfc4ce0-fb03-48b7-8bcd-76bd6d2748bd" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    
+  </div>
+</div>
 
-      <a href="01-claude-code-in-action.html" class="card c1">
+      <div class="card c1">
+  <a href="01-claude-code-in-action.html" class="card-link">
+
         <div class="card-num">COURSE 01</div>
         <div class="card-tag">CLAUDE CODE</div>
         <h3>Claude Code 실전</h3>
         <p>Claude Code를 개발 워크플로우에 통합하는 방법. 코드베이스 탐색, 디버깅, 자동화.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/59848c35-9a15-4413-8e00-212297b8ab45" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    <span class="badge-video">📹 영상</span>
+  </div>
+</div>
 
-      <a href="05-introduction-to-model-context-protocol.html" class="card c5">
+      <div class="card c5">
+  <a href="05-introduction-to-model-context-protocol.html" class="card-link">
+
         <div class="card-num">COURSE 05</div>
         <div class="card-tag">MCP · 기초</div>
         <h3>MCP 입문</h3>
         <p>Model Context Protocol의 핵심 개념. Tools·Resources·Prompts와 전송 방식 독립성.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/0c1d93bd-4256-4e8a-9b79-11f0ec214c3b" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    <span class="badge-video">📹 영상</span>
+  </div>
+</div>
 
-      <a href="08-model-context-protocol-advanced-topics.html" class="card c8">
+      <div class="card c8">
+  <a href="08-model-context-protocol-advanced-topics.html" class="card-link">
+
         <div class="card-num">COURSE 08</div>
         <div class="card-tag">MCP · 심화</div>
         <h3>MCP 고급 주제</h3>
         <p>Sampling, 알림, Roots, STDIO·StreamableHTTP 전송, 상태 관리 심화 구현.</p>
-        <span class="card-arrow">→</span>
-      </a>
+  </a>
+  <div class="card-bottom">
+    <a href="https://notebooklm.google.com/notebook/b4c1fe69-8f03-4302-96a7-d0b9174d71e3" target="_blank" class="btn-nlm">⬡ NotebookLM</a>
+    <span class="badge-video">📹 영상</span>
+  </div>
+</div>
 
     </div>
 
