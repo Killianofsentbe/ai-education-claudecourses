@@ -293,6 +293,55 @@
     }
     .quick-links .ql-origin:hover { background: rgba(217,127,58,.24); color: #e89a5a; }
 
+    /* ── Learning Paths ── */
+    .lp-section { margin-top: 56px; }
+    .lp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .lp-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 20px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .15s, box-shadow .2s;
+    }
+    .lp-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--lc, var(--accent));
+    }
+    .lp-card:hover {
+      border-color: var(--lc, var(--accent));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+    .lp-icon { font-size: 22px; margin-bottom: 10px; line-height: 1; }
+    .lp-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+    .lp-steps { display: flex; flex-direction: column; gap: 5px; }
+    .lp-step {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text2); line-height: 1.35;
+    }
+    .lp-num {
+      flex-shrink: 0;
+      width: 22px; height: 16px; border-radius: 3px;
+      background: rgba(255,255,255,.07);
+      color: var(--lc, var(--accent));
+      font-size: 9px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lp-divider { width: 1px; height: 7px; background: var(--border); margin-left: 10px; }
+    .lp-beginner { --lc: #e5c07b; }
+    .lp-dev      { --lc: #56b6c2; }
+    .lp-code     { --lc: #98c379; }
+    .lp-edu      { --lc: #e06c75; }
+
     /* ── 맨 위로 버튼 ── */
     .back-to-top {
       position: fixed; bottom: 24px; right: 20px; z-index: 9999;
@@ -610,6 +659,60 @@
   </div>
 </div>
 
+    </div>
+
+    <!-- ── Learning Paths ── -->
+    <div class="lp-section">
+      <div class="section-title">나에게 맞는 학습 경로</div>
+      <div class="lp-grid">
+
+        <div class="lp-card lp-beginner">
+          <div class="lp-icon">👋</div>
+          <div class="lp-title">Claude 처음이에요</div>
+          <div class="lp-steps">
+            <div class="lp-step"><span class="lp-num">02</span> Claude 101</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">03</span> AI Fluency 기초</div>
+          </div>
+        </div>
+
+        <div class="lp-card lp-dev">
+          <div class="lp-icon">💻</div>
+          <div class="lp-title">개발자입니다</div>
+          <div class="lp-steps">
+            <div class="lp-step"><span class="lp-num">04</span> Anthropic API</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">05</span> MCP 입문</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">08</span> MCP 심화</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">09</span> Bedrock 또는 <span class="lp-num" style="margin-left:4px">10</span>&nbsp;Vertex</div>
+          </div>
+        </div>
+
+        <div class="lp-card lp-code">
+          <div class="lp-icon">⌨️</div>
+          <div class="lp-title">Claude Code 쓰고 싶어요</div>
+          <div class="lp-steps">
+            <div class="lp-step"><span class="lp-num">01</span> Claude Code 실전</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">13</span> 에이전트 스킬</div>
+          </div>
+        </div>
+
+        <div class="lp-card lp-edu">
+          <div class="lp-icon">🎓</div>
+          <div class="lp-title">교육자 / 비영리</div>
+          <div class="lp-steps">
+            <div class="lp-step"><span class="lp-num">03</span> AI Fluency 기초</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">06</span> 교육자 또는 <span class="lp-num" style="margin-left:4px">11</span>&nbsp;교육법</div>
+            <div class="lp-divider"></div>
+            <div class="lp-step"><span class="lp-num">12</span> 비영리 (해당 시)</div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </main>
