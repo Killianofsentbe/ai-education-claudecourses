@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Fluency for Students — Anthropic Academy</title>
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg: #0d0d10;
       --surface: #16161c;
       --surface2: #1e1e27;
@@ -400,6 +401,45 @@
     }
     .back-to-top.visible { opacity: 1; pointer-events: auto; }
     .back-to-top:hover { transform: translateY(-3px); border-color: rgba(123,110,246,.7); color: #c4baff; }
+  
+    /* ── Light Theme (SentBe DS) ── */
+    [data-theme="light"] {
+      --bg:        #FFFFFF;
+      --surface:   #F0F2F7;
+      --surface2:  #E9ECF1;
+      --border:    #D8DADF;
+      --accent:    #1462FC;
+      --accent2:   #6D2EF6;
+      --text:      #1A1A1A;
+      --text-muted:#525357;
+      --text-dim:  #9D9FA1;
+      --code-bg:   #F7F8FB;
+      --tag-bg:    #F0F2F7;
+      --success:   #079F78;
+      --warning:   #C23F06;
+    }
+    [data-theme="light"] header {
+      background: rgba(255,255,255,.95) !important;
+      border-bottom-color: var(--border);
+    }
+    [data-theme="light"] aside { background: var(--bg) !important; border-right-color: var(--border) !important; }
+    [data-theme="light"] .nav-item.active { background: rgba(20,98,252,.08) !important; border-color: rgba(20,98,252,.25) !important; }
+    [data-theme="light"] .nav-item.active .nav-num { color: var(--accent) !important; }
+    [data-theme="light"] .lesson-number-badge { color: #fff !important; }
+    [data-theme="light"] .course-badge { background: rgba(20,98,252,.08) !important; color: var(--accent) !important; border-color: rgba(20,98,252,.2) !important; }
+    [data-theme="light"] code { background: var(--code-bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    [data-theme="light"] pre { background: var(--code-bg) !important; border-color: var(--border) !important; }
+    [data-theme="light"] .nlm-banner { background: rgba(20,98,252,.05) !important; border-color: rgba(20,98,252,.15) !important; }
+    [data-theme="light"] .lesson-section { border-bottom-color: var(--border) !important; }
+    /* ── Theme Toggle Button ── */
+    body { transition: background .25s, color .25s; }
+    .theme-toggle {
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      padding: 5px 10px; cursor: pointer; font-size: 14px; line-height: 1;
+      transition: all .2s; color: var(--text-muted); display: inline-flex;
+      align-items: center; margin-left: auto; flex-shrink: 0;
+    }
+    .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
   </style>
 </head>
 <body>
@@ -426,6 +466,7 @@
     <a href="index.html" class="logo">⬡ Anthropic Academy</a>
     <span class="sep">/</span>
     <span class="course-title-small">AI Fluency for Students</span>
+    <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">☀️</button>
   </div>
 </header>
 
@@ -1266,5 +1307,21 @@
     document.querySelector('main').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 </script>
+
+  <script>
+    /* ── Theme toggle ── */
+    (function() {
+      var btn = document.getElementById('theme-toggle');
+      function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        if (btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+        localStorage.setItem('sentbe-theme', t);
+      }
+      applyTheme(localStorage.getItem('sentbe-theme') || 'dark');
+      if (btn) btn.addEventListener('click', function() {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+    })();
+  </script>
 </body>
 </html>

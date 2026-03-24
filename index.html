@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anthropic AI 교육 코스 — 한국어 학습 자료</title>
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
-    :root {
+    :root,
+    [data-theme="dark"] {
       --bg:      #0d0d10;
       --bg2:     #13131a;
       --surface: #16161c;
@@ -358,6 +359,42 @@
     }
     .back-to-top.visible { opacity: 1; pointer-events: auto; }
     .back-to-top:hover { transform: translateY(-3px); border-color: rgba(123,110,246,.7); color: #c4baff; }
+  
+    /* ── Light Theme (SentBe DS) ── */
+    [data-theme="light"] {
+      --bg:      #FFFFFF;
+      --bg2:     #F7F8FB;
+      --surface: #F0F2F7;
+      --surface2:#E9ECF1;
+      --border:  #D8DADF;
+      --text:    #1A1A1A;
+      --text2:   #525357;
+      --muted:   #9D9FA1;
+      --accent:  #1462FC;
+      --accent2: #6D2EF6;
+      --green:   #079F78;
+    }
+    [data-theme="light"] aside { background: var(--bg2) !important; border-right-color: var(--border); }
+    [data-theme="light"] header { background: var(--surface) !important; border-bottom-color: var(--border); }
+    [data-theme="light"] .sidebar-logo { color: var(--accent) !important; }
+    [data-theme="light"] .nav-item.active { background: rgba(20,98,252,.08) !important; border-color: rgba(20,98,252,.25) !important; color: var(--accent) !important; }
+    [data-theme="light"] .nav-item:hover { background: var(--surface2) !important; }
+    [data-theme="light"] .header-badge { background: rgba(20,98,252,.1) !important; color: var(--accent) !important; }
+    [data-theme="light"] .stat .num { color: var(--accent) !important; }
+    [data-theme="light"] .card { background: var(--surface) !important; border-color: var(--border) !important; }
+    [data-theme="light"] .card:hover { border-color: rgba(20,98,252,.3) !important; box-shadow: 0 8px 32px rgba(0,0,0,.08) !important; }
+    [data-theme="light"] .filter-btn:hover,
+    [data-theme="light"] .filter-btn.active { background: rgba(20,98,252,.1) !important; color: var(--accent) !important; border-color: rgba(20,98,252,.3) !important; }
+    [data-theme="light"] .tag { background: rgba(20,98,252,.08) !important; color: var(--accent) !important; border-color: rgba(20,98,252,.2) !important; }
+    /* ── Theme Toggle Button ── */
+    body { transition: background .25s, color .25s; }
+    .theme-toggle {
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      padding: 5px 10px; cursor: pointer; font-size: 13px; line-height: 1;
+      transition: all .2s; color: var(--muted); display: flex;
+      align-items: center; justify-content: center; width: 100%; margin-top: 6px;
+    }
+    .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
   </style>
 </head>
 <body>
@@ -451,6 +488,8 @@
   </nav>
 
   <div class="sidebar-footer">
+    <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">☀️</button>
+
     <a href="guide.html" style="color:var(--accent2)">📖 사용 가이드</a>
     <a href="https://www.anthropic.com/learn" target="_blank">원본: anthropic.com/learn →</a>
   </div>
@@ -765,5 +804,21 @@
 
 </div><!-- /.main-wrap -->
 
+
+  <script>
+    /* ── Theme toggle ── */
+    (function() {
+      var btn = document.getElementById('theme-toggle');
+      function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        if (btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+        localStorage.setItem('sentbe-theme', t);
+      }
+      applyTheme(localStorage.getItem('sentbe-theme') || 'dark');
+      if (btn) btn.addEventListener('click', function() {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+    })();
+  </script>
 </body>
 </html>
