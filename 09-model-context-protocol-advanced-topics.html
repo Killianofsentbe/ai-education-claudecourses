@@ -40,15 +40,11 @@
     /* ── Sidebar ── */
     .sidebar {
       width: 270px;
-      min-height: 100vh;
       background: var(--surface);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      position: fixed;
-      top: 0; left: 0;
-      overflow-y: auto;
-      z-index: 100;
+      position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
     }
     .sidebar-header {
       padding: 24px 20px 18px;
@@ -141,7 +137,6 @@
 
     /* ── Main ── */
     .main {
-      margin-left: 270px;
       flex: 1;
       min-height: 100vh;
     }
@@ -708,6 +703,22 @@
     }
     .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
     [data-theme="light"] .lesson-video-btn { color: #1462FC; }
+  
+    header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 200; backdrop-filter: blur(12px); }
+    .header-inner { max-width: 1440px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; height: 56px; overflow: hidden; }
+    .logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; white-space: nowrap; transition: opacity .2s; }
+    .logo:hover { opacity: .7; }
+    .sep { color: var(--text-muted, var(--text3)); font-size: 13px; }
+    .course-title-small { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--text, var(--text2)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .layout { display: grid; grid-template-columns: 270px 1fr; min-height: calc(100vh - 56px); }
+  
+    .quick-links .theme-toggle {
+      background: transparent; border: 1px solid rgba(255,255,255,.15); border-radius: 6px;
+      padding: 5px 10px; cursor: pointer; font-size: 13px; color: var(--muted, #9D9FA1);
+      transition: all .2s; line-height: 1;
+    }
+    .quick-links .theme-toggle:hover { background: rgba(255,255,255,.08); }
+    [data-theme="light"] .quick-links .theme-toggle { border-color: rgba(0,0,0,.15); color: #525357; }
   </style>
 </head>
 <body>
@@ -716,6 +727,8 @@
 <div class="quick-links">
   <a href="guide.html" class="ql-guide">📖 사용 가이드</a>
   <a href="https://www.anthropic.com/learn" target="_blank" class="ql-origin">원본 →</a>
+
+  <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">☀️</button>
 </div>
 
 <!-- ── 맨 위로 버튼 ── -->
@@ -727,8 +740,16 @@
   });
 </script>
 
-<a href="index.html" id="home-btn" style="position:fixed;top:12px;left:14px;z-index:9999;font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;color:#d97f3a;text-decoration:none;letter-spacing:.05em;background:rgba(13,13,16,.92);padding:5px 11px;border-radius:5px;border:1px solid #2a2a3a;backdrop-filter:blur(4px);transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">← 강의 목록</a>
 
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">← 강의 목록</a>
+    <span class="sep">/</span>
+    <span class="course-title-small">MCP 고급 주제 (Advanced Topics)</span>
+  </div>
+</header>
+
+<div class="layout">
 <aside class="sidebar">
   <div class="sidebar-header">
     <div class="course-badge">Advanced MCP</div>
@@ -1849,6 +1870,7 @@ root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /pa
 
   </div>
 </main>
+</div><!-- /.layout -->
 
 <script>
   function showLesson(idx) {

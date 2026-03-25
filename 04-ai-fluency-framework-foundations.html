@@ -408,6 +408,14 @@
     }
     .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
     [data-theme="light"] .lesson-video-btn { color: #1462FC; }
+  
+    .quick-links .theme-toggle {
+      background: transparent; border: 1px solid rgba(255,255,255,.15); border-radius: 6px;
+      padding: 5px 10px; cursor: pointer; font-size: 13px; color: var(--muted, #9D9FA1);
+      transition: all .2s; line-height: 1;
+    }
+    .quick-links .theme-toggle:hover { background: rgba(255,255,255,.08); }
+    [data-theme="light"] .quick-links .theme-toggle { border-color: rgba(0,0,0,.15); color: #525357; }
   </style>
 </head>
 <body>
@@ -416,6 +424,8 @@
 <div class="quick-links">
   <a href="guide.html" class="ql-guide">📖 사용 가이드</a>
   <a href="https://www.anthropic.com/learn" target="_blank" class="ql-origin">원본 →</a>
+
+  <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">☀️</button>
 </div>
 
 <!-- ── 맨 위로 버튼 ── -->
@@ -433,7 +443,6 @@
     <a href="index.html" class="logo">← 강의 목록</a>
     <span class="sep">/</span>
     <span class="course-title-small">AI Fluency: Framework & Foundations</span>
-    <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">☀️</button>
   </div>
 </header>
 
