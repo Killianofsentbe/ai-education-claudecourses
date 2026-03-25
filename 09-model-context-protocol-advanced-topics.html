@@ -697,6 +697,17 @@
       color: #1462FC;
     }
     .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+  
+    /* ── 레슨별 영상 링크 ── */
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
+      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
+    }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+    [data-theme="light"] .lesson-video-btn { color: #1462FC; }
   </style>
 </head>
 <body>
@@ -800,6 +811,8 @@
         <div class="lesson-tag">레슨 1 · Sampling</div>
         <h1>Sampling: 서버가 AI를 빌리는 방법</h1>
         <p class="subtitle">MCP 서버가 직접 Claude를 호출하지 않고, 클라이언트를 통해 LLM 기능을 위임하는 혁신적인 패턴을 학습합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/296349" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -979,6 +992,8 @@
         <div class="lesson-tag">레슨 2 · Sampling Walkthrough</div>
         <h1>Sampling 단계별 구현 가이드</h1>
         <p class="subtitle">실제 프로젝트를 통해 Sampling의 모든 구현 단계를 체계적으로 살펴봅니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/296288" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -1102,6 +1117,8 @@ mcp = <span class="fn">FastMCP</span>(name=<span class="str">"DemoServer"</span>
         <div class="lesson-tag">레슨 3 · Notifications</div>
         <h1>로그와 진행률 알림으로 UX 개선</h1>
         <p class="subtitle">장시간 실행되는 도구의 상태를 실시간으로 클라이언트에 전달해 답답한 대기 경험을 해소합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/295172" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -1223,6 +1240,8 @@ mcp = <span class="fn">FastMCP</span>(name=<span class="str">"DemoServer"</span>
         <div class="lesson-tag">레슨 4 · Roots</div>
         <h1>Roots: 파일 시스템 접근 권한 관리</h1>
         <p class="subtitle">MCP 서버에 특정 파일과 폴더에 대한 접근 권한을 부여하면서도 보안 경계를 유지하는 방법을 학습합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/296284" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -1380,6 +1399,8 @@ root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /pa
         <div class="lesson-tag">레슨 5 · JSON Message Types</div>
         <h1>MCP의 JSON 메시지 타입 이해</h1>
         <p class="subtitle">MCP 통신의 기반이 되는 JSON 메시지 타입을 분류하고, 양방향 프로토콜의 설계 원리를 이해합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/291036" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -1474,6 +1495,8 @@ root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /pa
         <div class="lesson-tag">레슨 6 · STDIO Transport</div>
         <h1>STDIO 트랜스포트: 가장 단순한 통신 방식</h1>
         <p class="subtitle">표준 입출력 스트림을 통해 클라이언트와 서버가 통신하는 가장 기본적이고 직관적인 MCP 트랜스포트를 이해합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/296289" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -1600,6 +1623,8 @@ root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /pa
         <div class="lesson-tag">레슨 7 · StreamableHTTP</div>
         <h1>StreamableHTTP 트랜스포트: 원격 MCP 서버</h1>
         <p class="subtitle">HTTP를 통해 원격으로 호스팅된 MCP 서버에 연결하는 방법과 SSE를 이용한 양방향 통신 구현 원리를 이해합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/295839" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">
@@ -1705,6 +1730,8 @@ root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /pa
         <div class="lesson-tag">레슨 8 · State Management</div>
         <h1>Stateless HTTP와 확장성 설계</h1>
         <p class="subtitle">수천 명의 클라이언트를 지원하는 프로덕션 MCP 서버를 구축할 때 상태 관리와 수평 확장의 트레이드오프를 이해합니다.</p>
+      
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics/297276" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
       </div>
 
       <div class="learn-box">

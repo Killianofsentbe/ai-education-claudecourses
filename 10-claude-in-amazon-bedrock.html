@@ -245,6 +245,17 @@
       color: #1462FC;
     }
     .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+  
+    /* ── 레슨별 영상 링크 ── */
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
+      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
+    }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+    [data-theme="light"] .lesson-video-btn { color: #1462FC; }
   </style>
 </head>
 <body>
@@ -309,7 +320,9 @@
           <span class="lesson-number-badge">LESSON 01</span>
           <h2>Amazon Bedrock & Claude 모델 이해</h2>
           <p class="lesson-subtitle">AWS 에코시스템에서 Claude를 활용하는 방법과 Bedrock의 고유한 특성을 이해합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/241929" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -423,7 +436,9 @@ model_id = "us.anthropic.claude-sonnet-4-0-20250514-v1:0"
           <span class="lesson-number-badge">LESSON 02</span>
           <h2>Bedrock API & 대화 관리</h2>
           <p class="lesson-subtitle">client.converse()로 첫 요청을 만들고, 멀티턴 대화를 Bedrock API로 구현합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/303332" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -564,7 +579,9 @@ final = chat(messages)</code></pre>
           <span class="lesson-number-badge">LESSON 03</span>
           <h2>시스템 프롬프트 & 출력 제어</h2>
           <p class="lesson-subtitle">Bedrock API에서 시스템 프롬프트, Temperature, 구조화 출력을 구현합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276716" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -667,7 +684,9 @@ data = json.loads(raw_json)  # 순수 JSON만 파싱</code></pre>
           <span class="lesson-number-badge">LESSON 04</span>
           <h2>프롬프트 평가 (Evals)</h2>
           <p class="lesson-subtitle">Bedrock API로 체계적인 Eval 파이프라인을 구축해 프롬프트를 데이터 기반으로 개선합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276719" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -778,7 +797,9 @@ Return only a JSON: {{"score": N, "reason": "..."}}"""
           <span class="lesson-number-badge">LESSON 05</span>
           <h2>프롬프트 엔지니어링</h2>
           <p class="lesson-subtitle">Bedrock 환경에서도 동일하게 적용되는 4가지 핵심 프롬프트 엔지니어링 기법</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276722" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -883,7 +904,9 @@ Convert the following natural language description to an AWS CLI command.
           <span class="lesson-number-badge">LESSON 06</span>
           <h2>Tool Use (도구 사용)</h2>
           <p class="lesson-subtitle">Bedrock의 converse() API로 도구를 정의하고, 멀티턴 도구 대화와 구조화 데이터 추출을 구현합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276725" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1029,7 +1052,9 @@ for block in response["output"]["message"]["content"]:
           <span class="lesson-number-badge">LESSON 07</span>
           <h2>RAG (검색 증강 생성)</h2>
           <p class="lesson-subtitle">AWS 생태계(S3, OpenSearch, Kendra)와 통합하는 RAG 파이프라인을 Bedrock에서 구축합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276726" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1139,7 +1164,9 @@ If the answer is not in the context, say so clearly."""
           <span class="lesson-number-badge">LESSON 08</span>
           <h2>Claude 고급 기능</h2>
           <p class="lesson-subtitle">Bedrock에서 확장 사고, 이미지·PDF 처리, Citations, 프롬프트 캐싱을 구현합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276717" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1260,7 +1287,9 @@ print(f"캐시 생성 토큰: {usage.get('cacheWriteInputTokens', 0)}")</code></
           <span class="lesson-number-badge">LESSON 09</span>
           <h2>MCP (모델 컨텍스트 프로토콜)</h2>
           <p class="lesson-subtitle">Bedrock 환경에서 MCP를 활용해 AWS 서비스와 외부 도구를 Claude와 통합합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276720" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1356,7 +1385,9 @@ class BedrockMCPClient:
           <span class="lesson-number-badge">LESSON 10</span>
           <h2>에이전트 & Claude Code</h2>
           <p class="lesson-subtitle">AWS 환경에서 AI 에이전트를 구축하고, Claude Code와 Computer Use를 활용한 자동화를 구현합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-in-amazon-bedrock/276721" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>

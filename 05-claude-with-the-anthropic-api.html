@@ -251,6 +251,17 @@
       color: #1462FC;
     }
     .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+  
+    /* ── 레슨별 영상 링크 ── */
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
+      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
+    }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+    [data-theme="light"] .lesson-video-btn { color: #1462FC; }
   </style>
 </head>
 <body>
@@ -315,7 +326,9 @@
           <span class="lesson-number-badge">LESSON 01</span>
           <h2>API 기초 & Claude 모델 이해</h2>
           <p class="lesson-subtitle">Anthropic API의 작동 원리와 Claude 모델 패밀리를 이해합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287818" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -449,7 +462,9 @@
           <span class="lesson-number-badge">LESSON 02</span>
           <h2>첫 API 요청 & 대화 관리</h2>
           <p class="lesson-subtitle">client.messages.create()로 첫 요청을 만들고, 멀티턴 대화를 올바르게 관리합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287722" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -576,7 +591,9 @@ final_answer = chat(messages)</code></pre>
           <span class="lesson-number-badge">LESSON 03</span>
           <h2>시스템 프롬프트 & 출력 제어</h2>
           <p class="lesson-subtitle">시스템 프롬프트로 Claude의 역할을 정의하고, Temperature·스트리밍·구조화 출력으로 응답을 제어합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287726" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -734,7 +751,9 @@ data = json.loads(text)</code></pre>
           <span class="lesson-number-badge">LESSON 04</span>
           <h2>프롬프트 평가 (Evals)</h2>
           <p class="lesson-subtitle">데이터 기반으로 프롬프트 성능을 측정하고 체계적으로 개선하는 Eval 워크플로우를 구축합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/296766" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -887,7 +906,9 @@ with open('dataset.json', 'w') as f:
           <span class="lesson-number-badge">LESSON 05</span>
           <h2>프롬프트 엔지니어링</h2>
           <p class="lesson-subtitle">명확성, 구체성, XML 태그, 예시 제공의 4가지 핵심 기법으로 프롬프트 품질을 극적으로 향상시킵니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287725" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1019,7 +1040,9 @@ Classify the sentiment of this tweet as positive or negative.
           <span class="lesson-number-badge">LESSON 06</span>
           <h2>Tool Use (도구 사용)</h2>
           <p class="lesson-subtitle">Claude가 외부 함수와 API를 호출할 수 있도록 도구를 정의하고, 멀티턴 도구 대화와 구조화 데이터 추출을 구현합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287735" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1182,7 +1205,9 @@ structured_data = response.content[0].input  # 깔끔한 구조화 데이터</co
           <span class="lesson-number-badge">LESSON 07</span>
           <h2>RAG (검색 증강 생성)</h2>
           <p class="lesson-subtitle">텍스트 청킹, 임베딩, 벡터 검색을 활용해 외부 문서를 Claude에게 효율적으로 제공하는 RAG 파이프라인을 구축합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287727" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1322,7 +1347,9 @@ def find_relevant_chunks(query, chunk_embeddings, chunks, top_k=3):
           <span class="lesson-number-badge">LESSON 08</span>
           <h2>Claude 고급 기능</h2>
           <p class="lesson-subtitle">확장 사고, 이미지·PDF·인용, 프롬프트 캐싱 등 Claude의 강력한 고급 기능들을 실무에 적용합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287733" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1467,7 +1494,9 @@ print(f"캐시 히트: {response.usage.cache_read_input_tokens}")</code></pre>
           <span class="lesson-number-badge">LESSON 09</span>
           <h2>MCP (모델 컨텍스트 프로토콜)</h2>
           <p class="lesson-subtitle">MCP의 아키텍처를 이해하고, 클라이언트·서버를 직접 구현해 외부 서비스와 통합하는 방법을 배웁니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287724" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>
@@ -1608,7 +1637,9 @@ class MCPClient:
           <span class="lesson-number-badge">LESSON 10</span>
           <h2>에이전트 & Claude Code</h2>
           <p class="lesson-subtitle">자율적으로 작업을 수행하는 AI 에이전트의 핵심 특성을 이해하고, Claude Code와 Computer Use를 실무에 적용합니다</p>
-        </div>
+        
+        <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-the-anthropic-api/287728" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+      </div>
 
         <div class="learn-box">
           <h4>이 레슨에서 배우는 것</h4>

@@ -329,6 +329,17 @@
       color: #1462FC;
     }
     .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+  
+    /* ── 레슨별 영상 링크 ── */
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
+      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
+    }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+    [data-theme="light"] .lesson-video-btn { color: #1462FC; }
   </style>
 </head>
 <body>
@@ -423,7 +434,9 @@
       <span class="tag">01 · VERTEX AI SETUP</span>
       <h2>Vertex AI & Claude 모델 이해</h2>
       <p>Google Cloud의 Vertex AI 플랫폼에서 Claude를 사용하는 방법과 GCP 인증 설정을 마스터합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289145" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -588,7 +601,9 @@ model = <span class="str">"claude-sonnet-4@20250514"</span>  <span class="cm"># 
       <span class="tag">02 · API REQUESTS</span>
       <h2>첫 API 요청 & 대화 관리</h2>
       <p>AnthropicVertex로 첫 요청을 보내고, 멀티턴 대화와 스트리밍을 구현합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289146" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -731,7 +746,9 @@ data = json.loads(response.content[<span class="num">0</span>].text)
       <span class="tag">03 · SYSTEM PROMPTS</span>
       <h2>시스템 프롬프트 & 출력 제어</h2>
       <p>시스템 프롬프트로 Claude의 역할과 행동을 정의하고, Temperature와 기타 파라미터로 출력을 세밀하게 제어합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289151" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -848,7 +865,9 @@ response = client.messages.create(model=model, max_tokens=<span class="num">1000
       <span class="tag">04 · PROMPT EVALS</span>
       <h2>프롬프트 평가 (Evals)</h2>
       <p>체계적인 평가 워크플로우로 프롬프트 품질을 측정하고 지속적으로 개선합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/307525" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -969,7 +988,9 @@ accuracy = <span class="fn">sum</span>(results) / <span class="fn">len</span>(re
       <span class="tag">05 · PROMPT ENGINEERING</span>
       <h2>프롬프트 엔지니어링</h2>
       <p>Claude로부터 더 정확하고 유용한 응답을 끌어내는 4가지 핵심 기법을 익힙니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289155" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -1069,7 +1090,9 @@ response = client.messages.create(
       <span class="tag">06 · TOOL USE</span>
       <h2>Tool Use (도구 사용)</h2>
       <p>Claude에게 함수 호출 능력을 부여하여 실시간 데이터 접근, 계산, 외부 서비스 연동을 가능하게 합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289156" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -1195,7 +1218,9 @@ response = client.messages.create(
       <span class="tag">07 · RAG</span>
       <h2>RAG (검색 증강 생성)</h2>
       <p>외부 문서나 데이터베이스에서 관련 정보를 검색하여 Claude에게 컨텍스트로 제공하는 RAG 파이프라인을 구축합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289150" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -1306,7 +1331,9 @@ vector_store = []
       <span class="tag">08 · ADVANCED FEATURES</span>
       <h2>Claude 고급 기능</h2>
       <p>Extended Thinking, 멀티모달(이미지/PDF), Citations, 프롬프트 캐싱으로 애플리케이션의 성능과 비용 효율을 극대화합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289153" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -1415,7 +1442,9 @@ response = client.messages.create(
       <span class="tag">09 · MCP</span>
       <h2>MCP (모델 컨텍스트 프로토콜)</h2>
       <p>MCP로 Claude에게 표준화된 방식으로 도구와 리소스를 연결하여 진정한 AI 에이전트를 구축합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289157" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>
@@ -1527,7 +1556,9 @@ model = <span class="str">"claude-sonnet-4@20250514"</span>
       <span class="tag">10 · AGENTS</span>
       <h2>에이전트 & Claude Code</h2>
       <p>에이전트 루프 패턴으로 자율적으로 작업을 완수하는 AI 에이전트를 구축하고, Claude Code를 개발 워크플로우에 통합합니다.</p>
-    </div>
+    
+    <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/claude-with-google-vertex/289154" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+  </div>
 
     <div class="learn-box">
       <h3>이 섹션에서 배울 내용</h3>

@@ -270,6 +270,17 @@
       color: #1462FC;
     }
     .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+  
+    /* ── 레슨별 영상 링크 ── */
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
+      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
+    }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+    [data-theme="light"] .lesson-video-btn { color: #1462FC; }
   </style>
 </head>
 <body>
@@ -371,7 +382,9 @@
           <div class="lesson-title-block">
             <h2>코스에 오신 것을 환영합니다</h2>
             <div class="lesson-time">Welcome to the course</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/303756" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -431,7 +444,9 @@
           <div class="lesson-title-block">
             <h2>MCP 소개</h2>
             <div class="lesson-time">Introducing MCP</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296689" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -530,7 +545,9 @@
           <div class="lesson-title-block">
             <h2>MCP 클라이언트</h2>
             <div class="lesson-time">MCP Clients</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296690" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -603,7 +620,9 @@
           <div class="lesson-title-block">
             <h2>프로젝트 설정</h2>
             <div class="lesson-time">Project Setup</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296694" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -670,7 +689,9 @@
           <div class="lesson-title-block">
             <h2>MCP로 도구 정의하기</h2>
             <div class="lesson-time">Defining Tools with MCP</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296697" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -770,7 +791,9 @@ docs = {
           <div class="lesson-title-block">
             <h2>서버 인스펙터</h2>
             <div class="lesson-time">The Server Inspector</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296693" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -842,7 +865,9 @@ mcp dev mcp_server.py
           <div class="lesson-title-block">
             <h2>코스 만족도 설문</h2>
             <div class="lesson-time">Course Satisfaction Survey</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/297281" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="key-takeaways">
@@ -875,7 +900,9 @@ mcp dev mcp_server.py
           <div class="lesson-title-block">
             <h2>클라이언트 구현하기</h2>
             <div class="lesson-time">Implementing a Client</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296696" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -946,7 +973,9 @@ uv run main.py</code></pre>
           <div class="lesson-title-block">
             <h2>리소스 정의하기</h2>
             <div class="lesson-time">Defining Resources</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296699" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -1021,7 +1050,9 @@ uv run main.py</code></pre>
           <div class="lesson-title-block">
             <h2>리소스 접근하기</h2>
             <div class="lesson-time">Accessing Resources</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296695" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -1094,7 +1125,9 @@ uv run main.py</code></pre>
           <div class="lesson-title-block">
             <h2>프롬프트 정의하기</h2>
             <div class="lesson-time">Defining Prompts</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296698" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -1186,7 +1219,9 @@ Use the 'edit_document' tool to edit the document.
           <div class="lesson-title-block">
             <h2>클라이언트에서 프롬프트 사용하기</h2>
             <div class="lesson-time">Prompts in the Client</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296692" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
@@ -1253,7 +1288,9 @@ messages = <span class="kw">await</span> client.get_prompt(<span class="str">"fo
           <div class="lesson-title-block">
             <h2>MCP 최종 평가</h2>
             <div class="lesson-time">Final Assessment on MCP</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/297196" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="key-takeaways">
@@ -1303,7 +1340,9 @@ messages = <span class="kw">await</span> client.get_prompt(<span class="str">"fo
           <div class="lesson-title-block">
             <h2>MCP 복습</h2>
             <div class="lesson-time">MCP Review</div>
-          </div>
+          
+          <div class="lesson-video-links"><a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol/296691" target="_blank" class="lesson-video-btn">📺 원본 영상 →</a></div>
+        </div>
         </div>
 
         <div class="learn-box">
