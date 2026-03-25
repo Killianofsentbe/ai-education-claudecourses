@@ -390,6 +390,13 @@
       align-items: center; margin-left: auto; flex-shrink: 0;
     }
     .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
+  
+    /* ── Academy 버튼 ── */
+    .academy-btn {
+      background: rgba(20,98,252,.12); border: 1px solid rgba(20,98,252,.3);
+      color: #1462FC;
+    }
+    .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
   </style>
 </head>
 <body>
@@ -463,6 +470,15 @@
 </aside>
 
 <main class="main">
+  <div class="nlm-banner">
+      <span class="nlm-banner-icon">⬡</span>
+      <div class="nlm-banner-text">
+        <strong>심화 학습 &amp; 원본 자료</strong>
+        <span>원본 영상(한글 자막)은 Anthropic Academy에서, AI 대화 학습은 NotebookLM에서 이어가세요.</span>
+      </div>
+      <a href="https://anthropic.skilljar.com/claude-101" target="_blank" class="nlm-banner-btn academy-btn">📺 원본 영상 →</a>
+      <a href="https://notebooklm.google.com/notebook/7be249e7-74e7-4d79-9e5b-a4b26683fbd4" target="_blank" class="nlm-banner-btn">⬡ NotebookLM →</a>
+    </div>
   <div class="top-bar">
     <button class="tab-btn active" onclick="showLesson(0)">Claude 소개</button>
     <button class="tab-btn" onclick="showLesson(1)">결과 개선</button>

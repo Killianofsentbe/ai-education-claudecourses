@@ -322,6 +322,13 @@
       align-items: center; margin-left: auto; flex-shrink: 0;
     }
     .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
+  
+    /* ── Academy 버튼 ── */
+    .academy-btn {
+      background: rgba(20,98,252,.12); border: 1px solid rgba(20,98,252,.3);
+      color: #1462FC;
+    }
+    .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
   </style>
 </head>
 <body>
@@ -398,6 +405,15 @@
 
 <!-- ── 메인 콘텐츠 ── -->
 <main id="main">
+  <div class="nlm-banner">
+      <span class="nlm-banner-icon">⬡</span>
+      <div class="nlm-banner-text">
+        <strong>심화 학습 &amp; 원본 자료</strong>
+        <span>원본 영상(한글 자막)은 Anthropic Academy에서, AI 대화 학습은 NotebookLM에서 이어가세요.</span>
+      </div>
+      <a href="https://anthropic.skilljar.com/claude-with-google-vertex" target="_blank" class="nlm-banner-btn academy-btn">📺 원본 영상 →</a>
+      <a href="https://notebooklm.google.com/notebook/a4c2d82e-9a48-4579-9f06-8a14116ab0fd" target="_blank" class="nlm-banner-btn">⬡ NotebookLM →</a>
+    </div>
 
   <!-- ══════════════════════════════════════
        패널 01 — Vertex AI & Claude 모델 이해

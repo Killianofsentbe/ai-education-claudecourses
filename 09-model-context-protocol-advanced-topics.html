@@ -690,6 +690,13 @@
       align-items: center; margin-left: auto; flex-shrink: 0;
     }
     .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
+  
+    /* ── Academy 버튼 ── */
+    .academy-btn {
+      background: rgba(20,98,252,.12); border: 1px solid rgba(20,98,252,.3);
+      color: #1462FC;
+    }
+    .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
   </style>
 </head>
 <body>
@@ -763,6 +770,15 @@
 </aside>
 
 <main class="main">
+  <div class="nlm-banner">
+      <span class="nlm-banner-icon">⬡</span>
+      <div class="nlm-banner-text">
+        <strong>심화 학습 &amp; 원본 자료</strong>
+        <span>원본 영상(한글 자막)은 Anthropic Academy에서, AI 대화 학습은 NotebookLM에서 이어가세요.</span>
+      </div>
+      <a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics" target="_blank" class="nlm-banner-btn academy-btn">📺 원본 영상 →</a>
+      <a href="https://notebooklm.google.com/notebook/b4c1fe69-8f03-4302-96a7-d0b9174d71e3" target="_blank" class="nlm-banner-btn">⬡ NotebookLM →</a>
+    </div>
   <div class="top-bar">
     <button class="tab-btn active" onclick="showLesson(0)">Sampling</button>
     <button class="tab-btn" onclick="showLesson(1)">구현 실습</button>
