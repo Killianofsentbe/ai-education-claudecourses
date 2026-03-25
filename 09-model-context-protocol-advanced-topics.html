@@ -6,176 +6,130 @@
   <title>MCP 심화 | Model Context Protocol: Advanced Topics</title>
   <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
   <style>
+    /* ── Base Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root,
     [data-theme="dark"] {
-      --bg: #0d0d10;
-      --surface: #16161c;
-      --surface2: #1e1e28;
-      --surface3: #252530;
-      --border: #2e2e3e;
-      --border2: #3a3a50;
-      --text: #e8e8f0;
-      --text2: #a8a8c0;
-      --text3: #6868a0;
-      --accent: #d97f3a;
-      --accent2: #7b6ef6;
-      --accent3: #4ec9b0;
-      --accent4: #e06c75;
-      --accent5: #61afef;
-      --success: #4caf80;
-      --warn: #e6c84a;
+      --bg: #0d0d10; --surface: #16161c; --surface2: #1e1e27; --border: #2a2a38;
+      --accent: #d97f3a; --accent2: #7b6ef6; --text: #e8e6f0; --text-muted: #8884a8;
+      --text-dim: #5a5870; --code-bg: #111118; --tag-bg: #1e1e2e;
+      --success: #4caf80; --warning: #e5c07b;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 15px;
-      line-height: 1.75;
-      display: flex;
-      min-height: 100vh;
+    [data-theme="light"] {
+      --bg:        #FFFFFF;
+      --surface:   #F0F2F7;
+      --surface2:  #E9ECF1;
+      --border:    #D8DADF;
+      --accent:    #1462FC;
+      --accent2:   #6D2EF6;
+      --text:      #1A1A1A;
+      --text-muted:#525357;
+      --text-dim:  #9D9FA1;
+      --code-bg:   #F7F8FB;
+      --tag-bg:    #F0F2F7;
+      --success:   #079F78;
+      --warning:   #C23F06;
     }
+    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.7; transition: background .25s, color .25s; }
+
+    /* ── Header ── */
+    header { background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #0d0f1a 100%); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .header-inner { max-width: 1440px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; height: 56px; overflow: hidden; }
+    .logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; white-space: nowrap; transition: opacity .2s; }
+    .logo:hover { opacity: .7; }
+    .sep { color: var(--text-dim); font-size: 13px; flex-shrink: 0; }
+    .course-title-small { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    [data-theme="light"] header { background: rgba(255,255,255,.95) !important; border-bottom-color: var(--border); }
+
+    /* ── Layout ── */
+    .layout { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 270px 1fr; gap: 0; padding: 0 2rem; }
 
     /* ── Sidebar ── */
-    .sidebar {
-      width: 270px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
-    }
-    .sidebar-header {
-      padding: 24px 20px 18px;
-      border-bottom: 1px solid var(--border);
-    }
-    .course-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--accent2), #5a4fc4);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    .sidebar-header h2 {
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.4;
-    }
-    .sidebar-header p {
-      font-size: 11px;
-      color: var(--text3);
-      margin-top: 6px;
-    }
-    .progress-bar-wrap {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    .progress-label {
-      font-size: 11px;
-      color: var(--text3);
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .progress-track {
-      height: 4px;
-      background: var(--surface3);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent2), var(--accent));
-      border-radius: 2px;
-      width: 12.5%;
-      transition: width .4s;
-    }
+    aside, .sidebar { position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 2rem 1.5rem 2rem 0; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border) transparent; background: transparent; width: auto; min-width: 0; min-height: 0; display: block; flex-direction: unset; }
+    .sidebar-label { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem; }
+    .lesson-nav { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text-muted); font-size: 13px; line-height: 1.4; transition: all 0.15s; border: 1px solid transparent; }
+    .nav-item:hover { background: var(--surface); color: var(--text); }
+    .nav-item.active { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
+    .nav-num { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11px; color: var(--accent); min-width: 18px; margin-top: 1px; flex-shrink: 0; }
+    [data-theme="light"] aside, [data-theme="light"] .sidebar { background: var(--bg) !important; border-right-color: var(--border); }
+    [data-theme="light"] .nav-item.active { background: rgba(20,98,252,.08) !important; border-color: rgba(20,98,252,.25) !important; }
+
+    /* ── Main ── */
+    main { padding: 3rem 0 3rem 3rem; min-width: 0; }
+
+    /* ── Quick Links ── */
+    .quick-links { position: fixed; top: 12px; right: 16px; z-index: 9999; display: flex; align-items: center; gap: 8px; }
+    .quick-links a { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 6px; text-decoration: none; border: 1px solid; transition: all .2s; white-space: nowrap; }
+    .quick-links .ql-guide { background: rgba(123,110,246,.15); border-color: rgba(123,110,246,.4); color: #a89ef8; }
+    .quick-links .ql-guide:hover { background: rgba(123,110,246,.28); color: #d0cbff; }
+    .quick-links .ql-origin { background: rgba(217,127,58,.15); border-color: rgba(217,127,58,.4); color: #d97f3a; }
+    .quick-links .ql-origin:hover { background: rgba(217,127,58,.24); color: #e89a5a; }
+    .quick-links .theme-toggle { background: transparent; border: 1px solid rgba(255,255,255,.15); border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 13px; color: var(--text-muted); transition: all .2s; line-height: 1; }
+    .quick-links .theme-toggle:hover { background: rgba(255,255,255,.08); }
+    [data-theme="light"] .quick-links .theme-toggle { border-color: rgba(0,0,0,.15); color: #525357; }
+
+    /* ── Back to Top ── */
+    .back-to-top { position: fixed; bottom: 24px; right: 20px; z-index: 9999; width: 38px; height: 38px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 16px; cursor: pointer; opacity: 0; transition: opacity .3s, background .2s; display: flex; align-items: center; justify-content: center; }
+    .back-to-top.visible { opacity: 1; }
+    .back-to-top:hover { background: var(--surface); color: var(--text); }
+
+    /* ── NLM Banner ── */
+    .nlm-banner { display: flex; align-items: center; gap: 1rem; background: linear-gradient(135deg,rgba(123,110,246,.08),rgba(123,110,246,.04)); border: 1px solid rgba(123,110,246,.25); border-radius: 10px; padding: .85rem 1.25rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .nlm-banner-icon { font-size: 18px; flex-shrink: 0; }
+    .nlm-banner-text { flex: 1; min-width: 200px; }
+    .nlm-banner-text strong { display: block; font-size: 13px; color: var(--accent2); margin-bottom: 2px; }
+    .nlm-banner-text span { font-size: 12px; color: var(--text-muted); }
+    .nlm-banner-btn { display: inline-flex; align-items: center; gap: .4rem; background: rgba(123,110,246,.15); border: 1px solid rgba(123,110,246,.4); color: #a89ef8; text-decoration: none; font-size: 12px; font-weight: 600; padding: .45rem 1rem; border-radius: 6px; white-space: nowrap; transition: background .2s; }
+    .nlm-banner-btn:hover { background: rgba(123,110,246,.28); border-color: rgba(123,110,246,.6); }
+    .academy-btn { background: rgba(20,98,252,.12); border: 1px solid rgba(20,98,252,.3); color: #1462FC; }
+    .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+    [data-theme="light"] .nlm-banner { background: rgba(20,98,252,.05) !important; border-color: rgba(20,98,252,.15) !important; }
+
+    /* ── Lesson Video Links ── */
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn { display: inline-flex; align-items: center; gap: 4px; background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25); color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s; }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+
+    /* ── Theme Toggle (header) ── */
+    body { transition: background .25s, color .25s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) { .layout { grid-template-columns: 1fr; padding: 0 1rem; } aside, .sidebar { display: none; } main { padding: 2rem 0; } }
+
+    /* ── 이 강의 고유 스타일 ── */
+    html { scroll-behavior: smooth; }
+    
+
+    /
+    
+    
+    
+    
+    
+    
+    
     .nav-list { padding: 10px 0; flex: 1; }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 20px;
-      cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: all .2s;
-    }
-    .nav-item:hover { background: var(--surface2); }
-    .nav-item.active {
-      background: var(--surface2);
-      border-left-color: var(--accent2);
-    }
-    .nav-num {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: var(--surface3);
-      color: var(--text3);
-      font-size: 10px;
-      font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all .2s;
-    }
-    .nav-item.active .nav-num {
-      background: var(--accent2);
-      color: #fff;
-    }
+    
+    
+    
+    
+    
     .nav-text {
       font-size: 12.5px;
       color: var(--text2);
       line-height: 1.3;
     }
-    .nav-item.active .nav-text { color: var(--text); font-weight: 600; }
+    
 
-    /* ── Main ── */
-    .main {
-      flex: 1;
-      min-height: 100vh;
-    }
-    .top-bar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 32px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow-x: auto;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-    .tab-btn {
-      flex-shrink: 0;
-      padding: 7px 16px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text2);
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all .2s;
-      white-space: nowrap;
-    }
-    .tab-btn:hover { border-color: var(--accent2); color: var(--text); }
-    .tab-btn.active {
-      background: var(--accent2);
-      border-color: var(--accent2);
-      color: #fff;
-      font-weight: 600;
-    }
+    /
+    
+    
+    
+    
     .content-wrap { padding: 40px 48px 80px; max-width: 900px; }
 
-    /* ── Lesson Panel ── */
-    .lesson-panel { display: none; }
+    /
     .lesson-panel.active { display: block; }
 
     .lesson-hero {
@@ -207,14 +161,7 @@
       line-height: 1.7;
     }
 
-    /* ── Components ── */
-    .learn-box {
-      background: linear-gradient(135deg, rgba(123,110,246,.1), rgba(217,127,58,.08));
-      border: 1px solid rgba(123,110,246,.3);
-      border-radius: 12px;
-      padding: 22px 26px;
-      margin-bottom: 28px;
-    }
+    /
     .learn-box h3 {
       font-size: 13px;
       font-weight: 700;
@@ -535,73 +482,29 @@
       color: var(--accent5);
       border: 1px solid rgba(97,175,239,.3);
     }
-      a.logo { text-decoration: none; transition: opacity .2s; }
-    a.logo:hover { opacity: .7; }
+      a
+    a
   
-    /* ===== 공통 통일 스타일 (Anthropic Academy) ===== */
+    /
 
-    /* 1. 카드 border-radius 10px 통일 */
-    .priority-card, .card, .card-like, .card-section,
-    .content-section, .feature-card, .concept-card,
-    .example-card, .info-card, .lesson-card {
-      border-radius: 10px;
-    }
+    /
 
-    /* 2. 카드 padding 통일: 20px 24px */
-    .priority-card, .card, .card-like, .card-section {
-      padding: 20px 24px;
-    }
+    /
 
-    /* 3. 진도바 높이 4px 통일 */
-    .progress, .progress-bar, .progress-fill,
-    #progressBar, #progress {
-      height: 4px;
-    }
+    /
+    
+    
 
-    /* 4. nav-item 활성 상태 - border-left 방식으로 통일 */
-    .nav-item {
-      border-left: 3px solid transparent !important;
-      border-top: none !important;
-      border-right: none !important;
-      border-bottom: none !important;
-      border-radius: 0 6px 6px 0 !important;
-    }
-    .nav-item.active {
-      border-left-color: var(--accent, #d97f3a) !important;
-      background: var(--surface2, #1e1e2a) !important;
-    }
-    .nav-item:hover {
-      border-left-color: var(--border, #2a2a38) !important;
-      background: var(--surface, #16161c) !important;
-    }
-
-    /* 5. 사이드바 너비 및 헤더 패딩 통일 */
-    .sidebar-header, #sidebar-header {
-      padding: 22px 20px 16px;
-    }
+    /
 
     
-    /* ── NotebookLM 배너 ── */
-    .nlm-banner {
-      display: flex; align-items: center; gap: 1rem;
-      background: linear-gradient(135deg, rgba(123,110,246,0.08), rgba(123,110,246,0.04));
-      border: 1px solid rgba(123,110,246,0.25);
-      border-radius: 10px; padding: 0.85rem 1.25rem;
-      margin-bottom: 2rem; flex-wrap: wrap;
-    }
-    .nlm-banner-icon { font-size: 18px; flex-shrink: 0; }
-    .nlm-banner-text { flex: 1; min-width: 200px; }
-    .nlm-banner-text strong { display: block; font-size: 13px; color: var(--accent2, #7b6ef6); margin-bottom: 2px; }
-    .nlm-banner-text span { font-size: 12px; color: var(--text-muted, #8884a8); }
-    .nlm-banner-btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      background: rgba(123,110,246,0.15); border: 1px solid rgba(123,110,246,0.4);
-      color: #a89ef8; text-decoration: none; font-size: 12px; font-weight: 600;
-      padding: 0.45rem 1rem; border-radius: 6px; white-space: nowrap;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: 0.04em;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .nlm-banner-btn:hover { background: rgba(123,110,246,0.28); border-color: rgba(123,110,246,0.6); }
+    /
+    
+    
+    
+    
+    
+    
     .video-badge-inline {
       display: inline-flex; align-items: center; gap: 0.3rem;
       background: rgba(217,127,58,0.1); border: 1px solid rgba(217,127,58,0.3);
@@ -609,116 +512,51 @@
       padding: 0.3rem 0.7rem; border-radius: 5px; letter-spacing: 0.04em;
     }
   
-    /* ── 우측 상단 퀵 링크 ── */
-    .quick-links {
-      position: fixed; top: 12px; right: 16px; z-index: 9999;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .quick-links a {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; font-weight: 600;
-      padding: 5px 11px; border-radius: 6px; text-decoration: none;
-      transition: all .2s; white-space: nowrap; letter-spacing: .02em;
-      backdrop-filter: blur(8px);
-    }
-    .quick-links .ql-guide {
-      background: rgba(123,110,246,.15); color: #b8b0f8;
-      border: 1px solid rgba(123,110,246,.35);
-    }
-    .quick-links .ql-guide:hover { background: rgba(123,110,246,.28); color: #d0cbff; }
-    .quick-links .ql-origin {
-      background: rgba(217,127,58,.12); color: #d97f3a;
-      border: 1px solid rgba(217,127,58,.32);
-    }
-    .quick-links .ql-origin:hover { background: rgba(217,127,58,.24); color: #e89a5a; }
+    /
+    
+    
+    
+    
+    
 
-    /* ── 맨 위로 버튼 ── */
-    .back-to-top {
-      position: fixed; bottom: 24px; right: 20px; z-index: 9999;
-      width: 38px; height: 38px; border-radius: 50%;
-      background: rgba(30,30,40,.85); border: 1px solid rgba(123,110,246,.4);
-      color: #a89ef8; font-size: 16px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(8px);
-      opacity: 0; pointer-events: none;
-      transition: opacity .25s, transform .2s, border-color .2s;
-      box-shadow: 0 4px 16px rgba(0,0,0,.4);
-    }
-    .back-to-top.visible { opacity: 1; pointer-events: auto; }
-    .back-to-top:hover { transform: translateY(-3px); border-color: rgba(123,110,246,.7); color: #c4baff; }
+    /
+    
+    
   
-    /* ── Light Theme (SentBe DS) ── */
-    [data-theme="light"] {
-      --bg:        #FFFFFF;
-      --surface:   #F0F2F7;
-      --surface2:  #E9ECF1;
-      --border:    #D8DADF;
-      --accent:    #1462FC;
-      --accent2:   #6D2EF6;
-      --text:      #1A1A1A;
-      --text-muted:#525357;
-      --text-dim:  #9D9FA1;
-      --code-bg:   #F7F8FB;
-      --tag-bg:    #F0F2F7;
-      --success:   #079F78;
-      --warning:   #C23F06;
-    }
-    [data-theme="light"] header {
-      background: rgba(255,255,255,.95) !important;
-      border-bottom-color: var(--border);
-    }
-    [data-theme="light"] aside { background: var(--bg) !important; border-right-color: var(--border) !important; }
-    [data-theme="light"] .nav-item.active { background: rgba(20,98,252,.08) !important; border-color: rgba(20,98,252,.25) !important; }
-    [data-theme="light"] .nav-item.active .nav-num { color: var(--accent) !important; }
+    /
+    [data-theme="light"] 
+    [data-theme="light"] 
+    [data-theme="light"] 
+    [data-theme="light"] 
     [data-theme="light"] .lesson-number-badge { color: #fff !important; }
     [data-theme="light"] .course-badge { background: rgba(20,98,252,.08) !important; color: var(--accent) !important; border-color: rgba(20,98,252,.2) !important; }
     [data-theme="light"] code { background: var(--code-bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
     [data-theme="light"] pre { background: var(--code-bg) !important; border-color: var(--border) !important; }
-    [data-theme="light"] .nlm-banner { background: rgba(20,98,252,.05) !important; border-color: rgba(20,98,252,.15) !important; }
+    [data-theme="light"] 
     [data-theme="light"] .lesson-section { border-bottom-color: var(--border) !important; }
-    /* ── Theme Toggle Button ── */
-    body { transition: background .25s, color .25s; }
-    .theme-toggle {
-      background: transparent; border: 1px solid var(--border); border-radius: 6px;
-      padding: 5px 10px; cursor: pointer; font-size: 14px; line-height: 1;
-      transition: all .2s; color: var(--text-muted); display: inline-flex;
-      align-items: center; margin-left: auto; flex-shrink: 0;
-    }
-    .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
+    /
+    
+    
   
-    /* ── Academy 버튼 ── */
-    .academy-btn {
-      background: rgba(20,98,252,.12); border: 1px solid rgba(20,98,252,.3);
-      color: #1462FC;
-    }
-    .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+    /
+    
   
-    /* ── 레슨별 영상 링크 ── */
-    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .lesson-video-btn {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
-      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
-      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
-    }
-    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
-    [data-theme="light"] .lesson-video-btn { color: #1462FC; }
+    /
+    
+    
+    [data-theme="light"] 
   
-    header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 200; backdrop-filter: blur(12px); }
-    .header-inner { max-width: 1440px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; height: 56px; overflow: hidden; }
-    .logo { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; font-weight: 600; color: var(--accent); text-decoration: none; white-space: nowrap; transition: opacity .2s; }
-    .logo:hover { opacity: .7; }
-    .sep { color: var(--text-muted, var(--text3)); font-size: 13px; }
-    .course-title-small { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; color: var(--text, var(--text2)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .layout { display: grid; grid-template-columns: 270px 1fr; min-height: calc(100vh - 56px); }
+    
+    
+    
+    
+    
+    
+    
   
-    .quick-links .theme-toggle {
-      background: transparent; border: 1px solid rgba(255,255,255,.15); border-radius: 6px;
-      padding: 5px 10px; cursor: pointer; font-size: 13px; color: var(--muted, #9D9FA1);
-      transition: all .2s; line-height: 1;
-    }
-    .quick-links .theme-toggle:hover { background: rgba(255,255,255,.08); }
-    [data-theme="light"] .quick-links .theme-toggle { border-color: rgba(0,0,0,.15); color: #525357; }
+    
+    
+    [data-theme="light"]
   </style>
 </head>
 <body>
@@ -750,54 +588,17 @@
 </header>
 
 <div class="layout">
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <div class="course-badge">Advanced MCP</div>
-    <h2>MCP 심화 과정</h2>
-    <p>Model Context Protocol 고급 기능</p>
-  </div>
-  <div class="progress-bar-wrap">
-    <div class="progress-label">
-      <span>학습 진행도</span>
-      <span id="progressLabel">1 / 8</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressBar"></div>
-    </div>
-  </div>
-  <nav class="nav-list">
-    <div class="nav-item active" onclick="showLesson(0)">
-      <div class="nav-num">1</div>
-      <div class="nav-text">Sampling 개념</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(1)">
-      <div class="nav-num">2</div>
-      <div class="nav-text">Sampling 구현 실습</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(2)">
-      <div class="nav-num">3</div>
-      <div class="nav-text">로그 및 진행률 알림</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(3)">
-      <div class="nav-num">4</div>
-      <div class="nav-text">Roots: 파일 접근 권한</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(4)">
-      <div class="nav-num">5</div>
-      <div class="nav-text">JSON 메시지 타입</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(5)">
-      <div class="nav-num">6</div>
-      <div class="nav-text">STDIO 트랜스포트</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(6)">
-      <div class="nav-num">7</div>
-      <div class="nav-text">StreamableHTTP 트랜스포트</div>
-    </div>
-    <div class="nav-item" onclick="showLesson(7)">
-      <div class="nav-num">8</div>
-      <div class="nav-text">상태 관리 & Stateless HTTP</div>
-    </div>
+<aside>
+  <div class="sidebar-label">강의 목록</div>
+  <nav class="lesson-nav">
+    <a class="nav-item active" href="#" onclick="showLesson(0); return false;"><span class="nav-num">01</span><span>Sampling 개념</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(1); return false;"><span class="nav-num">02</span><span>Sampling 구현 실습</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(2); return false;"><span class="nav-num">03</span><span>로그 및 진행률 알림</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(3); return false;"><span class="nav-num">04</span><span>Roots: 파일 접근 권한</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(4); return false;"><span class="nav-num">05</span><span>JSON 메시지 타입</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(5); return false;"><span class="nav-num">06</span><span>STDIO 트랜스포트</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(6); return false;"><span class="nav-num">07</span><span>StreamableHTTP 트랜스포트</span></a>
+    <a class="nav-item" href="#" onclick="showLesson(7); return false;"><span class="nav-num">08</span><span>상태 관리 & Stateless HTTP</span></a>
   </nav>
 </aside>
 
@@ -805,18 +606,7 @@
       <a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics" target="_blank" class="nlm-banner-btn academy-btn">📺 원본 영상 →</a>
       <a href="https://notebooklm.google.com/notebook/b4c1fe69-8f03-4302-96a7-d0b9174d71e3" target="_blank" class="nlm-banner-btn">⬡ NotebookLM →</a>
     </div>
-  <div class="top-bar">
-    <button class="tab-btn active" onclick="showLesson(0)">Sampling</button>
-    <button class="tab-btn" onclick="showLesson(1)">구현 실습</button>
-    <button class="tab-btn" onclick="showLesson(2)">알림</button>
-    <button class="tab-btn" onclick="showLesson(3)">Roots</button>
-    <button class="tab-btn" onclick="showLesson(4)">JSON 메시지</button>
-    <button class="tab-btn" onclick="showLesson(5)">STDIO</button>
-    <button class="tab-btn" onclick="showLesson(6)">StreamableHTTP</button>
-    <button class="tab-btn" onclick="showLesson(7)">상태 관리</button>
-  </div>
-
-  <div class="content-wrap">
+<div class="content-wrap">
 
     <div class="nlm-banner">
       <span class="nlm-banner-icon">⬡</span>
@@ -1873,14 +1663,11 @@ root_paths = sys.argv[<span class="num">1</span>:]  <span class="cmt"># 예: /pa
 </div><!-- /.layout -->
 
 <script>
-  function showLesson(idx) {
+    function showLesson(idx) {
     document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
-    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
     document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
-    const total = document.querySelectorAll('.lesson-panel').length;
-    document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
-    document.getElementById('progressLabel').textContent = (idx + 1) + ' / ' + total;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
+  });
   }
 </script>
 
