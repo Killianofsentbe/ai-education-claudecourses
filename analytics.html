@@ -936,13 +936,21 @@
           metrics: [{ name: 'screenPageViews' }, { name: 'totalUsers' }],
           orderBys: [{ dimension: { dimensionName: 'date' } }]
         }),
-        // Top pages
+        // Top pages (analytics 페이지 제외)
         runReport({
           dateRanges: dateRange,
           dimensions: [{ name: 'pageTitle' }],
           metrics: [{ name: 'screenPageViews' }],
           orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
-          limit: 10
+          limit: 10,
+          dimensionFilter: {
+            notExpression: {
+              filter: {
+                fieldName: 'pagePath',
+                stringFilter: { matchType: 'CONTAINS', value: 'analytics' }
+              }
+            }
+          }
         }),
         // Channels
         runReport({
