@@ -309,7 +309,7 @@
     /* Metric Cards */
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       margin-bottom: 28px;
     }
@@ -333,6 +333,8 @@
     .metric-card.accent2::before { background: var(--accent2); }
     .metric-card.accent3::before { background: var(--green); }
     .metric-card.accent4::before { background: #4db6e0; }
+    .metric-card.accent5::before { background: var(--red); }
+    .metric-card.accent6::before { background: #f0c040; }
     .metric-label {
       font-size: 12px;
       font-weight: 600;
@@ -626,6 +628,16 @@
         <div class="metric-value" id="m-duration">—</div>
         <div class="metric-sub" id="m-duration-sub">데이터 로딩 중</div>
       </div>
+      <div class="metric-card accent5">
+        <div class="metric-label">이탈률</div>
+        <div class="metric-value" id="m-bounce">—</div>
+        <div class="metric-sub" id="m-bounce-sub">방문 후 바로 이탈</div>
+      </div>
+      <div class="metric-card accent6">
+        <div class="metric-label">세션당 페이지 수</div>
+        <div class="metric-value" id="m-pps">—</div>
+        <div class="metric-sub" id="m-pps-sub">평균 탐색 깊이</div>
+      </div>
     </div>
 
     <!-- Line Chart: 일별 페이지뷰 -->
@@ -665,6 +677,47 @@
         </div>
         <div class="chart-wrap tall" style="display:flex; align-items:center; justify-content:center;">
           <canvas id="chart-channels" style="max-height:280px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- New vs Returning + Day of Week -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div>
+            <div class="chart-card-title">신규 vs 재방문</div>
+            <div class="chart-card-sub">사용자 유형 비율</div>
+          </div>
+        </div>
+        <div class="chart-wrap tall" style="display:flex; align-items:center; justify-content:center;">
+          <canvas id="chart-new-returning" style="max-height:280px;"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div>
+            <div class="chart-card-title">요일별 트래픽</div>
+            <div class="chart-card-sub">페이지뷰 기준 (주말 강조)</div>
+          </div>
+        </div>
+        <div class="chart-wrap tall">
+          <canvas id="chart-dow"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hour of Day -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div>
+            <div class="chart-card-title">시간대별 트래픽</div>
+            <div class="chart-card-sub">24시간 기준 페이지뷰</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chart-hour"></canvas>
         </div>
       </div>
     </div>
@@ -863,7 +916,7 @@
     const dateRange = [{ startDate: `${days}daysAgo`, endDate: 'today' }];
 
     try {
-      const [overview, daily, pages, channels, countries] = await Promise.all([
+      const [overview, daily, pages, channels, countries, newVsRet, dayOfWeek, hourOfDay] = await Promise.all([
         // Overview metrics
         runReport({
           dateRanges: dateRange,
@@ -871,7 +924,9 @@
             { name: 'totalUsers' },
             { name: 'sessions' },
             { name: 'screenPageViews' },
-            { name: 'averageSessionDuration' }
+            { name: 'averageSessionDuration' },
+            { name: 'bounceRate' },
+            { name: 'screenPageViewsPerSession' }
           ]
         }),
         // Daily pageviews
@@ -903,6 +958,26 @@
           metrics: [{ name: 'totalUsers' }],
           orderBys: [{ metric: { metricName: 'totalUsers' }, desc: true }],
           limit: 10
+        }),
+        // New vs Returning
+        runReport({
+          dateRanges: dateRange,
+          dimensions: [{ name: 'newVsReturning' }],
+          metrics: [{ name: 'totalUsers' }]
+        }),
+        // Day of Week
+        runReport({
+          dateRanges: dateRange,
+          dimensions: [{ name: 'dayOfWeek' }],
+          metrics: [{ name: 'screenPageViews' }],
+          orderBys: [{ dimension: { dimensionName: 'dayOfWeek' } }]
+        }),
+        // Hour of Day
+        runReport({
+          dateRanges: dateRange,
+          dimensions: [{ name: 'hour' }],
+          metrics: [{ name: 'screenPageViews' }],
+          orderBys: [{ dimension: { dimensionName: 'hour' } }]
         })
       ]);
 
@@ -911,6 +986,9 @@
       renderPagesChart(pages);
       renderChannelsChart(channels);
       renderCountriesTable(countries);
+      renderNewReturning(newVsRet);
+      renderDayOfWeek(dayOfWeek);
+      renderHourOfDay(hourOfDay);
 
       document.getElementById('last-updated').textContent =
         '마지막 업데이트: ' + new Date().toLocaleString('ko-KR');
@@ -951,6 +1029,75 @@
     document.getElementById('m-pageviews-sub').textContent = '선택 기간 누적';
     document.getElementById('m-duration').textContent = fmtDuration(mv[3]?.value);
     document.getElementById('m-duration-sub').textContent = '평균 세션 길이';
+    const bounce = parseFloat(mv[4]?.value || 0);
+    document.getElementById('m-bounce').textContent = (bounce * 100).toFixed(1) + '%';
+    document.getElementById('m-bounce-sub').textContent = bounce < 0.4 ? '양호 — 콘텐츠 참여 높음' : bounce < 0.7 ? '보통' : '높음 — 개선 필요';
+    const pps = parseFloat(mv[5]?.value || 0);
+    document.getElementById('m-pps').textContent = pps.toFixed(1);
+    document.getElementById('m-pps-sub').textContent = pps >= 3 ? '활발한 탐색' : pps >= 1.5 ? '평균적 탐색' : '단일 페이지 위주';
+  }
+
+  function renderNewReturning(data) {
+    const rows = data.rows || [];
+    const labels = [], values = [];
+    rows.forEach(r => {
+      labels.push(r.dimensionValues[0].value === 'new' ? '신규 방문자' : '재방문자');
+      values.push(parseInt(r.metricValues[0].value));
+    });
+    destroyChart('chart-new-returning');
+    charts['chart-new-returning'] = new Chart(document.getElementById('chart-new-returning'), {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{ data: values, backgroundColor: ['#3ab87f', '#d97f3a'], borderColor: '#16161c', borderWidth: 3, hoverOffset: 8 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#a0a0c0', font: { size: 12, family: 'Pretendard' }, padding: 14, boxWidth: 14 } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmt(ctx.parsed)}명` } }
+        },
+        cutout: '60%'
+      }
+    });
+  }
+
+  function renderDayOfWeek(data) {
+    const DAY_KO = ['일', '월', '화', '수', '목', '금', '토'];
+    const rows = data.rows || [];
+    const dayMap = {};
+    rows.forEach(r => { dayMap[r.dimensionValues[0].value] = parseInt(r.metricValues[0].value); });
+    const values = Array.from({ length: 7 }, (_, i) => dayMap[String(i)] || 0);
+    destroyChart('chart-dow');
+    charts['chart-dow'] = new Chart(document.getElementById('chart-dow'), {
+      type: 'bar',
+      data: {
+        labels: DAY_KO,
+        datasets: [{
+          label: '페이지뷰', data: values,
+          backgroundColor: values.map((_, i) => i === 0 || i === 6 ? 'rgba(123,110,246,0.5)' : 'rgba(217,127,58,0.8)'),
+          borderRadius: 6, borderSkipped: false
+        }]
+      },
+      options: { ...chartOptions({}), plugins: { legend: { display: false } } }
+    });
+  }
+
+  function renderHourOfDay(data) {
+    const rows = data.rows || [];
+    const hourMap = {};
+    rows.forEach(r => { hourMap[r.dimensionValues[0].value] = parseInt(r.metricValues[0].value); });
+    const labels = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}시`);
+    const values = Array.from({ length: 24 }, (_, i) => hourMap[String(i)] || 0);
+    destroyChart('chart-hour');
+    charts['chart-hour'] = new Chart(document.getElementById('chart-hour'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ label: '페이지뷰', data: values, backgroundColor: 'rgba(77,182,224,0.75)', borderRadius: 4, borderSkipped: false }]
+      },
+      options: { ...chartOptions({}), plugins: { legend: { display: false } } }
+    });
   }
 
   function renderDailyChart(data) {
