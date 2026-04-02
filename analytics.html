@@ -471,6 +471,64 @@
     }
     .rank-badge.top3 { background: rgba(217,127,58,0.2); color: var(--accent); }
 
+    /* Heatmap */
+    .heatmap-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap-table {
+      border-collapse: separate;
+      border-spacing: 3px;
+      font-size: 11px;
+    }
+    .heatmap-table th {
+      color: var(--muted);
+      font-weight: 600;
+      padding: 0 0 4px;
+      text-align: left;
+      min-width: 20px;
+    }
+    .heatmap-date {
+      color: var(--text2);
+      font-size: 11px;
+      padding-right: 10px;
+      white-space: nowrap;
+      text-align: right;
+      vertical-align: middle;
+    }
+    .hm-cell {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      background: var(--surface2);
+      cursor: default;
+      transition: outline 0.1s;
+    }
+    .hm-cell:hover { outline: 1.5px solid var(--accent2); }
+
     /* Error State */
     .error-banner {
       background: rgba(224,85,85,0.1);
@@ -722,6 +780,26 @@
       </div>
     </div>
 
+    <!-- Heatmap: 일자×시간 -->
+    <div class="table-card">
+      <div class="heatmap-header">
+        <div>
+          <div class="chart-card-title">일자 × 시간대 트래픽</div>
+          <div class="chart-card-sub">시간대별 일별 페이지뷰 히트맵</div>
+        </div>
+        <div class="heatmap-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--surface2);border:1px solid var(--border)"></div>없음</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(123,110,246,0.2)"></div>적음</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(123,110,246,0.5)"></div>보통</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(123,110,246,0.8)"></div>많음</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(123,110,246,1.0)"></div>매우 많음</div>
+        </div>
+      </div>
+      <div class="heatmap-wrap" id="heatmap-container">
+        <div class="empty-state">데이터를 불러오는 중...</div>
+      </div>
+    </div>
+
     <!-- Countries Table -->
     <div class="table-card">
       <div class="table-card-title">국가별 사용자</div>
@@ -916,7 +994,7 @@
     const dateRange = [{ startDate: `${days}daysAgo`, endDate: 'today' }];
 
     try {
-      const [overview, daily, pages, channels, countries, newVsRet, dayOfWeek, hourOfDay] = await Promise.all([
+      const [overview, daily, pages, channels, countries, newVsRet, dayOfWeek, hourOfDay, heatmap] = await Promise.all([
         // Overview metrics
         runReport({
           dateRanges: dateRange,
@@ -986,6 +1064,16 @@
           dimensions: [{ name: 'hour' }],
           metrics: [{ name: 'screenPageViews' }],
           orderBys: [{ dimension: { dimensionName: 'hour' } }]
+        }),
+        // Heatmap: date × hour
+        runReport({
+          dateRanges: dateRange,
+          dimensions: [{ name: 'date' }, { name: 'hour' }],
+          metrics: [{ name: 'screenPageViews' }],
+          orderBys: [
+            { dimension: { dimensionName: 'date' } },
+            { dimension: { dimensionName: 'hour' } }
+          ]
         })
       ]);
 
@@ -997,6 +1085,7 @@
       renderNewReturning(newVsRet);
       renderDayOfWeek(dayOfWeek);
       renderHourOfDay(hourOfDay);
+      renderHeatmap(heatmap);
 
       document.getElementById('last-updated').textContent =
         '마지막 업데이트: ' + new Date().toLocaleString('ko-KR');
@@ -1089,6 +1178,68 @@
       },
       options: { ...chartOptions({}), plugins: { legend: { display: false } } }
     });
+  }
+
+  function renderHeatmap(data) {
+    const container = document.getElementById('heatmap-container');
+    const rows = data.rows || [];
+    if (!rows.length) {
+      container.innerHTML = '<div class="empty-state">데이터 없음</div>';
+      return;
+    }
+
+    // date(YYYYMMDD) → { hour: value }
+    const map = {};
+    let maxVal = 0;
+    rows.forEach(r => {
+      const date = r.dimensionValues[0].value;
+      const hour = parseInt(r.dimensionValues[1].value);
+      const val  = parseInt(r.metricValues[0].value);
+      if (!map[date]) map[date] = {};
+      map[date][hour] = val;
+      if (val > maxVal) maxVal = val;
+    });
+
+    const DOW = ['일','월','화','수','목','금','토'];
+    const dates = Object.keys(map).sort();
+
+    function cellColor(val) {
+      if (!val) return 'var(--surface2)';
+      const r = val / maxVal;
+      if (r < 0.15) return 'rgba(123,110,246,0.18)';
+      if (r < 0.35) return 'rgba(123,110,246,0.4)';
+      if (r < 0.65) return 'rgba(123,110,246,0.65)';
+      if (r < 0.85) return 'rgba(123,110,246,0.85)';
+      return 'rgba(123,110,246,1.0)';
+    }
+
+    function fmtDate(d) {
+      const dt = new Date(`${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`);
+      return `${d.slice(4,6)}/${d.slice(6,8)}(${DOW[dt.getDay()]})`;
+    }
+
+    const HOURS = Array.from({ length: 24 }, (_, i) => i);
+
+    let html = '<table class="heatmap-table"><thead><tr><th></th>';
+    HOURS.forEach(h => {
+      html += `<th>${h % 3 === 0 ? String(h).padStart(2,'0') : ''}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    dates.forEach(date => {
+      const dow = new Date(`${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}`).getDay();
+      const isWeekend = dow === 0 || dow === 6;
+      html += `<tr><td class="heatmap-date" style="${isWeekend ? 'color:var(--accent2)' : ''}">${fmtDate(date)}</td>`;
+      HOURS.forEach(h => {
+        const val = map[date]?.[h] || 0;
+        const title = `${fmtDate(date)} ${String(h).padStart(2,'0')}시 — ${val}회`;
+        html += `<td><div class="hm-cell" style="background:${cellColor(val)}" title="${title}"></div></td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
   }
 
   function renderHourOfDay(data) {
