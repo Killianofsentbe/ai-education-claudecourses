@@ -552,7 +552,14 @@
     <div class="icon">🔐</div>
     <h2>Google 계정으로 로그인</h2>
     <p>Google Analytics 데이터에 접근하려면<br>권한이 필요해요. 읽기 권한만 요청합니다.</p>
-    <button class="btn-google" onclick="signIn()">
+
+    <!-- silent auth 시도 중 표시 -->
+    <div id="auth-connecting" style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:8px;">
+      <div style="width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+      <span style="font-size:13px;color:var(--text2);">자동 로그인 시도 중...</span>
+    </div>
+
+    <button class="btn-google" style="display:none;" onclick="signIn()">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -688,6 +695,7 @@
 <script>
   /* ── Config ── */
   const CONFIG_KEY = 'cc_analytics_config';
+  const TOKEN_KEY  = 'cc_analytics_token';
   let config = null;
   let tokenClient = null;
   let accessToken = null;
@@ -707,15 +715,31 @@
     config = { propertyId: propId, clientId };
     localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
     showScreen('auth');
-    initGIS();
+    initGIS(true);
   }
 
   function resetConfig() {
     localStorage.removeItem(CONFIG_KEY);
+    clearToken();
     accessToken = null;
     config = null;
     showScreen('setup');
   }
+
+  /* ── Token Persistence ── */
+  function saveToken(token, expiresIn) {
+    // 만료 2분 전에 재인증하도록 여유 설정
+    const expiresAt = Date.now() + ((expiresIn || 3600) - 120) * 1000;
+    sessionStorage.setItem(TOKEN_KEY, JSON.stringify({ token, expiresAt }));
+  }
+  function loadToken() {
+    try {
+      const d = JSON.parse(sessionStorage.getItem(TOKEN_KEY));
+      if (d && d.expiresAt > Date.now()) return d.token;
+    } catch(e) {}
+    return null;
+  }
+  function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
 
   /* ── Screen Management ── */
   function showScreen(name) {
@@ -725,9 +749,8 @@
   }
 
   /* ── GIS OAuth2 ── */
-  function initGIS() {
+  function initGIS(silent = false) {
     if (!config) return;
-    // Wait for GIS library to load
     const tryInit = () => {
       if (typeof google !== 'undefined' && google.accounts) {
         tokenClient = google.accounts.oauth2.initTokenClient({
@@ -735,6 +758,10 @@
           scope: 'https://www.googleapis.com/auth/analytics.readonly',
           callback: handleTokenResponse
         });
+        if (silent) {
+          // 사용자 인터랙션 없이 조용히 토큰 요청
+          tokenClient.requestAccessToken({ prompt: '' });
+        }
       } else {
         setTimeout(tryInit, 200);
       }
@@ -744,18 +771,23 @@
 
   function handleTokenResponse(response) {
     if (response.error) {
-      showError('Google 로그인 실패: ' + response.error);
+      // silent 시도 실패 → 수동 로그인 버튼 표시
+      setAuthConnecting(false);
+      if (response.error !== 'interaction_required' && response.error !== 'access_denied') {
+        showError('Google 로그인 실패: ' + response.error);
+      }
       showScreen('auth');
       return;
     }
     accessToken = response.access_token;
+    saveToken(response.access_token, response.expires_in);
     showScreen('dashboard');
     loadDashboard();
   }
 
   function signIn() {
     if (!tokenClient) { showError('GIS 초기화 중입니다. 잠시 후 다시 시도해주세요.'); return; }
-    tokenClient.requestAccessToken();
+    tokenClient.requestAccessToken({ prompt: 'select_account' });
   }
 
   function signOut() {
@@ -763,7 +795,16 @@
       google.accounts.oauth2.revoke(accessToken);
       accessToken = null;
     }
+    clearToken();
+    setAuthConnecting(false);
     showScreen('auth');
+  }
+
+  function setAuthConnecting(on) {
+    const el = document.getElementById('auth-connecting');
+    if (el) el.style.display = on ? 'flex' : 'none';
+    const btn = document.querySelector('.btn-google');
+    if (btn) btn.style.display = on ? 'none' : 'inline-flex';
   }
 
   /* ── GA4 Data API ── */
@@ -1103,10 +1144,21 @@
     config = loadConfig();
     if (!config) {
       showScreen('setup');
-    } else {
-      showScreen('auth');
-      initGIS();
+      return;
     }
+    // 1) 같은 탭: sessionStorage에 유효한 토큰이 있으면 바로 대시보드
+    const saved = loadToken();
+    if (saved) {
+      accessToken = saved;
+      initGIS(); // 미래 수동 재로그인을 위해 초기화만
+      showScreen('dashboard');
+      loadDashboard();
+      return;
+    }
+    // 2) 새 창/탭: silent auth로 버튼 없이 자동 재연결 시도
+    showScreen('auth');
+    setAuthConnecting(true);
+    initGIS(true);
   }
 
   init();
