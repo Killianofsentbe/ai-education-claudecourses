@@ -1659,10 +1659,8 @@ result = subprocess.run(
     function showLesson(idx) {
     document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
     document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
-    window.scrollTo(0, 0);
-  });
-    document.getElementById('main').scrollTo({ top: 0, behavior: 'smooth' });
     currentLesson = idx;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
 
