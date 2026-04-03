@@ -852,10 +852,7 @@
     function showLesson(idx) {
     document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
     document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
-    window.scrollTo(0, 0);
-  });
-    navItems.forEach(function(n,i){n.classList.toggle('active',i===idx);});
-    tabBtns.forEach(function(t,i){t.classList.toggle('active',i===idx);});
+    document.querySelectorAll('.tab-btn').forEach((t, i) => t.classList.toggle('active', i === idx));
     var pct = Math.round(((idx+1)/total)*100);
     document.getElementById('progressBar').style.width = pct+'%';
     document.getElementById('progressLabel').textContent = (idx+1)+' / '+total;
