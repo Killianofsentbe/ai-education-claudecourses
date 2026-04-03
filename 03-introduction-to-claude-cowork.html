@@ -262,6 +262,10 @@
     <a class="nav-item" href="#" onclick="showLesson(8); return false;"><span class="nav-num">09</span><span>권한·사용량·모델 선택</span></a>
     <a class="nav-item" href="#" onclick="showLesson(9); return false;"><span class="nav-num">10</span><span>문제 해결 & 다음 단계</span></a>
   </nav>
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:0.5rem;display:flex;justify-content:space-between;"><span>진행률</span><span id="progressLabel">1 / 10</span></div>
+    <div style="height:4px;background:var(--surface2);border-radius:2px;"><div id="progressBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.4s;width:10%"></div></div>
+  </div>
 </aside>
 
 <main class="main">

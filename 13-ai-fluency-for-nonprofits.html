@@ -423,6 +423,10 @@
     <a class="nav-item" href="#" onclick="showLesson(4); return false;"><span class="nav-num">05</span><span>데이터 분석 & 워크플로우</span></a>
     <a class="nav-item" href="#" onclick="showLesson(5); return false;"><span class="nav-num">06</span><span>조직 통합 & 다음 단계</span></a>
   </nav>
+  <div style="margin-top:1.5rem;">
+    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:0.5rem;display:flex;justify-content:space-between;"><span>진행률</span><span id="progressLabel">1 / 6</span></div>
+    <div style="height:4px;background:var(--surface2);border-radius:2px;"><div id="progressBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.4s;width:16.7%"></div></div>
+  </div>
 </aside>
 
 <main class="main">
@@ -1147,7 +1151,10 @@
     function showLesson(idx) {
     document.querySelectorAll('.lesson-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
     document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', i === idx));
-    window.scrollTo(0, 0);
+    var total = document.querySelectorAll('.lesson-panel').length;
+    document.getElementById('progressBar').style.width = Math.round((idx+1)/total*100)+'%';
+    document.getElementById('progressLabel').textContent = (idx+1)+' / '+total;
+    window.scrollTo({top:0,behavior:'smooth'});
   }
 </script>
 
