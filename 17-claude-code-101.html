@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WK96GWLLY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2WK96GWLLY');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code 101 — Anthropic Academy</title>
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.min.css" />
+  <style>
+    :root,
+    [data-theme="dark"] {
+      --bg: #0d0d10;
+      --surface: #16161c;
+      --surface2: #1e1e27;
+      --border: #2a2a38;
+      --accent: #61afef;
+      --accent2: #7b6ef6;
+      --text: #e8e6f0;
+      --text-muted: #8884a8;
+      --text-dim: #5a5870;
+      --code-bg: #111118;
+      --tag-bg: #1e1e2e;
+      --success: #4caf80;
+      --warning: #e8a838;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0d0d10 0%, #13131a 50%, #0d0f1a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      height: 56px;
+    }
+
+    .logo {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .sep { color: var(--text-dim); }
+
+    .course-title-small {
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 0;
+      padding: 0 2rem;
+    }
+
+    aside {
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      padding: 2rem 1.5rem 2rem 0;
+      border-right: 1px solid var(--border);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar-label {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .lesson-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.4;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .nav-item.active {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--accent2);
+    }
+
+    .nav-num {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      color: var(--accent);
+      min-width: 18px;
+      margin-top: 1px;
+    }
+
+    main {
+      padding: 3rem 0 3rem 3rem;
+      min-width: 0;
+    }
+
+    .course-hero {
+      margin-bottom: 3rem;
+    }
+
+    .course-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(97, 175, 239, 0.1);
+      border: 1px solid rgba(97, 175, 239, 0.25);
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.08em;
+    }
+
+    .course-hero h1 {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 1.5rem;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .lesson-section {
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lesson-section:last-child {
+      border-bottom: none;
+    }
+
+    .lesson-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .lesson-number-badge {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .lesson-title-block h2 {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 0.4rem;
+    }
+
+    .lesson-time {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .learn-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .learn-box-title {
+      font-size: 11px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.75rem;
+    }
+
+    .learn-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .learn-box ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .learn-box ul li::before {
+      content: '→';
+      color: var(--accent2);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .key-takeaways {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .key-takeaways-title {
+      font-size: 11px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .key-takeaways ul li {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .key-takeaways ul li::before {
+      content: '✦';
+      color: var(--accent);
+      font-size: 11px;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .content-section {
+      margin-bottom: 2rem;
+    }
+
+    .content-section h3 {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-section p {
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    pre code {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13px;
+      color: #b8b4d0;
+      line-height: 1.7;
+    }
+
+    code {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12.5px;
+      background: var(--tag-bg);
+      color: #c8c4e0;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .priority-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+
+    .priority-card .rank {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .priority-card .name {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .priority-card .desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .priority-card.p1 { border-left: 3px solid #e84040; }
+    .priority-card.p2 { border-left: 3px solid var(--accent); }
+    .priority-card.p3 { border-left: 3px solid var(--accent2); }
+    .priority-card.p4 { border-left: 3px solid var(--text-dim); }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 13.5px;
+    }
+
+    .compare-table th {
+      background: var(--surface2);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .compare-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .compare-table tr:hover td {
+      background: var(--surface);
+    }
+
+    .compare-table td:first-child {
+      font-weight: 600;
+      color: var(--text);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12.5px;
+      white-space: nowrap;
+    }
+
+    .tip-box {
+      background: rgba(76, 175, 128, 0.07);
+      border: 1px solid rgba(76, 175, 128, 0.25);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .tip-box .tip-label {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      color: var(--success);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+    }
+
+    .warn-box {
+      background: rgba(232, 168, 56, 0.07);
+      border: 1px solid rgba(232, 168, 56, 0.25);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .warn-box .warn-label {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      color: var(--warning);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+    }
+
+    .info-box {
+      background: rgba(123, 110, 246, 0.07);
+      border: 1px solid rgba(123, 110, 246, 0.25);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .info-box .info-label {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+    }
+
+    .key-point {
+      background: rgba(97, 175, 239, 0.07);
+      border: 1px solid rgba(97, 175, 239, 0.25);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .key-point .kp-label {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+    }
+
+    .exercise-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .exercise-box .ex-title {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+    }
+
+    .exercise-box p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      line-height: 1.75;
+    }
+
+    .exercise-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .exercise-box ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .exercise-box ul li::before {
+      content: '•';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .exercise-box a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .exercise-box a:hover { opacity: 0.75; }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .checklist li::before {
+      content: '□';
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--accent);
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .reflection-box {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .reflection-box .ref-title {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .reflection-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .reflection-box ul li {
+      display: flex;
+      gap: 0.6rem;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .reflection-box ul li::before {
+      content: '◇';
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1rem;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .kw { color: #c792ea; }
+    .str { color: #c3e88d; }
+    .cm { color: #546e7a; }
+    .key { color: #82aaff; }
+    .val { color: var(--accent); }
+
+    .progress-bar-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      height: 4px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+      }
+      aside { display: none; }
+      main { padding: 2rem 0; }
+      .priority-grid { grid-template-columns: 1fr; }
+      .course-hero h1 { font-size: 1.8rem; }
+    }
+
+    a.logo { text-decoration: none; transition: opacity .2s; }
+    a.logo:hover { opacity: .7; }
+
+    .nav-item {
+      border-left: 3px solid transparent !important;
+      border-top: none !important;
+      border-right: none !important;
+      border-bottom: none !important;
+      border-radius: 0 6px 6px 0 !important;
+    }
+    .nav-item.active {
+      border-left-color: var(--accent, #61afef) !important;
+      background: var(--surface2, #1e1e2a) !important;
+    }
+    .nav-item:hover {
+      border-left-color: var(--border, #2a2a38) !important;
+      background: var(--surface, #16161c) !important;
+    }
+
+    .nlm-banner {
+      display: flex; align-items: center; gap: 1rem;
+      background: linear-gradient(135deg, rgba(123,110,246,0.08), rgba(123,110,246,0.04));
+      border: 1px solid rgba(123,110,246,0.25);
+      border-radius: 10px; padding: 0.85rem 1.25rem;
+      margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .nlm-banner-icon { font-size: 18px; flex-shrink: 0; }
+    .nlm-banner-text { flex: 1; min-width: 200px; }
+    .nlm-banner-text strong { display: block; font-size: 13px; color: var(--accent2, #7b6ef6); margin-bottom: 2px; }
+    .nlm-banner-text span { font-size: 12px; color: var(--text-muted, #8884a8); }
+    .nlm-banner-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(123,110,246,0.15); border: 1px solid rgba(123,110,246,0.4);
+      color: #a89ef8; text-decoration: none; font-size: 12px; font-weight: 600;
+      padding: 0.45rem 1rem; border-radius: 6px; white-space: nowrap;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: 0.04em;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nlm-banner-btn:hover { background: rgba(123,110,246,0.28); border-color: rgba(123,110,246,0.6); }
+
+    .academy-btn {
+      background: rgba(20,98,252,.12); border: 1px solid rgba(20,98,252,.3);
+      color: #1462FC;
+    }
+    .academy-btn:hover { background: rgba(20,98,252,.22); border-color: rgba(20,98,252,.55); }
+
+    .lesson-video-links { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .lesson-video-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(20,98,252,.1); border: 1px solid rgba(20,98,252,.25);
+      color: #1462FC; text-decoration: none; font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px; white-space: nowrap; transition: all .2s;
+    }
+    .lesson-video-btn:hover { background: rgba(20,98,252,.2); border-color: rgba(20,98,252,.5); }
+
+    .quick-links {
+      position: fixed; top: 12px; right: 16px; z-index: 9999;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .quick-links a {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 10.5px; font-weight: 600;
+      padding: 5px 11px; border-radius: 6px; text-decoration: none;
+      transition: all .2s; white-space: nowrap; letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+    }
+    .quick-links .ql-guide {
+      background: rgba(123,110,246,.15); color: #b8b0f8;
+      border: 1px solid rgba(123,110,246,.35);
+    }
+    .quick-links .ql-guide:hover { background: rgba(123,110,246,.28); color: #d0cbff; }
+    .quick-links .ql-origin {
+      background: rgba(97,175,239,.12); color: #61afef;
+      border: 1px solid rgba(97,175,239,.32);
+    }
+    .quick-links .ql-origin:hover { background: rgba(97,175,239,.24); color: #90c8f5; }
+
+    .back-to-top {
+      position: fixed; bottom: 24px; right: 20px; z-index: 9999;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(30,30,40,.85); border: 1px solid rgba(123,110,246,.4);
+      color: #a89ef8; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s, transform .2s, border-color .2s;
+      box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; }
+    .back-to-top:hover { transform: translateY(-3px); border-color: rgba(123,110,246,.7); color: #c4baff; }
+
+    .theme-toggle {
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      padding: 5px 10px; cursor: pointer; font-size: 14px; line-height: 1;
+      transition: all .2s; color: var(--text-muted); display: inline-flex;
+      align-items: center; margin-left: auto; flex-shrink: 0;
+    }
+    .theme-toggle:hover { background: var(--surface2); border-color: var(--accent2); }
+
+    .quick-links .theme-toggle {
+      background: transparent; border: 1px solid rgba(255,255,255,.15); border-radius: 6px;
+      padding: 5px 10px; cursor: pointer; font-size: 13px; color: var(--text-muted);
+      transition: all .2s; line-height: 1;
+    }
+    .quick-links .theme-toggle:hover { background: rgba(255,255,255,.08); }
+
+    .course-nav-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .course-nav-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500;
+      padding: 0.6rem 1.1rem; border-radius: 8px;
+      transition: all .2s;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .course-nav-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent2); }
+
+    .course-nav-center {
+      display: flex; align-items: center;
+    }
+    .course-nav-center a {
+      color: var(--accent2); text-decoration: none; font-size: 12.5px;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: opacity .2s;
+    }
+    .course-nav-center a:hover { opacity: .7; }
+
+    [data-theme="light"] {
+      --bg:        #FFFFFF;
+      --surface:   #F0F2F7;
+      --surface2:  #E9ECF1;
+      --border:    #D8DADF;
+      --accent:    #1e7abf;
+      --accent2:   #6D2EF6;
+      --text:      #1A1A1A;
+      --text-muted:#525357;
+      --text-dim:  #9D9FA1;
+      --code-bg:   #F7F8FB;
+      --tag-bg:    #F0F2F7;
+      --success:   #079F78;
+      --warning:   #C23F06;
+    }
+    [data-theme="light"] header {
+      background: rgba(255,255,255,.95) !important;
+      border-bottom-color: var(--border);
+    }
+    [data-theme="light"] aside { background: var(--bg) !important; border-right-color: var(--border) !important; }
+    [data-theme="light"] .nav-item.active { background: rgba(30,122,191,.08) !important; border-color: rgba(30,122,191,.25) !important; }
+    [data-theme="light"] .lesson-number-badge { color: #fff !important; }
+    [data-theme="light"] code { background: var(--code-bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    [data-theme="light"] pre { background: var(--code-bg) !important; border-color: var(--border) !important; }
+    body { transition: background .25s, color .25s; }
+  </style>
+</head>
+<body>
+
+<!-- 우측 상단 퀵 링크 -->
+<div class="quick-links">
+  <a href="guide.html" class="ql-guide">📖 사용 가이드</a>
+  <a href="https://anthropic.skilljar.com/claude-code-101" target="_blank" class="ql-origin">원본 →</a>
+  <button id="theme-toggle" class="theme-toggle" aria-label="테마 전환">☀️</button>
+</div>
+
+<!-- 맨 위로 버튼 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="맨 위로">↑</button>
+<script>
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 300);
+  });
+</script>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">← 강의 목록</a>
+    <span class="sep">/</span>
+    <span class="course-title-small">Claude Code 101</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- 사이드바 -->
+  <aside>
+    <div class="sidebar-label">강의 목록</div>
+    <nav class="lesson-nav">
+      <a class="nav-item active" href="#lesson-1">
+        <span class="nav-num">01</span>
+        <span>What is Claude Code?</span>
+      </a>
+      <a class="nav-item" href="#lesson-2">
+        <span class="nav-num">02</span>
+        <span>How Claude Code works</span>
+      </a>
+      <a class="nav-item" href="#lesson-3">
+        <span class="nav-num">03</span>
+        <span>Installing Claude Code</span>
+      </a>
+      <a class="nav-item" href="#lesson-4">
+        <span class="nav-num">04</span>
+        <span>Your first prompt</span>
+      </a>
+      <a class="nav-item" href="#lesson-5">
+        <span class="nav-num">05</span>
+        <span>The explore → plan → code → commit workflow</span>
+      </a>
+      <a class="nav-item" href="#lesson-6">
+        <span class="nav-num">06</span>
+        <span>Context management</span>
+      </a>
+      <a class="nav-item" href="#lesson-7">
+        <span class="nav-num">07</span>
+        <span>Code review</span>
+      </a>
+      <a class="nav-item" href="#lesson-8">
+        <span class="nav-num">08</span>
+        <span>The CLAUDE.md file</span>
+      </a>
+      <a class="nav-item" href="#lesson-9">
+        <span class="nav-num">09</span>
+        <span>Subagents</span>
+      </a>
+      <a class="nav-item" href="#lesson-10">
+        <span class="nav-num">10</span>
+        <span>Skills</span>
+      </a>
+      <a class="nav-item" href="#lesson-11">
+        <span class="nav-num">11</span>
+        <span>MCP</span>
+      </a>
+      <a class="nav-item" href="#lesson-12">
+        <span class="nav-num">12</span>
+        <span>Hooks</span>
+      </a>
+      <a class="nav-item" href="#lesson-13">
+        <span class="nav-num">13</span>
+        <span>Course quiz</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- 메인 -->
+  <main>
+    <div class="nlm-banner">
+      <span class="nlm-banner-icon">⬡</span>
+      <div class="nlm-banner-text">
+        <strong>심화 학습 &amp; 원본 자료</strong>
+        <span>원본 강의는 Anthropic Academy에서 확인하세요.</span>
+      </div>
+      <a href="https://notebooklm.google.com/notebook/17fa0915-0bff-4f30-a99d-179a5eb29261" target="_blank" class="nlm-banner-btn">⬡ NotebookLM →</a>
+      <a href="https://anthropic.skilljar.com/claude-code-101" target="_blank" class="nlm-banner-btn academy-btn">📺 원본 강의 →</a>
+    </div>
+
+    <!-- 코스 히어로 -->
+    <div class="course-hero" id="hero">
+      <div class="course-badge">⬡ CLAUDE CODE &nbsp;·&nbsp; 13 LESSONS</div>
+      <h1>Claude Code 101</h1>
+      <div class="course-meta">
+        <span class="meta-item">📖 13개 레슨</span>
+        <span class="meta-item">🇰🇷 한국어 번역</span>
+        <span class="meta-item">🔗 <a href="https://anthropic.skilljar.com/claude-code-101" target="_blank" style="color:var(--text-muted);text-decoration:none;">원본 강의</a></span>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════════ LESSON 1 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-1">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 1</span>
+        <div class="lesson-title-block">
+          <h2>What is Claude Code?</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469788" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469788</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>Claude Code가 일반 AI 채팅과 다른 점</li>
+          <li>AI 에이전트 개념과 Claude Code의 에이전트 구조</li>
+          <li>Claude Code가 실제로 할 수 있는 일들</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>Claude Code란?</h3>
+        <p>Claude Code는 코드베이스를 이해하고, 파일을 편집하고, 명령을 실행하고, 기존 개발자 툴과 연동해 더 빠르게 작업을 완료할 수 있도록 돕는 에이전틱 코딩 도구입니다. 터미널, Visual Studio Code, Claude Desktop 앱, 웹, JetBrains IDE에서 사용할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Claude.ai와 무엇이 다른가?</h3>
+        <p>Claude.ai를 사용해본 적 있다면, Claude Code가 무엇이 다른지 궁금할 것입니다. Claude.ai와 달리, Claude Code는 파일, 터미널, 전체 코드베이스에 직접 접근할 수 있습니다. 코드를 복사해서 붙여넣는 대신, 직접 들어가서 작업을 수행합니다.</p>
+        <p>핵심 차이점은 <strong>Claude Code가 AI 에이전트로 동작</strong>한다는 것입니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>AI 에이전트란?</h3>
+        <p>AI 에이전트는 환경과 상호작용하고 정의된 목표를 달성하기 위한 행동을 수행할 수 있는 소프트웨어입니다. 핵심적으로, 대형 언어 모델이 실시간으로 루프 안에서 작동합니다. AI 에이전트는 목표 달성을 위해 도구, 외부 서비스, 심지어 다른 AI 에이전트에도 접근할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Claude Code가 실제로 할 수 있는 일</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;margin:0.5rem 0;">
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;">
+            <span style="color:var(--accent);font-size:12px;margin-top:3px;flex-shrink:0;">▸</span>
+            <span><strong>코드베이스 읽기 및 이해</strong>: 기능을 설명하거나 코드 전체에서 버그를 추적할 수 있습니다</span>
+          </li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;">
+            <span style="color:var(--accent);font-size:12px;margin-top:3px;flex-shrink:0;">▸</span>
+            <span><strong>프로젝트 파일 편집</strong>: 함수를 리팩토링하고 참조하는 모든 파일을 업데이트할 수 있습니다</span>
+          </li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;">
+            <span style="color:var(--accent);font-size:12px;margin-top:3px;flex-shrink:0;">▸</span>
+            <span><strong>터미널 명령 실행</strong>: 빌드 스크립트를 실행하고, 테스트를 돌리고, 패키지를 설치하고, 결과를 보고 다음 행동을 결정합니다</span>
+          </li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;">
+            <span style="color:var(--accent);font-size:12px;margin-top:3px;flex-shrink:0;">▸</span>
+            <span><strong>웹 검색</strong>: 문서나 최신 API 레퍼런스가 필요하면 직접 검색합니다</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>Claude Code를 효과적으로 사용하기</h3>
+        <p>세 가지 개념을 항상 염두에 두세요:</p>
+        <div class="key-point">
+          <div class="kp-label">1. 컨텍스트 윈도우</div>
+          Claude의 작업 메모리입니다. 많은 내용을 담을 수 있지만 전부는 아닙니다. 여기서 '에이전틱' 측면이 드러납니다 — Claude는 전체를 컨텍스트에 로드하지 않고도 코드베이스에서 답을 찾는 전략적인 방법을 찾아냅니다.
+        </div>
+        <div class="key-point">
+          <div class="kp-label">2. 권한 요청</div>
+          기본적으로 Claude Code는 명령 실행이나 변경 전에 허가를 요청합니다. 세밀하게 관여하든 방임하든, 항상 제어권은 여러분에게 있습니다.
+        </div>
+        <div class="key-point">
+          <div class="kp-label">3. 실수 가능성</div>
+          어떤 도구와 마찬가지로, Claude Code도 완벽하지 않습니다. 의도를 잘못 이해하거나, 버그를 도입하거나, 과도하게 설계할 수 있습니다. 관여를 유지하면 조기에 발견할 수 있습니다.
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>Claude Code는 파일을 읽고, 명령을 실행하고, 외부 도구에 연결하는 에이전틱 코딩 도구입니다</li>
+          <li>터미널, VS Code, JetBrains, Claude Desktop 앱에서 사용 가능합니다</li>
+          <li>AI 에이전트로서 루프 안에서 동작하며, 결과를 검증하고 목표를 향해 반복합니다</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 2 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-2">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 2</span>
+        <div class="lesson-title-block">
+          <h2>How Claude Code works</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469789" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469789</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>에이전틱 루프의 동작 방식</li>
+          <li>컨텍스트 윈도우 관리</li>
+          <li>도구(Tools)의 역할</li>
+          <li>권한 모드 종류</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>에이전틱 루프</h3>
+        <p>Claude Code는 에이전틱 루프로 동작합니다:</p>
+        <ol style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin:0.75rem 0;">
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;min-width:20px;">1.</span><span>프롬프트를 입력합니다</span></li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;min-width:20px;">2.</span><span>Claude는 모델과 상호작용하며 필요한 컨텍스트를 수집합니다 — 텍스트 또는 실행 가능한 툴 호출을 반환합니다</span></li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;min-width:20px;">3.</span><span>파일 편집이나 명령 실행 등 행동을 취합니다</span></li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;min-width:20px;">4.</span><span>결과를 검증하고 프롬프트가 목표를 달성했는지 판단합니다</span></li>
+          <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:14px;color:var(--text-muted);line-height:1.7;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;min-width:20px;">5.</span><span>달성했으면 완료하고 다음 프롬프트를 기다립니다. 그렇지 않으면 완료될 때까지 루프를 반복합니다</span></li>
+        </ol>
+        <p>이 루프 내내 컨텍스트를 추가하거나, 중단하거나, 방향을 조정해 목표를 향해 유도할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>컨텍스트</h3>
+        <p>Claude는 대화, 파일 내용, 명령 출력 등을 저장하고 참조할 수 있는 컨텍스트 윈도우를 가집니다. 한계에 도달하면 Claude Code는 대화를 자동으로 압축합니다 — 컨텍스트 윈도우를 사용 가능한 크기로 줄이기 위해 제거하거나 요약할 수 있는 것을 자동으로 결정합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>도구(Tools)</h3>
+        <p>도구는 에이전트가 동작하는 근간입니다. 대부분의 AI 어시스턴트는 단순히 텍스트를 받아 텍스트를 반환합니다. 도구는 Claude Code가 작업 완료에 가까워지기 위해 코드를 언제 실행할지 결정할 수 있게 합니다. 파일 읽기 도구, 웹 검색 도구 등 다양한 기능이 있습니다. Claude Code는 의미론적 이해를 통해 언제 도구를 호출하고 결과를 어떻게 활용할지 결정합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>권한 모드</h3>
+        <p>Claude Code에는 여러 권한 모드가 있습니다:</p>
+        <div class="info-box">
+          <div class="info-label">기본 동작</div>
+          파일 편집이나 셸 명령 실행 전 명시적 허가를 요청합니다
+        </div>
+        <div class="info-box">
+          <div class="info-label">자동 수락</div>
+          파일은 묻지 않고 편집되지만, 명령은 여전히 승인이 필요합니다
+        </div>
+        <div class="info-box">
+          <div class="info-label">플랜 모드</div>
+          읽기 전용 도구를 사용해 작업 시작 전 실행 계획을 수립합니다
+        </div>
+        <div class="warn-box">
+          <div class="warn-label">⚠️ 주의</div>
+          권한을 건너뛸 때는 주의하세요 — Claude Code가 명령을 자유롭게 실행하게 하면 실수가 발생하기 전에 잡기 어려울 수 있습니다.
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>Claude Code는 에이전틱 루프, 관리된 컨텍스트 윈도우, 도구, 설정 가능한 권한 모드를 결합합니다</li>
+          <li>코드베이스를 읽고, 행동을 취하고, 자체 작업을 검증할 수 있습니다</li>
+          <li>이것이 채팅 창과 근본적으로 다른 점입니다</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 3 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-3">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 3</span>
+        <div class="lesson-title-block">
+          <h2>Installing Claude Code</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469790" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469790</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>터미널, VS Code, JetBrains, Desktop, Web에서의 설치 방법</li>
+          <li>각 플랫폼별 특징과 장단점</li>
+          <li>어떤 환경을 선택할지 기준</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>터미널</h3>
+        <p>macOS, Linux, WSL에서는 curl 명령으로 한 번에 설치할 수 있습니다. Homebrew도 사용할 수 있지만 자동 업데이트를 지원하지 않습니다.</p>
+        <p>Windows에서는 PowerShell에서 Invoke-RestMethod 명령, CMD에서 curl 명령, 또는 winget 명령을 사용할 수 있습니다 (winget도 자동 업데이트 미지원).</p>
+        <p>설치 후 <code>claude</code> 명령을 실행할 수 있어야 합니다. 실행이 안 되면 터미널을 재시작하세요. 프로젝트 디렉토리로 이동해 실행하면 됩니다:</p>
+        <pre><code>claude</code></pre>
+        <p>색상 테마 선택, Claude 계정(Pro, Max, Enterprise) 로그인 또는 API 키 입력 등 초기 설정을 진행합니다. claude를 실행한 디렉토리와 모든 하위 폴더에 접근 권한이 부여됩니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Visual Studio Code</h3>
+        <p>확장 프로그램 패널을 열고 "Claude Code"를 검색합니다. 파란색 인증 마크가 있는 Anthropic의 확장을 찾아 설치합니다.</p>
+        <p>설치 후 VS Code를 재시작해야 할 수 있습니다. 실행 후 Ctrl/Cmd + Shift + P로 명령 팔레트를 열고 "Claude Code Open in New Tab"을 검색합니다. 사이드바에 Claude 로고가 보이면 클릭해도 됩니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>JetBrains</h3>
+        <p>JetBrains Marketplace에서 Claude Code 플러그인을 설치합니다. 설치 후 IDE를 재시작하면 Claude 로고가 보입니다. 클릭하면 에디터 옆에 터미널 경험을 제공하는 패널이 열립니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Desktop</h3>
+        <p>Claude Desktop을 설치하고 로그인하면 상단에 "Code" 토글이 보입니다. 채팅과 비슷하지만 특정 폴더에서 작업하고, 권한을 변경하고, 클라우드 환경에서도 작업할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>Web</h3>
+        <p>웹에서는 claude.ai/code에 접속하거나 채팅 앱 사이드바의 "Code" 탭을 클릭합니다. Desktop 앱과 유사하지만 GitHub 저장소로 제한됩니다.</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="tip-label">어떤 것을 선택해야 할까요?</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
+          <li><strong>최신 기능</strong>을 원한다면 터미널 — 기능이 가장 먼저 배포됩니다</li>
+          <li><strong>IDE 통합</strong>을 원한다면 VS Code 또는 JetBrains 확장</li>
+          <li><strong>Claude가 백그라운드에서 실행</strong>되길 원한다면 Desktop 앱</li>
+          <li><strong>GitHub 저장소 원격 작업</strong>을 원한다면 Web</li>
+        </ul>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>Claude Code는 터미널, VS Code, JetBrains, Desktop, Web 5가지 환경에서 사용 가능합니다</li>
+          <li>터미널이 항상 최신 기능을 먼저 받습니다</li>
+          <li>어떤 환경을 선택하든 기본 경험은 동일합니다</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 4 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-4">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 4</span>
+        <div class="lesson-title-block">
+          <h2>Your first prompt</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469791" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469791</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>자동 수락 vs 승인 모드 전환 방법</li>
+          <li>플랜 모드의 활용법</li>
+          <li>효과적인 첫 프롬프트 작성법</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>자동 수락 vs 승인 모드</h3>
+        <p>Claude가 매번 파일 변경을 자동 수락할지, 아니면 명시적 허가를 요청할지 선택할 수 있습니다. <code>Shift + Tab</code>을 눌러 모드를 전환합니다.</p>
+        <div class="info-box">
+          <div class="info-label">승인 모드</div>
+          Claude가 파일을 편집하거나 명령을 실행할 때마다 허가를 요청합니다
+        </div>
+        <div class="info-box">
+          <div class="info-label">자동 수락 모드</div>
+          파일 편집은 자동으로 승인되지만, 명령은 여전히 허가가 필요합니다
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>플랜 모드</h3>
+        <p><code>Shift + Tab</code> 메뉴에 플랜 모드가 있습니다. 플랜 모드는 프롬프트를 받아 읽기 전용 도구로 코드베이스를 분석하고 구현 방법을 연구합니다. 진행하면서 명확화 질문을 하고, 실행할 수 있는 상세한 계획을 반환합니다.</p>
+        <p>플랜 모드는 복잡한 변경을 계획하거나 안전한 코드 리뷰를 하는 데 최적입니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>예시: 다크 모드 토글 추가</h3>
+        <div class="exercise-box">
+          <div class="ex-title">실습 예시</div>
+          <p>다크 모드 토글이 필요한 앱이 있다고 가정합니다. 프로젝트 루트 디렉토리를 열고 <code>claude</code>를 실행합니다. <code>Shift + Tab</code>을 몇 번 눌러 플랜 모드에 진입한 후 다음과 같은 프롬프트를 작성합니다:</p>
+          <p style="margin-top:0.75rem;padding:0.75rem 1rem;background:var(--code-bg);border-radius:6px;border:1px solid var(--border);font-size:13px;color:#b8b4d0;font-style:italic;">"앱 전체에 다크 모드를 구현해야 합니다. 기존 라이트 테마를 기반으로 좋은 대비 색상을 찾아 헤더에 라이트/다크 모드를 전환할 수 있는 토글 스위치를 만들어줄 수 있나요?"</p>
+          <p>Claude가 계획을 세우도록 기다립니다. 계획이 괜찮아 보이면 수락하고 Claude가 각 단계별로 승인을 요청하도록 합니다.</p>
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>Shift + Tab으로 승인 모드, 자동 수락 모드, 플랜 모드를 전환합니다</li>
+          <li>프롬프트는 최대한 구체적으로 작성하세요</li>
+          <li>플랜 모드는 코드 작성 전에 Claude가 세부 사항을 깊이 파악할 수 있게 합니다</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 5 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-5">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 5</span>
+        <div class="lesson-title-block">
+          <h2>The explore → plan → code → commit workflow</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469792" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469792</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>Explore → Plan → Code → Commit 워크플로우의 각 단계</li>
+          <li>플랜 모드를 활용한 탐색과 계획</li>
+          <li>코딩 단계를 원활하게 하는 팁</li>
+          <li>코드 리뷰와 커밋 자동화</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>Explore → Plan → Code → Commit 워크플로우</h3>
+        <p>이 강의에서 한 가지만 가져간다면 바로 이 워크플로우입니다: Explore, Plan, Code, Commit. 이 없이는 대부분의 사람들이 Claude에게 바로 코드 작성을 요청합니다 — 이는 나중에 더 많은 수정을 의미합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>탐색과 계획 (Explore &amp; Plan)</h3>
+        <p>가장 빠른 방법은 플랜 모드를 사용하는 것입니다. 플랜 모드에서 Claude는 파일을 편집할 수 없습니다 — 구현 방법을 파악하기 위해 파일을 읽기만 합니다.</p>
+        <p><code>Shift + Tab</code>을 눌러 플랜 모드에 진입한 후 예시 프롬프트:</p>
+        <div class="key-point">
+          <div class="kp-label">예시 프롬프트</div>
+          "이미지 업로드 파이프라인에 WebP 변환을 추가해야 합니다. 파이프라인의 어디에 들어가야 할지, 새로운 의존성이 필요한지, 어떻게 접근할지 파악해주세요."
+        </div>
+        <p>Claude가 관련 파일을 읽고, 웹 검색을 하고, 행동 계획을 제시합니다. 검토 후 기준에 맞는지 결정합니다. 맞지 않으면 특정 부분 수정을 요청합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>코딩 단계 (Code)</h3>
+        <p>계획이 좋아 보이면 "승인"을 선택해 Claude가 목록 항목들을 처리하도록 합니다.</p>
+        <div class="tip-box">
+          <div class="tip-label">코딩 단계를 원활하게 하는 팁</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
+            <li><strong>성공 기준 정의</strong>: 결과가 "올바른지" 명확히 해야 Claude가 확신을 가질 수 있습니다</li>
+            <li><strong>도구 추가</strong>: Claude가 목표를 달성하는 데 도움이 되는 도구는 많은 시간을 절약합니다 (예: 웹 UI 작업 시 Claude in Chrome 확장)</li>
+            <li><strong>테스트 스위트 포함</strong>: Claude가 지속적으로 검증할 수 있는 테스트를 제공합니다</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>커밋 단계 (Commit)</h3>
+        <p>변경 사항을 직접 테스트하고 만족하면 코드를 푸시할 차례입니다. 커밋 전에 서브에이전트 코드 리뷰어로 작업을 검토합니다. 서브에이전트는 세션에서 메인 에이전트가 가질 수 있는 편향 없이 코드베이스를 새로운 시각으로 바라봅니다.</p>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li><strong>Explore</strong>: Claude에게 프로젝트의 관련 컨텍스트를 제공합니다</li>
+          <li><strong>Plan</strong>: Claude가 성공 측정에 사용할 행동 계획을 수립합니다</li>
+          <li><strong>Code</strong>: 최종 결과를 결정하기 전 여러분과 Claude 사이의 반복 과정입니다</li>
+          <li><strong>Commit</strong>: 코드를 검토하고 푸시해 다음 기능을 시작합니다</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 6 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-6">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 6</span>
+        <div class="lesson-title-block">
+          <h2>Context management</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469793" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469793</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>컨텍스트 윈도우가 무엇인지와 왜 중요한지</li>
+          <li>컨텍스트 관리 명령어 (/compact, /clear, /context)</li>
+          <li>컨텍스트를 절약하는 실용적인 팁</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>컨텍스트 윈도우란?</h3>
+        <p>컨텍스트는 Claude의 작업 메모리입니다. 프롬프트를 입력하거나, 파일을 읽거나, 도구 호출을 실행하거나, 결과를 받을 때마다 모두 컨텍스트 윈도우 공간을 차지합니다. 공간이 제한적이므로 효율적으로 활용하는 것이 중요합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>컨텍스트가 가득 찰 때</h3>
+        <p>한계에 가까워지면 컨텍스트 윈도우가 자동으로 압축됩니다. 압축은 중요한 세부 사항을 요약하고 불필요한 도구 호출 결과를 제거해 공간을 확보합니다. 이 과정에서 세부 사항이 손실될 수 있다는 점에 주의하세요.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>컨텍스트 관리 명령어</h3>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>명령어</th>
+              <th>설명</th>
+              <th>언제 사용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/compact</code></td>
+              <td>현재까지의 내용을 압축</td>
+              <td>현재 기능 작업 중 컨텍스트 한계에 다가갈 때</td>
+            </tr>
+            <tr>
+              <td><code>/clear</code></td>
+              <td>모든 기록 완전 삭제</td>
+              <td>새 기능 작업 시작 시</td>
+            </tr>
+            <tr>
+              <td><code>/context</code></td>
+              <td>현재 컨텍스트 상태 확인</td>
+              <td>현재 컨텍스트 사용 현황 파악</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>컨텍스트 공간 절약 팁</h3>
+        <div class="tip-box">
+          <div class="tip-label">구체적으로 작성하기</div>
+          막연한 프롬프트는 오히려 컨텍스트를 더 많이 소비합니다. 명확한 지시 없이 Claude는 코드베이스를 더 많이 탐색하고 자체 추론을 해야 합니다
+        </div>
+        <div class="tip-box">
+          <div class="tip-label">MCP 서버 관리</div>
+          MCP 서버는 기본적으로 모든 사용 가능한 도구를 컨텍스트에 로드합니다. 현재 프로젝트와 무관한 서버는 비활성화를 고려하세요
+        </div>
+        <div class="tip-box">
+          <div class="tip-label">서브에이전트 활용</div>
+          서브에이전트는 메인 에이전트와 별개의 컨텍스트 윈도우에서 실행됩니다. "인증 엔드포인트가 어디 있나요?" 같은 질문은 서브에이전트가 처리하고 요약만 반환합니다
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>/compact으로 긴 세션을 요약하고, /clear로 새로 시작합니다</li>
+          <li>구체적인 프롬프트로 컨텍스트 낭비를 줄이세요</li>
+          <li>서브에이전트를 활용해 답만 필요한 작업을 위임하세요</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 7 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-7">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 7</span>
+        <div class="lesson-title-block">
+          <h2>Code review</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469794" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469794</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>서브에이전트를 활용한 편향 없는 코드 리뷰</li>
+          <li>/commit-push-pr 스킬로 워크플로우 자동화</li>
+          <li>--from-pr 플래그로 PR 세션 재개</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>서브에이전트로 코드 리뷰</h3>
+        <p>PR을 푸시하기 전, Claude에게 서브에이전트를 사용해 변경 사항을 검토하도록 요청하세요. 서브에이전트는 자체 컨텍스트 윈도우에서 새로운 시각으로 실행됩니다 — 방금 코드를 작성한 메인 에이전트의 편향이 없습니다.</p>
+        <div class="tip-box">
+          <div class="tip-label">팁</div>
+          코드 리뷰어 서브에이전트를 만들 때는 읽기 전용 도구로 제한하세요. 리뷰어는 문제를 발견해야지, 파일을 편집해서는 안 됩니다. 서브에이전트 설정을 저장소에 체크인해 팀 전체가 동일한 리뷰어를 사용하도록 하세요.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>/commit-push-pr 스킬</h3>
+        <p>/commit-push-pr 스킬은 커밋, 푸시, PR 생성을 한 단계로 처리합니다. 각 단계를 수동으로 하는 대신, 스킬을 실행하면 Claude가 처리합니다.</p>
+        <div class="info-box">
+          <div class="info-label">자동 알림</div>
+          Slack MCP 서버가 설정되어 있고 CLAUDE.md에 채널 목록이 있으면, 자동으로 팀 채널에 PR 링크를 게시합니다.
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>--from-pr로 세션 연결</h3>
+        <p>Claude가 <code>gh pr create</code>를 통해 PR을 생성하면 세션이 해당 PR에 자동으로 연결됩니다. 나중에 돌아와야 할 때 — 리뷰 의견 반영이나 빌드 수정 등 — 다음을 실행합니다:</p>
+        <pre><code>claude --from-pr &lt;PR_NUMBER&gt;</code></pre>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>푸시 전 서브에이전트로 편향 없는 코드 리뷰를 받으세요</li>
+          <li>/commit-push-pr로 전체 커밋-PR 흐름을 한 단계로 처리하세요</li>
+          <li>--from-pr으로 나중에 PR 작업을 재개하세요</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 8 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-8">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 8</span>
+        <div class="lesson-title-block">
+          <h2>The CLAUDE.md file</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469795" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469795</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>CLAUDE.md 파일이 해결하는 문제</li>
+          <li>CLAUDE.md 파일 구조와 작성법</li>
+          <li>팀과 개인을 위한 계층적 메모리 시스템</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>CLAUDE.md 파일이란?</h3>
+        <p>Claude Code의 가장 유용한 기능 중 하나는 CLAUDE.md 파일입니다. Claude Code에게 프로젝트에 대한 지속적인 메모리를 제공합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>해결하는 문제</h3>
+        <p>CLAUDE.md 파일 없이 Claude Code를 열면 매번 새로 시작합니다. 코드베이스를 다시 탐색하고, 필요한 의존성을 파악하고, 이미 구현된 기능을 이해해야 합니다. 때로는 가정을 해서 올바른 방향으로 유도하기 어렵게 만듭니다.</p>
+        <p>CLAUDE.md는 이를 해결합니다. 프로젝트 루트에 추가하는 마크다운 파일로, 세션을 시작할 때마다 Claude Code가 자동으로 읽습니다. 코드베이스의 온보딩 스크립트라고 생각하세요. CLAUDE.md 파일의 내용은 프롬프트에 추가됩니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>예시 CLAUDE.md</h3>
+        <pre><code><span class="cm"># Project</span>
+<span class="str">This is a Next.js 15 app using the App Router, Tailwind, and Drizzle ORM.</span>
+
+<span class="cm"># Commands</span>
+<span class="key">- Dev server:</span> <span class="val">`pnpm dev`</span>
+<span class="key">- Run tests:</span> <span class="val">`pnpm test`</span>
+<span class="key">- Lint:</span> <span class="val">`pnpm lint`</span>
+
+<span class="cm"># Code Style</span>
+<span class="key">- Use 2-space indentation</span>
+<span class="key">- Prefer named exports</span>
+<span class="key">- All API routes go in app/api/</span>
+<span class="key">- Use server actions instead of API routes where possible</span></code></pre>
+      </div>
+
+      <div class="content-section">
+        <h3>팀을 위한 CLAUDE.md</h3>
+        <p>CLAUDE.md를 버전 관리에 커밋해 팀이 혜택을 받도록 하세요. 실제로 대상에 따라 메모리 파일의 계층이 있습니다:</p>
+        <div class="info-box">
+          <div class="info-label">프로젝트 레벨 CLAUDE.md</div>
+          프로젝트 루트에 위치, 팀과 공유
+        </div>
+        <div class="info-box">
+          <div class="info-label">사용자 레벨 CLAUDE.md</div>
+          설정 폴더에 위치, 개인용으로 모든 프로젝트에 적용
+        </div>
+        <div class="tip-box">
+          <div class="tip-label">유용한 팁들</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
+            <li><strong>수정 사항을 메모리에 저장</strong>: Claude를 반복적으로 수정하게 된다면 (항상 API 라우트 대신 서버 액션을 사용하도록 지시하는 등) Claude에게 해당 규칙을 메모리에 저장하도록 요청하세요</li>
+            <li><strong>프로젝트 문서 참조</strong>: <code>@README.md</code>처럼 @ 기호와 파일 경로를 사용해 문서를 참조할 수 있습니다</li>
+            <li><strong>CLAUDE.md 없이 시작</strong>: 지속적으로 모델을 수정해야 하는 곳을 파악한 후 <code>/init</code>을 실행해 Claude가 생성하도록 하세요</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>CLAUDE.md는 Claude Code의 지속적인 메모리로, 세션마다 자동으로 읽힙니다</li>
+          <li>스택, 명령어, 코드 스타일로 시작해 점차 발전시키세요</li>
+          <li>버전 관리에 커밋해 팀 전체가 활용하도록 하세요</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 9 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-9">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 9</span>
+        <div class="lesson-title-block">
+          <h2>Subagents</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469796" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469796</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>서브에이전트가 컨텍스트 관리를 어떻게 돕는지</li>
+          <li>서브에이전트 생성 방법</li>
+          <li>서브에이전트 커스터마이징 옵션</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>서브에이전트란?</h3>
+        <p>Claude는 작업을 분해하고 구성 요소를 병렬로 실행하는 서브에이전트에 위임할 수 있어 컨텍스트 관리를 향상시킵니다. 각 서브에이전트는 자체 격리된 컨텍스트 윈도우에서 동작합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>동작 방식</h3>
+        <p>컨텍스트 윈도우의 많은 부분이 코드베이스를 탐색하는 도구 호출이나 웹 검색 등으로 소비됩니다. Claude가 탐색하는 과정이 현재 개발 중인 기능과 항상 관련이 있는 것은 아닙니다.</p>
+        <p>여기서 서브에이전트가 등장합니다. Claude가 "이 코드베이스를 탐색해줘"와 같은 작업을 처리하는 서브에이전트를 생성합니다. 서브에이전트는 자체 컨텍스트 윈도우에서 병렬로 실행되고, 완료되면 결과를 요약해 Claude에게 반환합니다.</p>
+        <p>결과: 전체 탐색 과정 없이 찾던 답만 얻을 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>서브에이전트 생성</h3>
+        <p>서브에이전트는 YAML 프론트매터가 있는 마크다운 파일로 정의됩니다. 가장 쉬운 시작 방법은 Claude가 생성하도록 하는 것입니다:</p>
+        <pre><code>/agents</code></pre>
+        <p>"새 에이전트 만들기"를 선택하면 에이전트의 범위 선택, 목적 정의, 접근 가능한 도구 선택, 색상 지정 등 단계를 거칩니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>추가 커스터마이징</h3>
+        <div class="info-box">
+          <div class="info-label">지속적인 메모리</div>
+          서브에이전트가 대화 간 메모리를 유지할 수 있어 동일한 프로젝트에서 일관성 있게 사용할 때 유용합니다
+        </div>
+        <div class="info-box">
+          <div class="info-label">스킬 사전 로드</div>
+          skill 키를 추가하고 스킬 이름을 나열해 서브에이전트에 스킬을 사전 로드할 수 있습니다
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>서브에이전트는 자체 컨텍스트 윈도우에서 병렬로 실행됩니다</li>
+          <li>/agents로 새 서브에이전트를 만들 수 있습니다</li>
+          <li>무거운 탐색 작업을 서브에이전트에 위임하고 메인 컨텍스트를 깔끔하게 유지하세요</li>
+          <li>더 자세한 내용은 서브에이전트 입문 과정을 참고하세요</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 10 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-10">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 10</span>
+        <div class="lesson-title-block">
+          <h2>Skills</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469848" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469848</a></div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>스킬(Skills)</h3>
+        <p>스킬은 Claude Code에서 특정 작업을 위한 슬래시 명령어입니다. 이름과 설명만 컨텍스트에 로드되어, Claude가 필요할 때만 전체 스킬 내용을 로드합니다. 이는 MCP 서버보다 컨텍스트 효율적입니다.</p>
+        <div class="info-box">
+          <div class="info-label">더 알아보기</div>
+          스킬에 대한 자세한 내용은 에이전트 스킬 소개 과정에서 확인하세요.
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 11 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-11">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 11</span>
+        <div class="lesson-title-block">
+          <h2>MCP</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469797" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469797</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>MCP(Model Context Protocol)가 무엇인지</li>
+          <li>MCP 서버 추가 방법과 두 가지 유형</li>
+          <li>서버 범위 설정 방법</li>
+          <li>컨텍스트 비용과 최적화</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>MCP란?</h3>
+        <p>MCP(Model Context Protocol)는 Claude Code가 외부 도구와 데이터 소스에 연결할 수 있는 오픈 표준입니다. 질문을 할 때 Claude는 해당 도구를 언제 사용해야 할지 자동으로 이해합니다.</p>
+        <p>코드베이스 밖에 많은 컨텍스트가 있습니다 — 데이터베이스, 생산성 앱, 공개 저장소 등. MCP는 이 간격을 연결합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>도구(Tools)의 개념</h3>
+        <p>도구는 에이전트에게 작업을 더 효과적으로 완료하는 데 도움이 되는 행동 수행 능력을 제공합니다. 이는 단순히 텍스트 응답만 받는 일반적인 AI와 다릅니다.</p>
+        <p>예시: 팀이 프로젝트 관리에 Linear를 사용한다면 Linear MCP 서버를 추가해 특정 이슈의 세부 사항을 가져올 수 있습니다. 의존성의 최신 문서가 필요하다면 Context7 같은 docs MCP 서버를 활용할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>MCP 서버 추가</h3>
+        <p><code>claude mcp add</code> 명령으로 MCP 서버를 추가할 수 있습니다. 두 가지 주요 유형:</p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>유형</th>
+              <th>설명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>HTTP 서버</td>
+              <td>원격 서비스용, 서비스 제공자가 호스팅하고 네트워크를 통해 연결</td>
+            </tr>
+            <tr>
+              <td>Stdio 서버</td>
+              <td>로컬 머신에서 실행되는 로컬 프로세스용</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><code>/mcp</code> 명령으로 연결된 서버 확인, 상태 점검, 불필요한 서버 비활성화를 할 수 있습니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>서버 범위 설정</h3>
+        <div class="info-box">
+          <div class="info-label">로컬</div>
+          현재 프로젝트에서만 사용 가능, 나만의 설정
+        </div>
+        <div class="info-box">
+          <div class="info-label">사용자</div>
+          모든 프로젝트에서 사용 가능
+        </div>
+        <div class="info-box">
+          <div class="info-label">프로젝트</div>
+          .mcp.json 파일을 버전 관리에 체크인해 코드베이스 모든 사람이 자동으로 동일한 서버를 사용
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>컨텍스트 비용</h3>
+        <p>MCP 서버는 사용하지 않을 때도 도구 정의를 컨텍스트 윈도우에 추가합니다. 서버가 많으면 사용 가능한 컨텍스트를 소비합니다. /mcp로 연결된 서버를 확인하고 현재 사용하지 않는 것은 비활성화하세요.</p>
+        <div class="warn-box">
+          <div class="warn-label">⚠️ 도구 검색 모드 주의</div>
+          MCP 도구가 컨텍스트 윈도우의 10%를 초과하면 Claude Code가 자동으로 도구 검색 모드로 전환합니다. 이는 필요한 도구를 수요에 따라 발견하지만 신뢰성이 다소 낮을 수 있습니다.
+        </div>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li><code>claude mcp add</code>로 MCP 서버를 추가합니다</li>
+          <li>.mcp.json으로 프로젝트 범위로 설정해 팀과 공유하세요</li>
+          <li>현재 사용하지 않는 서버를 비활성화해 컨텍스트 사용량을 관리하세요</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 12 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-12">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 12</span>
+        <div class="lesson-title-block">
+          <h2>Hooks</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469798" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469798</a></div>
+        </div>
+      </div>
+
+      <div class="learn-box">
+        <div class="learn-box-title">WHAT YOU'LL LEARN</div>
+        <ul>
+          <li>훅이 무엇이고 왜 사용하는지</li>
+          <li>사용 가능한 이벤트 유형</li>
+          <li>PreToolUse 훅으로 위험한 동작 차단</li>
+          <li>팀과 훅 공유하는 방법</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>훅(Hooks)이란?</h3>
+        <p>훅은 Claude Code의 라이프사이클의 특정 지점에서 명령을 실행할 수 있게 합니다. 훅과 이 강의에서 다룬 다른 모든 것의 핵심 차이점은 훅이 <strong>결정론적</strong>이라는 점입니다 — 항상 실행됩니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>왜 훅을 사용하는가?</h3>
+        <p>CLAUDE.md에 모든 파일 편집 후 Prettier를 실행하도록 지시할 수 있습니다. 대부분의 경우 실행합니다. 하지만 가끔은 그렇지 않습니다. 훅은 예외 없이 항상 실행되도록 합니다.</p>
+        <p>일반적인 사용 사례:</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem;margin:0.5rem 0;">
+          <li style="display:flex;gap:0.6rem;font-size:14px;color:var(--text-muted);"><span style="color:var(--accent);">▸</span> 파일 편집 후 자동 포맷팅</li>
+          <li style="display:flex;gap:0.6rem;font-size:14px;color:var(--text-muted);"><span style="color:var(--accent);">▸</span> 컴플라이언스를 위한 실행된 명령 로깅</li>
+          <li style="display:flex;gap:0.6rem;font-size:14px;color:var(--text-muted);"><span style="color:var(--accent);">▸</span> 프로덕션 파일 수정과 같은 위험한 동작 차단</li>
+          <li style="display:flex;gap:0.6rem;font-size:14px;color:var(--text-muted);"><span style="color:var(--accent);">▸</span> 작업 완료 시 알림 전송</li>
+        </ul>
+      </div>
+
+      <div class="content-section">
+        <h3>사용 가능한 이벤트</h3>
+        <p>훅은 settings.json에 설정합니다. 이벤트를 선택하고, 적용할 도구를 위한 매처를 설정하고, 실행할 명령을 제공합니다:</p>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>이벤트</th>
+              <th>설명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PreToolUse</td>
+              <td>도구 호출 전 실행</td>
+            </tr>
+            <tr>
+              <td>PostToolUse</td>
+              <td>도구 호출 완료 후 실행</td>
+            </tr>
+            <tr>
+              <td>UserPromptSubmit</td>
+              <td>프롬프트 제출 시 Claude 처리 전 실행</td>
+            </tr>
+            <tr>
+              <td>Stop</td>
+              <td>Claude가 응답 완료 시 실행</td>
+            </tr>
+            <tr>
+              <td>Notification</td>
+              <td>Claude가 알림 전송 시 실행</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h3>실용적인 예시: 자동 포맷팅</h3>
+        <p>가장 일반적인 훅: 편집 후 자동 포맷팅. "Edit|MultiEdit|Write" 매처가 있는 PostToolUse 훅을 설정해 Claude가 파일을 수정할 때마다 실행되도록 합니다. 명령은 파일 확장자를 확인하고 적절한 포맷터를 실행합니다.</p>
+      </div>
+
+      <div class="content-section">
+        <h3>PreToolUse로 차단하기</h3>
+        <p>PreToolUse 훅은 도구 호출이 실행되기 전에 차단할 수 있습니다:</p>
+        <div class="info-box">
+          <div class="info-label">종료 코드 동작</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem;margin-top:0.4rem;">
+            <li><strong>종료 코드 0</strong>: 정상 진행</li>
+            <li><strong>종료 코드 2</strong>: 동작 차단. stderr 메시지가 Claude에게 피드백으로 전달되어 차단 이유를 알고 수정할 수 있습니다</li>
+            <li><strong>다른 종료 코드</strong>: 차단하지 않는 오류, 표시되지만 멈추지 않음</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>팀과 훅 공유</h3>
+        <p>.claude/settings.json에 설정된 훅은 프로젝트 레벨이며 저장소에 체크인할 수 있습니다. 이는 팀 전체가 자동으로 동일한 훅을 사용하게 됩니다.</p>
+      </div>
+
+      <div class="key-takeaways">
+        <div class="key-takeaways-title">RECAP</div>
+        <ul>
+          <li>훅은 Claude Code 동작에 대한 결정론적 제어를 제공합니다</li>
+          <li>PostToolUse는 자동 포맷팅과 로깅에 사용하세요</li>
+          <li>PreToolUse는 위험한 동작을 차단하세요</li>
+          <li>.claude/settings.json에 체크인해 팀과 공유하세요</li>
+          <li>반드시 일어나야 하는 일은 프롬프트가 아닌 훅에 넣으세요</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ════════════════════════════ LESSON 13 ════════════════════════════ -->
+    <section class="lesson-section" id="lesson-13">
+      <div class="lesson-header">
+        <span class="lesson-number-badge">LESSON 13</span>
+        <div class="lesson-title-block">
+          <h2>Course quiz</h2>
+          <div class="lesson-time">원본: <a href="https://anthropic.skilljar.com/claude-code-101/469849" target="_blank" style="color:var(--text-dim);text-decoration:none;">https://anthropic.skilljar.com/claude-code-101/469849</a></div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h3>강의 퀴즈</h3>
+        <p>이 과정에서 배운 내용을 테스트합니다. 7개 문제로 구성되어 있으며, 실제 퀴즈는 SkillJar 플랫폼에서 진행합니다.</p>
+        <div class="exercise-box">
+          <div class="ex-title">이 과정에서 배운 핵심 개념들</div>
+          <ul>
+            <li>Claude Code의 에이전틱 루프와 동작 방식</li>
+            <li>터미널/VS Code/JetBrains/Desktop/Web 설치</li>
+            <li>플랜 모드와 승인 모드 활용</li>
+            <li>Explore → Plan → Code → Commit 워크플로우</li>
+            <li>/compact, /clear, /context로 컨텍스트 관리</li>
+            <li>서브에이전트로 코드 리뷰</li>
+            <li>CLAUDE.md로 지속적인 메모리 제공</li>
+            <li>서브에이전트와 스킬, MCP, 훅 활용</li>
+          </ul>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, rgba(97,175,239,0.08), rgba(123,110,246,0.08)); border: 1px solid var(--border); border-radius: 12px;">
+          <div style="font-size: 2rem; margin-bottom: 1rem;">📝</div>
+          <p style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem;">퀴즈를 응시할 준비가 되셨나요?</p>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem;">원본 Anthropic Academy 사이트에서 퀴즈를 응시하세요.</p>
+          <a href="https://anthropic.skilljar.com/claude-code-101/469849" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(97,175,239,0.15); border: 1px solid rgba(97,175,239,0.4); color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 8px; transition: all .2s;">SkillJar에서 퀴즈 응시하기 →</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 하단 네비게이션 -->
+    <div class="course-nav-footer">
+      <a href="16-ai-capabilities-and-limitations.html" class="course-nav-btn">← 16. AI 역량과 한계</a>
+      <div class="course-nav-center">
+        <a href="landing.html">모든 강의 보기</a>
+      </div>
+      <span style="min-width:160px;"></span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // 스크롤 기반 사이드바 active 클래스 업데이트
+  (function() {
+    var navItems = document.querySelectorAll('.nav-item');
+    var sections = document.querySelectorAll('.lesson-section');
+
+    function updateActive() {
+      var scrollY = window.scrollY + 100;
+      var current = 0;
+      sections.forEach(function(section, i) {
+        if (section.offsetTop <= scrollY) {
+          current = i;
+        }
+      });
+      navItems.forEach(function(item, i) {
+        item.classList.toggle('active', i === current);
+      });
+    }
+
+    window.addEventListener('scroll', updateActive);
+    updateActive();
+
+    // 클릭 시 active 클래스 즉시 업데이트
+    navItems.forEach(function(item, idx) {
+      item.addEventListener('click', function() {
+        navItems.forEach(function(n) { n.classList.remove('active'); });
+        item.classList.add('active');
+      });
+    });
+  })();
+</script>
+
+<script>
+  (function() {
+    var btn = document.getElementById('theme-toggle');
+    function applyTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      if (btn) btn.textContent = t === 'light' ? '🌙' : '☀️';
+      localStorage.setItem('sentbe-theme', t);
+    }
+    applyTheme(localStorage.getItem('sentbe-theme') || 'dark');
+    if (btn) btn.addEventListener('click', function() {
+      applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>
+</body>
+</html>
